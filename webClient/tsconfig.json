@@ -1,0 +1,14 @@
+{
+  "extends": "../../zlux-app-manager/virtual-desktop/plugin-config/tsconfig.strict.json",
+  "compilerOptions": {
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "target": "es5",
+    "typeRoots": [
+      "./node_modules/@types"
+    ]
+  }
+}
