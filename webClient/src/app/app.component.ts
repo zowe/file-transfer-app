@@ -56,7 +56,7 @@ export class AppComponent {
     let host = this.document.location.hostname;
     //let port = this.document.location.port;
     //this.ftaServiceUrl = 'ws://'+ host + ':' + port + '/ZLUX/plugins/com.rs.mvd.fileTransferApp/services/fs';
-    this.ftaServiceUrl = (window as any).RocketMVD.uriBroker.pluginWSUri(this.pluginDefinition.getBasePlugin(), 'fs','');
+    this.ftaServiceUrl = (window as any).ZoweZLUX.uriBroker.pluginWSUri(this.pluginDefinition.getBasePlugin(), 'fs','');
     console.log('FTA service url: ' + this.ftaServiceUrl);
     var ftaWs: FTAWebsocketService = new FTAWebsocketService();
     ftaWs.onConnect((err: Error, connected: boolean) => {
