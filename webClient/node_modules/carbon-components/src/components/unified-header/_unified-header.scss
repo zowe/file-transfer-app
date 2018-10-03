@@ -1,0 +1,24 @@
+@import '../../globals/scss/colors';
+@import '../../globals/scss/vars';
+@import '../../globals/scss/theme';
+@import '../../globals/scss/helper-mixins';
+@import '../../globals/scss/layer';
+@import '../../globals/scss/layout';
+@import '../../globals/scss/typography';
+@import '../../globals/scss/import-once';
+@import '../../globals/scss/css--reset';
+@import '../../globals/scss/css--typography';
+@import 'mixins';
+@import 'left-nav-trigger';
+@import 'global-header';
+@import 'topnav';
+@import 'left-nav';
+@import 'account-switcher';
+
+@include exports('unified-header') {
+  .#{$prefix}--unified-header {
+    @include reset;
+    position: fixed;
+    z-index: z('header');
+  }
+}

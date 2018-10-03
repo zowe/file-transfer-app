@@ -1,0 +1,14 @@
+<fieldset class="bx--fieldset">
+  <legend class="bx--label">Radio Button heading</legend>
+  <div class="bx--form-item">
+    <div class="bx--radio-button-group">
+      {{#each items}}
+        <input id="{{id}}" class="bx--radio-button" type="radio" value="{{value}}" name="{{../group}}" tabindex="0"{{#is value ../selectedValue}} checked{{/is}}{{#if disabled}} disabled{{/if}}>
+        <label for="{{id}}" class="bx--radio-button__label">
+          <span class="bx--radio-button__appearance"></span>
+          {{label}}
+        </label>
+      {{/each}}
+    </div>
+  </div>
+</fieldset>

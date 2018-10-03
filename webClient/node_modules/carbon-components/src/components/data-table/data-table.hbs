@@ -1,0 +1,85 @@
+<div class="bx--responsive-table-container" data-responsive-table>
+  <table class="bx--responsive-table{{#if simple}} bx--responsive-table--static-size{{/if}}" data-table>
+    <thead class="bx--table-head">
+      <tr class="bx--table-row">
+        {{#each columns}}
+          <th class="bx--table-header{{#if checkbox}} bx--table-select{{/if}}{{#if sortable}} bx--table-sort{{/if}}"{{#if sortable}} data-event="sort"{{/if}}>
+            {{#if checkbox}}
+              <input data-event="select-all" id="{{checkboxId}}" class="bx--checkbox" type="checkbox" value="{{checkboxValue}}" name="{{checkboxName}}">
+              <label for="{{checkboxId}}" class="bx--checkbox-label" aria-label="{{title}}">
+                <span class="bx--checkbox-appearance">
+                  <svg class="bx--checkbox-checkmark" width="12" height="9" viewBox="0 0 12 9" fill-rule="evenodd">
+                    <path d="M4.1 6.1L1.4 3.4 0 4.9 4.1 9l7.6-7.6L10.3 0z"></path>
+                  </svg>
+                </span>
+              </label>
+            {{else}}
+              {{#if title}}
+                <span>{{title}}</span>
+              {{/if}}
+              {{#if sortable}}
+                <svg class="bx--table-sort__svg" width="10" height="5" viewBox="0 0 10 5" fill-rule="evenodd">
+                  <path d="M10 0L5 5 0 0z"></path>
+                </svg>
+              {{/if}}
+            {{/if}}
+          </th>
+        {{/each}}
+      </tr>
+    </thead>
+    <tbody class="bx--table-body">
+      {{#each rows as |row|}}
+        <tr tabindex="0" class="bx--table-row bx--parent-row" data-parent-row>
+          {{#each ../columns as |column|}}
+            {{#with (lookup row column.name) as |data|}}
+              {{#if column.section}}
+                <td tabindex="0" class="bx--table-expand" data-event="expand">
+                  <svg class="bx--table-expand__svg" width="8" height="12" viewBox="0 0 8 12" fill-rule="evenodd">
+                    <path d="M0 10.6L4.7 6 0 1.4 1.4 0l6.1 6-6.1 6z"></path>
+                  </svg>
+                </td>
+              {{else if column.checkbox}}
+                <td class="bx--table-select">
+                  <input id="bx--checkbox-2" class="bx--checkbox" type="checkbox" value="green" name="{{data.id}}">
+                  <label for="bx--{{id}}" class="bx--checkbox-label" aria-label="{{data.label}}">
+                    <span class="bx--checkbox-appearance">
+                      <svg class="bx--checkbox-checkmark" width="12" height="9" viewBox="0 0 12 9" fill-rule="evenodd">
+                        <path d="M4.1 6.1L1.4 3.4 0 4.9 4.1 9l7.6-7.6L10.3 0z"></path>
+                      </svg>
+                    </span>
+                  </label>
+                </td>
+              {{else if column.menu}}
+                <td class="bx--table-overflow">
+                  <div data-overflow-menu tabindex="0" aria-label="{{data.label}}" class="bx--overflow-menu">
+                    <svg class="bx--overflow-menu__icon" width="4" height="20" viewBox="0 0 4 20" fill-rule="evenodd">
+                      <circle cx="2" cy="2" r="2"></circle>
+                      <circle cx="2" cy="10" r="2"></circle>
+                      <circle cx="2" cy="18" r="2"></circle>
+                    </svg>
+                    <ul class="bx--overflow-menu-options{{#if data.flip}} bx--overflow-menu--flip{{/if}}" tabindex="-1">
+                      {{#each data.items}}
+                        <li class="bx--overflow-menu-options__option{{#if danger}} bx--overflow-menu-options__option--danger{{/if}}">
+                          <button class="bx--overflow-menu-options__btn"{{#if primaryFocus}} data-floating-menu-primary-focus{{/if}}>{{label}}</button>
+                        </li>
+                      {{/each}}
+                    </ul>
+                  </div>
+                </td>
+              {{else}}
+                <td>{{data}}</td>
+              {{/if}}
+            {{/with}}
+          {{/each}}
+        </tr>
+        {{#if row.sectionContent}}
+          <tr class="bx--table-row bx--expandable-row bx--expandable-row--hidden">
+            <td colspan="{{../columns.length}}">
+              {{{row.sectionContent}}}
+            </td>
+          </tr>
+        {{/if}}
+      {{/each}}
+    </tbody>
+  </table>
+</div>

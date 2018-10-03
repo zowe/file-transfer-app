@@ -1,0 +1,35 @@
+<button class="bx--btn bx--btn--primary" type="button" data-modal-target="#lightbox" data-carousel-item-index="0">Open Lightbox</button>
+
+<div id="lightbox" class="bx--modal" data-modal>
+  <div class="bx--lightbox" data-lightbox data-lightbox-index="0">
+    <div class="bx--lightbox__main">
+      <button class="bx--lightbox__btn" data-scroll-left>
+        <svg class="bx--pagination__button-icon" width="8" height="12" viewBox="0 0 8 12" fill-rule="evenodd">
+          <path d="M7.5 10.6L2.8 6l4.7-4.6L6.1 0 0 6l6.1 6z"></path>
+        </svg>
+      </button>
+      {{#each items}}
+        <img src="{{lightboxImageUrl}}" class="bx--lightbox__item">
+      {{/each}}
+      <button class="bx--lightbox__btn" data-scroll-right>
+        <svg class="bx--pagination__button-icon" width="8" height="12" viewBox="0 0 8 12" fill-rule="evenodd">
+          <path d="M7.5 10.6L2.8 6l4.7-4.6L6.1 0 0 6l6.1 6z"></path>
+        </svg>
+      </button>
+    </div>
+    <div class="bx--lightbox__footer">
+      <div class="bx--filmstrip">
+        {{#each items}}
+          <button class="bx--carousel__item" data-carousel-item-index="{{@index}}">
+            <img src="{{filmstripImageUrl}}">
+          </button>
+        {{/each}}
+      </div>
+      <div class="bx--filmstrip-indicator-ctn">
+        <div class="bx--filmstrip-indicator bx--filmstrip-indicator--active"></div>
+        <div class="bx--filmstrip-indicator"></div>
+        <div class="bx--filmstrip-indicator"></div>
+      </div>
+    </div>
+  </div>
+</div>

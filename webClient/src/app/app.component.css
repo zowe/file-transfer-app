@@ -9,7 +9,7 @@
   
   Copyright Contributors to the Zowe Project.
 */
-
+/* 
 h1 {
   text-align: center;
 }
@@ -17,7 +17,7 @@ h1 {
 .server-response {
   width: 100%;
   height: 180px;
-}
+} */
 
 
 /*ul.ui-tabview-nav.ui-helper-reset.ui-helper-clearfix.ui-widget-header.ui-corner-all {
@@ -28,7 +28,7 @@ h1 {
   border: none;
 }*/
 
-.tabPanel {
+/* .tabPanel {
   width: 100%;
 }
 
@@ -59,7 +59,7 @@ h1 {
 .rightTree {
   display: flex;
   flex-grow: 1;
-}
+} */
 
 
 /*
