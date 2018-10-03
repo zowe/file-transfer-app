@@ -29,14 +29,17 @@ import {MessagesModule} from 'primeng/messages';
 import {ProgressBarModule} from 'primeng/progressbar';
 import {FileUploadModule} from 'primeng/fileupload';
 
-
 import { AppComponent } from './app.component';
 import { ConnectionViewComponent } from './connection-view-component';
+import { BrowserPanelComponent } from './browser-panel/browser-panel.component';
+import { ConnectionPanelComponent } from './connection-panel/connection-panel.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    ConnectionViewComponent
+    ConnectionViewComponent,
+    BrowserPanelComponent,
+    ConnectionPanelComponent
   ],
   imports: [
     // BrowserModule, /* remove this for within-MVD development */
@@ -57,11 +60,6 @@ import { ConnectionViewComponent } from './connection-view-component';
     MenubarModule,
     ContextMenuModule,
     FileUploadModule
-    
-    
-    
-
-
 
   ],
   providers: [],

@@ -10,8 +10,17 @@
   Copyright Contributors to the Zowe Project.
 -->
 
-<div class="app-component">
-  <p-growl [value]="connectionMessages" (click)="hideMessages()"></p-growl>
+  <div class="container">
+      <div class="row">
+          <div class="col-sm-6 col-md-8 mt-3">
+              <app-browser-panel></app-browser-panel>
+          </div>
+          <div class="col-sm-6 col-md-4 mt-3">
+              <app-connection-panel></app-connection-panel>
+          </div>
+      </div>
+  </div>
+  <!-- <p-growl [value]="connectionMessages" (click)="hideMessages()"></p-growl>
   <div>
     <div [style]="{'display':'flex'}">
       <p-dropdown [options]="protocols" [(ngModel)]="selectedProtocol" optionLabel="label" [style]="{'width':'80px'}"></p-dropdown>
@@ -30,8 +39,7 @@
             </connection-view-component>
         </p-tabPanel>
     </p-tabView>
-  </div>
-</div>
+  </div> -->
 
 <!-- 
   This program and the accompanying materials are

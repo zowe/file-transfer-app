@@ -24,7 +24,10 @@ import {Message} from 'primeng/components/common/api';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['../../node_modules/primeng/resources/primeng.min.css',
+  styleUrls: [
+                '../../node_modules/carbon-components/css/carbon-components.min.css',
+                '../../node_modules/bootstrap/dist/css/bootstrap.min.css',
+                '../../node_modules/primeng/resources/primeng.min.css',
                 '../../node_modules/primeng/resources/themes/omega/theme.css',
                 './app.component.css'
                 ],
