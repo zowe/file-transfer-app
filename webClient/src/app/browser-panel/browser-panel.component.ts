@@ -180,7 +180,8 @@ export class BrowserPanelComponent implements OnInit {
         const filename = tokens[tokens.length - 1];
         console.log('saveAs filename=' + filename);
         const a = document.createElement('a');
-        a.href = '/unixFileContents' + this.leftPath;
+        a.href = '/unixfile/contents' + this.leftPath;
+        console.log(a.href);
         a.download = filename;
         a.click();
     }

@@ -212,7 +212,7 @@ export class FTABinaryData {
     static parseBlob(blob: Blob, callback: (binData: FTABinaryData) => void) {
         var reader = new FileReader();
         reader.onload = function(event) {
-            var dv: DataView = new DataView(reader.result);
+            var dv: DataView = new DataView(<ArrayBuffer>reader.result);
             var header: number = dv.getUint32(0);
             var length: number = dv.byteLength;
             var buf: ArrayBuffer = dv.buffer;

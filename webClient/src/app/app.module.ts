@@ -30,16 +30,15 @@ import {ProgressBarModule} from 'primeng/progressbar';
 import {FileUploadModule} from 'primeng/fileupload';
 
 import { AppComponent } from './app.component';
-import { ConnectionViewComponent } from './connection-view-component';
+// import { ConnectionViewComponent } from './connection-view-component';
 import { BrowserPanelComponent } from './browser-panel/browser-panel.component';
 import { ConnectionPanelComponent } from './connection-panel/connection-panel.component';
 import { FTAWebsocketService } from './services/FTAWebsocket.service';
-import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
     AppComponent,
-    ConnectionViewComponent,
+    // ConnectionViewComponent,
     BrowserPanelComponent,
     ConnectionPanelComponent
   ],
@@ -62,7 +61,6 @@ import { HttpClientModule } from '@angular/common/http';
     MenubarModule,
     ContextMenuModule,
     FileUploadModule,
-    HttpClientModule
   ],
   providers: [FTAWebsocketService],
   bootstrap: [AppComponent]
