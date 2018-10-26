@@ -9,7 +9,6 @@
   Copyright Contributors to the Zowe Project.
 */
 import { Injectable, EventEmitter } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 //import { Observable } from 'rxjs/Observable';
 //import { Observer } from 'rxjs/Observer';
 import {FTAMessageType, FTAMessage, FTAConnectOptions, FTAError, FTAConnectionTarget, FTAFileInfo, FTASide, FTAPath, FTAFolder, FTABinaryData, FTAFileMode} from '../../../../common/FTATypes';
@@ -21,7 +20,7 @@ export class FTAWebsocketService extends EventEmitter<any> {
   private completeHandlersMap: Map<string, any[]> = new Map<string, any[]>();
   public remoteConnected: boolean = false;
 
-  constructor(http: HttpClient) {
+  constructor() {
     super();
   }
 
