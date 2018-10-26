@@ -12,6 +12,7 @@
 
   <div class="container">
       <div class="row">
+<<<<<<< HEAD
           <div *ngIf="localConnection && connections.length === 0" class="col-sm-6 mt-3">
               <app-browser-panel [connection]="localConnection" [ftaSide]="sideLocal"></app-browser-panel>
           </div>
@@ -21,6 +22,14 @@
           <div *ngIf="credentialsSubmitted" class="col-sm-6 mt-3">
             <app-browser-panel [connection]="remoteConnection" [ftaSide]="sideRemote"></app-browser-panel>
         </div>
+=======
+          <div class="col-sm-6 col-md-8 mt-3">
+              <app-browser-panel></app-browser-panel>
+          </div>
+          <div class="col-sm-6 col-md-4 mt-3">
+              <app-connection-panel></app-connection-panel>
+          </div>
+>>>>>>> 2ee12eafde46e722ab3d7cbd9295cb5bd9752963
       </div>
   </div>
   <!-- <p-growl [value]="connectionMessages" (click)="hideMessages()"></p-growl>

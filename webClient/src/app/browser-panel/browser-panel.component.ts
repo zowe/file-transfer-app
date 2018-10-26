@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { Component, OnInit, Input } from '@angular/core';
 import { TreeNode } from 'primeng/api';
 import { Connection } from '../Connection';
@@ -513,5 +514,24 @@ export class BrowserPanelComponent implements OnInit {
         }
         return undefined;
     }
+=======
+import { Component, OnInit } from '@angular/core';
+
+@Component({
+  selector: 'app-browser-panel',
+  templateUrl: './browser-panel.component.html',
+  styleUrls: [
+  '../../../node_modules/carbon-components/css/carbon-components.min.css',
+  '../../../node_modules/primeng/resources/primeng.min.css',
+  './browser-panel.component.css'
+]
+})
+export class BrowserPanelComponent implements OnInit {
+
+  constructor() { }
+
+  ngOnInit() {
+  }
+>>>>>>> 2ee12eafde46e722ab3d7cbd9295cb5bd9752963
 
 }

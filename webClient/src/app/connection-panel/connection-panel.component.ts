@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { Component, EventEmitter, Output, Inject} from '@angular/core';
 import { Connection } from '../Connection';
 import { FTAWebsocketService } from '../services/FTAWebsocket.service';
@@ -5,6 +6,9 @@ import { FTAWebsocketService } from '../services/FTAWebsocket.service';
 import { SelectItem } from 'primeng/api';
 import { Message } from 'primeng/components/common/api';
 import { Angular2InjectionTokens } from 'pluginlib/inject-resources';
+=======
+import { Component, OnInit } from '@angular/core';
+>>>>>>> 2ee12eafde46e722ab3d7cbd9295cb5bd9752963
 
 @Component({
   selector: 'app-connection-panel',
@@ -12,6 +16,7 @@ import { Angular2InjectionTokens } from 'pluginlib/inject-resources';
   styleUrls: [
   '../../../node_modules/carbon-components/css/carbon-components.min.css',
   './connection-panel.component.css'
+<<<<<<< HEAD
   ],
   providers: [FTAWebsocketService]
 })
@@ -77,4 +82,15 @@ export class ConnectionPanelComponent {
     });
     ftaWs.connect(this.ftaServiceUrl);
   }
+=======
+  ]
+})
+export class ConnectionPanelComponent implements OnInit {
+
+  constructor() { }
+
+  ngOnInit() {
+  }
+
+>>>>>>> 2ee12eafde46e722ab3d7cbd9295cb5bd9752963
 }
