@@ -19,6 +19,7 @@ export class SFTPConnection extends FTAConnection {
     private sftp: any;
     private host: any;
     private port: any;
+
     constructor(side: FTASide) {
         super(side);
         this.client = new SFTPClient();
@@ -38,9 +39,11 @@ export class SFTPConnection extends FTAConnection {
             this.emit(FTAConnectionEvents.ERROR, err);
         });
     }
+
     toString(): string {
         return 'SFTP Connection';
     }
+
     connect(to: FTAConnectionTarget): void {
         this.client.connect({
             host: to.host,
@@ -51,11 +54,13 @@ export class SFTPConnection extends FTAConnection {
         this.host = to.host;
         this.port = to.port;
     }
+
     disconnect(): void {
         super.disconnect();
         console.log('close SFTP connection ' + this.host + ':' + this.port);
         this.client.end();
     }
+
     ls(path: string, handler: (err: any, list: FTAFileInfo[]) => void): void {
         this.sftp.readdir(path, (err, list) => {
             if (!err) {
@@ -74,6 +79,7 @@ export class SFTPConnection extends FTAConnection {
             }
         });
     }
+
     getHomePath(handler: (err: any, absPath) => void): void {
         this.sftp.realpath('.', (err, absPath) => {
             handler(err, absPath);
@@ -85,14 +91,17 @@ export class SFTPConnection extends FTAConnection {
             handler(err);
         });
     }
+
     fastPut(srcLocalPath: string, dstRemotePath: string, handler: (err: any) => void): void {
         this.sftp.fastPut(srcLocalPath, dstRemotePath, {}, function (err) {
             handler(err);
         });
     }
+
     md(path: string, handler: (err: any) => void): void {
         this.sftp.mkdir(path, handler);
     }
+
     stats(fullPath: string, handler: (err: any, fileInfo: FTAFileInfo) => void): void {
         this.sftp.stat(fullPath, (err, stats) => {
             console.log('stats of ' + fullPath + ": " + stats);
@@ -108,15 +117,19 @@ export class SFTPConnection extends FTAConnection {
             }
         });
     }
+
     rmdir(pathToDelete: string, handler: (err: any) => void): void {
         this.sftp.rmdir(pathToDelete, handler);
     }
+
     delete(pathToDelete: string, handler: (err: any) => void): void {
         this.sftp.unlink(pathToDelete, handler);
     }
+
     rename(pathToRename: string, newPath: string, renameHandler: (err: any) => void): void {
         this.sftp.rename(pathToRename, newPath, renameHandler);
     }
+
     createReadStream(pathToFile: string, readyHandler: (err: any, streamId?: number, readStream?: any) => void, dataHandler?: (err: any, streamId: number, data: Buffer) => void, end?: (err: any, streamId: number) => void): void {
         try {
             var readStream: any = this.sftp.createReadStream(pathToFile);
@@ -129,6 +142,7 @@ export class SFTPConnection extends FTAConnection {
             return readyHandler(err);
         }
     }
+    
     createWriteStream(pathToFile: string, readyHandler: (err: any, streamId?: number, writeStream?: any) => void, end?: (err: any, streamId?: number) => void): void {
         try {
             var writeStream: any = this.sftp.createWriteStream(pathToFile);

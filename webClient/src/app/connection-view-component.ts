@@ -11,40 +11,44 @@
 import { Component, OnInit } from '@angular/core';
 //import { Angular2InjectionTokens } from 'pluginlib/inject-resources';
 
-import {TreeNode} from 'primeng/api';
+import { TreeNode } from 'primeng/api';
 
 import { FTAWebsocketService } from './services/FTAWebsocket.service';
 import { Connection } from './Connection';
 import { FTASide, FTAFileInfo, FTAFileMode, FTABinaryData } from '../../../common/FTATypes';
 import { Message } from 'primeng/components/common/api';
-import {MenuItem} from 'primeng/primeng';//'primeng/api';
+import { MenuItem } from 'primeng/primeng';//'primeng/api';
 
 class TreeNodeData {
-    constructor(attributes: any, needUpdate: boolean) {
-        this.attributes = attributes;
-        this.needUpdate = needUpdate;
-    }
+
     attributes: any;
     needUpdate: boolean;
     virtual: boolean;
     files: FileRow[];
+
+    constructor(attributes: any, needUpdate: boolean) {
+        this.attributes = attributes;
+        this.needUpdate = needUpdate;
+    }
 }
 
 class FileRow {
+    treeNode: TreeNode;
+    name: string;
+    isDir: boolean;
+    size: string;
+    attributes: string;
+    isEditable: boolean;
+    nameBackup: string;
+
     constructor(treeNode: TreeNode, name: string, isDir: boolean, size: string, attributes: string) {
         this.treeNode = treeNode;
         this.name = name;
         this.isDir = isDir;
         this.size = size;
         this.attributes = attributes;
+        this.isEditable = false
     }
-    treeNode: TreeNode;
-    name: string;
-    isDir: boolean;
-    size: string;
-    attributes: string;
-    isEditable: boolean = false;
-    nameBackup: string;
 }
 
 @Component({
@@ -74,7 +78,7 @@ export class ConnectionViewComponent implements OnInit {
 
     leftTree: TreeNode[] = [];
     rightTree: TreeNode[] = [];
-    
+
     leftTreeSelectedNode: TreeNode;
     rightTreeSelectedNode: TreeNode;
 
@@ -90,26 +94,11 @@ export class ConnectionViewComponent implements OnInit {
 
     displayNewDirectoryDialog: boolean;
     newDirectoryName: string
-    onNewDirectoryOk(): void {
-        this.displayNewDirectoryDialog = false;
-        var pathToCrate = this.getPathFromRoot(this.contextTreeNode, this.newDirectoryName);
-        this.md(this.contextSide, pathToCrate);
-    }
-    onNewDirectoryCancel(): void {
-        this.displayNewDirectoryDialog = false;
-    }
+
 
     displayConfirmDialog: boolean;
     confirmMessage: string;
     confirmAction: any;
-    onConfirmOk(): void {
-        this.confirmAction();
-        this.displayConfirmDialog = false;
-        this.confirmAction = null;
-    }
-    onConfirmCancel(): void {
-        this.displayConfirmDialog = false;
-    }
 
     displayProcessDialog: boolean;
     progressValue: number;
@@ -122,9 +111,6 @@ export class ConnectionViewComponent implements OnInit {
             icon: 'fa fa-terminal',
             command: (event) => {
                 console.log('Left Tree Print: ' + this.getName(this.leftTreeSelectedNode));
-
-                
-                
             }
         },
         {
@@ -147,7 +133,7 @@ export class ConnectionViewComponent implements OnInit {
                 if (this.isFolder(this.leftTreeSelectedNode)) {
                     //TODO ask user
                 }
-                
+
                 var fromPath = this.getPathFromRoot(this.leftTreeSelectedNode);
                 var toPath = this.getFolderPathFromRoot(this.rightTreeSelectedNode, this.getName(this.leftTreeSelectedNode));
                 //this.fastPut(fromPath, toPath);
@@ -174,7 +160,6 @@ export class ConnectionViewComponent implements OnInit {
             command: (event) => {
                 console.log('Left Tree Delete: ' + this.getName(this.leftTreeSelectedNode));
                 var subtree: TreeNode = this.leftTreeSelectedNode;
-                
                 this.contextTreeNode = subtree;
                 this.contextSide = FTASide.LOCAL;
                 this.confirmMessage = "Confirm deletion of ";
@@ -258,7 +243,7 @@ export class ConnectionViewComponent implements OnInit {
             command: (event) => {
                 console.log('Right Tree Delete: ' + this.getName(this.rightTreeSelectedNode));
                 var subtree: TreeNode = this.rightTreeSelectedNode;
-                
+
                 this.contextTreeNode = subtree;
                 this.contextSide = FTASide.REMOTE;
                 this.confirmMessage = "Confirm deletion of ";
@@ -297,7 +282,7 @@ export class ConnectionViewComponent implements OnInit {
             command: (event) => {
                 console.log('Left List Print: ' + this.leftListSelection.name);
             }
-        }, 
+        },
         {
             label: 'Refresh',
             icon: 'fa fa-refresh',
@@ -494,7 +479,14 @@ export class ConnectionViewComponent implements OnInit {
     ];
     //end rightListMenu
 
-
+    onNewDirectoryOk(): void {
+        this.displayNewDirectoryDialog = false;
+        var pathToCrate = this.getPathFromRoot(this.contextTreeNode, this.newDirectoryName);
+        this.md(this.contextSide, pathToCrate);
+    }
+    onNewDirectoryCancel(): void {
+        this.displayNewDirectoryDialog = false;
+    }
     errorMessages: Message[] = [];
     showError(err: string): void {
         this.errorMessages.push({severity: 'error', summary: 'Error', detail: err});
@@ -646,6 +638,15 @@ export class ConnectionViewComponent implements OnInit {
         });
     }
 
+    onConfirmOk(): void {
+        this.confirmAction();
+        this.displayConfirmDialog = false;
+        this.confirmAction = null;
+    }
+    onConfirmCancel(): void {
+        this.displayConfirmDialog = false;
+    }
+
     ngOnDestroy() {
         console.log('ngOnDestroy');
         this.connection.ftaWs.disconnect();
@@ -772,7 +773,7 @@ export class ConnectionViewComponent implements OnInit {
         return <string>label;
     }
 
-    isNode(subtree: TreeNode, name: string) {
+    isNode(subtree: TreeNode, name: string): boolean {
         return this.getName(subtree) === name;
     }
 
@@ -869,7 +870,7 @@ export class ConnectionViewComponent implements OnInit {
     }
 
     isUpRow(row: FileRow): boolean {
-        return row.isDir && row.name == '..';
+        return row.isDir && row.name === '..';
     }
 
     createFileRows(subtree: TreeNode, needUpdate: boolean = false): FileRow[] {
@@ -947,7 +948,6 @@ export class ConnectionViewComponent implements OnInit {
     rightTreeNodeExpand(event: any): void {
         if(event.node) {
             console.log('rightTreeNodeExpand ' + this.getPathFromRoot(event.node));
-            
         }
     }
 
@@ -971,9 +971,8 @@ export class ConnectionViewComponent implements OnInit {
     }
 
     leftTreeNodeExpand(event: any): void {
-        if(event.node) {
+        if (event.node) {
             console.log('leftTreeNodeExpand ' + this.getPathFromRoot(event.node));
-            
         }
     }
 
@@ -1043,7 +1042,6 @@ export class ConnectionViewComponent implements OnInit {
         row.isEditable = false;
         delete this.contextRow;
     }
-
 
 
     onContextShow(event?: MouseEvent): void {
@@ -1269,16 +1267,16 @@ export class ConnectionViewComponent implements OnInit {
 
     fileCopyBtn(side: FTASide): void {
         console.log('fileCopyBtn side=' + side);
-        if (side == FTASide.LOCAL) {
+        if (side === FTASide.LOCAL) {
             if (!this.isFolder(this.leftTreeSelectedNode)) {
-                var fromPath = this.getPathFromRoot(this.leftTreeSelectedNode);
-                var toPath = this.getFolderPathFromRoot(this.rightTreeSelectedNode, this.getName(this.leftTreeSelectedNode));
+                const fromPath = this.getPathFromRoot(this.leftTreeSelectedNode);
+                const toPath = this.getFolderPathFromRoot(this.rightTreeSelectedNode, this.getName(this.leftTreeSelectedNode));
                 this.pipeLR(fromPath, toPath);
             }
         } else {
             if (!this.isFolder(this.rightTreeSelectedNode)) {
-                var fromPath = this.getPathFromRoot(this.rightTreeSelectedNode);
-                var toPath = this.getFolderPathFromRoot(this.leftTreeSelectedNode, this.getName(this.rightTreeSelectedNode));
+                const fromPath = this.getPathFromRoot(this.rightTreeSelectedNode);
+                const toPath = this.getFolderPathFromRoot(this.leftTreeSelectedNode, this.getName(this.rightTreeSelectedNode));
                 this.pipeRL(fromPath, toPath);
             }
         }
