@@ -33,6 +33,8 @@ import { AppComponent } from './app.component';
 import { ConnectionViewComponent } from './connection-view-component';
 import { BrowserPanelComponent } from './browser-panel/browser-panel.component';
 import { ConnectionPanelComponent } from './connection-panel/connection-panel.component';
+import { FTAWebsocketService } from './services/FTAWebsocket.service';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -59,10 +61,10 @@ import { ConnectionPanelComponent } from './connection-panel/connection-panel.co
     DataTableModule,
     MenubarModule,
     ContextMenuModule,
-    FileUploadModule
-
+    FileUploadModule,
+    HttpClientModule
   ],
-  providers: [],
+  providers: [FTAWebsocketService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -9,7 +9,6 @@
   
   <div class="bx--row">
     <div class="bx--col-xs-12">
-
       <hr>
     </div>
   </div>
@@ -18,10 +17,9 @@
   <div class="bx--form-item  mt-1">
     <div class="bx--select bx--select--inline bx--select--light">
       <label class="bx--label">Connection Type</label>
-      <select class="bx--select-input">
-            <option class="bx--select-option" value="" selected>SFTP</option>
-            <option class="bx--select-option" value="solong">FTP</option>
-
+      <select class="bx--select-input" >
+            <option class="bx--select-option" value="sftp" selected>SFTP</option>
+            <option class="bx--select-option" value="ftp">FTP</option>
       </select>
       <svg class="bx--select__arrow" width="10" height="5" viewBox="0 0 10 5">
         <path d="M0 0l5 4.998L10 0z" fill-rule="evenodd" />
@@ -33,7 +31,7 @@
     <!-- URL Input -->
     <div class="bx--form-item mt-3">
       <label for="URL" class="bx--label">URL</label>
-      <input type="text" class="bx--text-input bx--text-input--light" placeholder="Remote Server Address">
+      <input [(ngModel)]="address" name="address" type="text" class="bx--text-input bx--text-input--light" placeholder="Remote Server Address" >
     </div>
 
     <hr>
@@ -41,20 +39,20 @@
     <!-- Username Input -->
     <div class="bx--form-item mt-3">
       <label for="username" class="bx--label">Username</label>
-      <input type="text" class="bx--text-input bx--text-input--light" placeholder="Username">
+      <input [(ngModel)]="username" name="username" type="text" class="bx--text-input bx--text-input--light" placeholder="Username">
     </div>
 
     <!-- Password Input -->
     <div class="bx--form-item mt-3">
       <label for="password" class="bx--label">Password</label>
-      <input type="password" class="bx--text-input bx--text-input--light" placeholder="Password">
+      <input [(ngModel)]="password" (keyup.enter)="passwordInputEnter()" name="password" type="password" class="bx--text-input bx--text-input--light" placeholder="Password" >
     </div>
   </form>
 
   <!-- Connect/Cancel Buttons -->
   <div class="bx--row">
     <div class="bx--col-xs-12">
-      <button class="bx--btn bx--btn--primary mt-3" id="connect-button">Connect</button>
+      <button class="bx--btn bx--btn--primary mt-3" id="connect-button" (click)="onConnectionDialogOk()">Connect</button>
       <button class="bx--btn bx--btn--danger mt-3" id="cancel-button">Cancel</button>
     </div>
   </div>
