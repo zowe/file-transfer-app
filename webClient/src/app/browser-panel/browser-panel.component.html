@@ -22,17 +22,15 @@
     <form>
         <label for="path" id="path-label" class="bx--label">Path:</label>
         <div class="path-bar">
-            <input name="path-input" id="path-input" type="text" class="bx--text-input bx--text-input--light" placeholder="" [(ngModel)]="leftPath" (keyup.enter)="pathFieldEnter(ftaSide, leftPath)">
-            <div class="browser-list">
+            <input name="path-input" id="path-input" type="text" class="bx--text-input bx--text-input--light browser-list mr-2" placeholder="" [(ngModel)]="leftPath" (keyup.enter)="pathFieldEnter(ftaSide, leftPath)">
+            <div data-content-switcher class="bx--content-switcher" role="tablist" aria-label="Demo switch content">
                 <!-- List View Button -->
-                <button class="bx--btn bx--btn--primary" style="" (click)="listView()">
-                    <svg width="24" height="24" viewBox="0 0 20 20"><path d="M3 4h14v1H3zm0 6h14v1H3zm0 6h14v1H3z"></path></svg>
+                <button class="bx--content-switcher-btn" [ngClass]="{'bx--content-switcher--selected' : fileView === 'list' ? true : false}" (click)="listView()" role="tab">
+                    <svg width="24" height="24" viewBox="0 0 20 20" [ngStyle]="{'fill': fileView === 'list' ? '#ffffff' : '#3d70b2'}"><path d="M3 4h14v1H3zm0 6h14v1H3zm0 6h14v1H3z"></path></svg>
                 </button>
-            </div>
-            <div class="browser-list">
                 <!-- Tree View Button -->
-                <button class="bx--btn bx--btn--primary" style="" (click)="treeView()">
-                    <svg width="24" height="24" viewBox="0 0 23 24"><path d="M20.5 18v-6h-9V5.9C12.9 5.7 14 4.5 14 3c0-1.7-1.3-3-3-3S8 1.3 8 3c0 1.5 1.1 2.7 2.5 2.9V12h-8v6.1C1.1 18.4 0 19.6 0 21c0 1.7 1.3 3 3 3s3-1.3 3-3c0-1.5-1.1-2.7-2.5-2.9V13h16v5.1c-1.4.2-2.5 1.5-2.5 2.9 0 1.7 1.3 3 3 3s3-1.3 3-3c0-1.5-1-2.8-2.5-3zM9 3c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zM5 21c0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2 2 .9 2 2zm15 2c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"></path></svg>
+                <button class="bx--content-switcher-btn" [ngClass]="{'bx--content-switcher--selected' : fileView === 'tree' ? true : false}" (click)="treeView()" role="tab">
+                    <svg width="24" height="24" viewBox="0 0 23 24" [ngStyle]="{'fill': fileView === 'tree' ? '#ffffff' : '#3d70b2'}"><path d="M20.5 18v-6h-9V5.9C12.9 5.7 14 4.5 14 3c0-1.7-1.3-3-3-3S8 1.3 8 3c0 1.5 1.1 2.7 2.5 2.9V12h-8v6.1C1.1 18.4 0 19.6 0 21c0 1.7 1.3 3 3 3s3-1.3 3-3c0-1.5-1.1-2.7-2.5-2.9V13h16v5.1c-1.4.2-2.5 1.5-2.5 2.9 0 1.7 1.3 3 3 3s3-1.3 3-3c0-1.5-1-2.8-2.5-3zM9 3c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zM5 21c0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2 2 .9 2 2zm15 2c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"></path></svg>
                 </button>
             </div>
         </div>
@@ -40,7 +38,7 @@
     
     <!-- Download, Copy Panel -->
     <div class="download-copy-panel mt-3">
-        <div id="download-button" class="col-xs-3 mt-1 mr-3">
+        <div id="download-button" class="col-xs-3 mt-1 mr-1">
             <!-- Download Button -->
             <button class="bx--btn bx--btn--primary" style="width:100%" (click)="saveAs()">
                 Download 
@@ -50,7 +48,7 @@
 
         <div></div>
 
-        <div id="copy-button" class="col-xs-3 mt-1 ml-3">
+        <div id="copy-button" class="col-xs-3 mt-1 ml-1">
             <!-- Copy Button -->
             <button class="bx--btn bx--btn--primary" style="width:100%" (click)="sendTo()">
                 Copy
@@ -98,5 +96,28 @@
     </div>
 
     <!-- Upload Button for z/OS -->
-    <button class="bx--btn bx--btn--secondary mt-3" style="width:100%;" (click)="uploadBtn(rightUpload, sideRemote)">Upload files to z/OS...</button>
+    <form id="file-form">
+        <div class="bx--form-item mt-3" style="width:100%">
+            <div class="bx--file" style="width:100%" data-file>
+                <label
+                    for="file-upload"
+                    class="bx--file-btn bx--btn bx--btn--secondary"
+                    role="button"
+                    tabindex="0">Upload Files to z/OS...</label>
+                <input
+                    type="file"
+                    name="uploader"
+                    class="bx--file-input"
+                    id="file-upload"
+                    data-file-uploader
+                    data-target="[data-file-container]"
+                    style="width:100%"
+                    multiple
+                    />
+                <div data-file-container class="bx--file-container"></div>
+                <button type="submit" id="upload-button"></button>
+            </div>
+        </div>
+    </form>
+    <!-- <button class="bx--btn bx--btn--secondary mt-3" style="width:100%;" (click)="uploadBtn(rightUpload, sideRemote)">Upload files to z/OS...</button> -->
 </div>

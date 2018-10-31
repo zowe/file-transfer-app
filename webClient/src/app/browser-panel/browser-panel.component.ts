@@ -3,6 +3,7 @@ import { TreeNode } from 'primeng/api';
 import { Connection } from '../Connection';
 import { Message } from 'primeng/components/common/api';
 import { FTASide, FTAFileInfo, FTAFileMode } from '../../../../common/FTATypes';
+// import { declaredViewContainer } from '@angular/core/src/view/util';
 
 class TreeNodeData {
     attributes: any;
@@ -81,6 +82,55 @@ export class BrowserPanelComponent implements OnInit {
 
         this.fileView = 'tree';
 
+        const form = <HTMLFormElement> document.getElementById('file-form');
+        const fileSelect = <HTMLInputElement> document.getElementById('file-upload');
+        const uploadButton = <HTMLButtonElement> document.getElementById('upload-button');
+
+        form.onsubmit = event => {
+            event.preventDefault();
+            console.log('Submit Event Triggered');
+
+            uploadButton.innerHTML = 'Uploading...'; // prevents browser from submitting form
+            const files = <FileList> fileSelect.files;
+            // const formData = new FormData();
+
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+
+                const reader = new FileReader();
+
+                reader.addEventListener('load', () => {
+                    // Sending AJAX Request
+                    const xhr = new XMLHttpRequest();
+
+                    xhr.open('PUT', '/unixfile/contents/u/ts6531/'
+                    + 'arbitraryfilename'
+                    + '?sourceEncoding=BINARY&targetEncoding=BINARY',
+                    true);
+
+                    xhr.setRequestHeader('Content-Type', 'image/png');
+
+                    xhr.onload = () => {
+                        if (xhr.status === 200) {
+                            uploadButton.innerHTML = 'Upload';
+                        } else {
+                            alert('An error occurred!');
+                        }
+                    };
+
+                    if (reader.result) {
+                        const res = reader.result.toString();
+                        console.log(res);
+                        xhr.send(res.substring(res.indexOf('base64,') + 'base64,'.length, res.length));
+                    }
+                });
+
+                reader.readAsDataURL(file);
+
+                // formData.append('uploader', file, file.name);
+            }
+        };
+
         this.connection.ftaWs.onError((err) => {
             this.showError(err);
         });
@@ -91,17 +141,10 @@ export class BrowserPanelComponent implements OnInit {
                 this.showError(err);
                 return;
             }
-            // if (system === this.ftaSide) {
-                // this.rightPath = path;
-                // this.rightTreeSelectedNode = this.ensurePath(this.rightTree, path);
-                // this.expandNode(this.rightTreeSelectedNode);
-                // this.connection.ftaWs.ls(FTASide.REMOTE, path);
-            // } else {
-                this.leftPath = path;
-                this.treeSelectedNode = this.ensurePath(this.tree, path);
-                this.expandNode(this.treeSelectedNode);
-                this.connection.ftaWs.ls(this.ftaSide, path);
-            // }
+            this.leftPath = path;
+            this.treeSelectedNode = this.ensurePath(this.tree, path);
+            this.expandNode(this.treeSelectedNode);
+            this.connection.ftaWs.ls(this.ftaSide, path);
         });
 
         this.connection.ftaWs.onLs((err: any, system: FTASide, path: string, fileInfos: FTAFileInfo[]) => {
@@ -110,18 +153,6 @@ export class BrowserPanelComponent implements OnInit {
                 this.showError(err);
                 return;
             }
-            // if (system === FTASide.REMOTE) {
-                // let node : TreeNode = this.ensurePath(this.rightTree, path);
-                // this.rightList = this.createFileRows(node);
-                // this.cleanChildren(node);
-                // fileInfos.forEach(fileinfo => {
-                //     this.getOrCreateChildNode(node, fileinfo.name, fileinfo);
-                // });
-                // this.sortFileRows(this.rightList);
-                // this.rightPath = this.getPathFromRoot(node);
-                // this.rightTreeSelectedNode = node;
-                // this.expandNode(this.rightTreeSelectedNode);
-            // } else {
                 const node: TreeNode = this.ensurePath(this.tree, path);
                 this.list = this.createFileRows(node);
                 this.cleanChildren(node);
@@ -132,13 +163,9 @@ export class BrowserPanelComponent implements OnInit {
                 this.leftPath = this.getPathFromRoot(node);
                 this.treeSelectedNode = node;
                 this.expandNode(this.treeSelectedNode);
-            // }
         });
 
         this.connection.ftaWs.getHomePath(this.ftaSide);
-        // if (this.connection.ftaWs.remoteConnected) {
-        //     this.connection.ftaWs.getHomePath(FTASide.REMOTE);
-        // }
     }
 
     treeView(): void {
@@ -172,7 +199,7 @@ export class BrowserPanelComponent implements OnInit {
     // }
 
     sendTo(): void {
-        
+
     }
 
     saveAs(): void {
@@ -183,6 +210,10 @@ export class BrowserPanelComponent implements OnInit {
         a.href = '/unixFileContents' + this.leftPath;
         a.download = filename;
         a.click();
+    }
+
+    upload(): void {
+        // let form = document.getElementById('')
     }
 
     // saveFile(side: FTASide, filePath: string, filename: string): void {
@@ -231,7 +262,7 @@ export class BrowserPanelComponent implements OnInit {
             if (row) {
                 this.listSelection = row;
             } /*else {
-                //TODO how to deselect?
+                // TODO how to deselect?
                 this.listSelection = null;
             }*/
         }
