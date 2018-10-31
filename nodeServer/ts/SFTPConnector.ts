@@ -15,7 +15,7 @@ export class SFTPConnector {
             username: 'rchowdhary',
             password: 'linuxmint'
         }).then(() => { 
-            return this.sftp.list('~');
+            return this.sftp.list('.');
         }).then(data => {
             console.log('\n\n\n', data, 'data stuff');
         }).catch((err) => {
