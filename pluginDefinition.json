@@ -16,13 +16,7 @@
     "defaultWindowStyle": {
       "width": 800,
       "height": 880
-    },
-    "publicRoutes": [
-      {
-        "route": "node_modules",
-        "path": "webClient/node_modules"
-      }
-    ]
+    }
   },
   "dataServices": [
     {

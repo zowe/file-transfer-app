@@ -13,14 +13,14 @@
   <div class="container">
       <div class="row">
           <div *ngIf="localConnection && connections.length === 0" class="col-sm-6 mt-3">
-              <app-browser-panel [connection]="localConnection" [ftaSide]="sideLocal"></app-browser-panel>
+            <app-browser-panel [connection]="localConnection" [ftaSide]="sideLocal"></app-browser-panel>
           </div>
           <div *ngIf="!credentialsSubmitted" class="col-sm-6 mt-3">
-              <app-connection-panel (submitted)="onCredentialsSubmitted($event)"></app-connection-panel>
+            <app-connection-panel (submitted)="onCredentialsSubmitted($event)"></app-connection-panel>
           </div>
           <div *ngIf="credentialsSubmitted" class="col-sm-6 mt-3">
             <app-browser-panel [connection]="remoteConnection" [ftaSide]="sideRemote"></app-browser-panel>
-        </div>
+          </div>
       </div>
   </div>
   <!-- <p-growl [value]="connectionMessages" (click)="hideMessages()"></p-growl>
