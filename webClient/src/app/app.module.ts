@@ -16,7 +16,8 @@ import { FormsModule } from '@angular/forms';
 import { TreeModule } from 'primeng/tree';
 import { DataTableModule } from 'primeng/primeng';
 import { TranslateModule } from '@ngx-translate/core';
-
+import { HttpClientModule } from '@angular/common/http';
+import { UploaderService } from './services/Uploader.service'
 
 import { AppComponent } from './app.component';
 import { BrowserPanelComponent } from './browser-panel/browser-panel.component';
@@ -36,9 +37,10 @@ import { HttpClientModule } from '@angular/common/http';
     DataTableModule,
     TreeModule,
     FormsModule,
-    TranslateModule.forRoot()
+    TranslateModule.forRoot(),
+    HttpClientModule
   ],
-  providers: [FTAWebsocketService],
+  providers: [FTAWebsocketService, UploaderService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

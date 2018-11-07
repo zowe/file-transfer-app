@@ -3,6 +3,7 @@ import { TreeNode } from 'primeng/api';
 import { Connection } from '../Connection';
 import { Message } from 'primeng/components/common/api';
 import { FTASide, FTAFileInfo, FTAFileMode } from '../../../../common/FTATypes';
+import { UploaderService } from '../services/Uploader.service';
 // import { declaredViewContainer } from '@angular/core/src/view/util';
 
 class TreeNodeData {
@@ -43,8 +44,7 @@ class FileRow {
     '../../../node_modules/carbon-components/css/carbon-components.min.css',
     '../../../node_modules/primeng/resources/primeng.min.css',
     './browser-panel.component.css'
-    ],
-    inputs: ['connection']
+    ]
 })
 export class BrowserPanelComponent implements OnInit {
     @Input() connection: Connection;
@@ -68,7 +68,7 @@ export class BrowserPanelComponent implements OnInit {
     contextTreeNode: TreeNode;
     contextRow: FileRow;
 
-    constructor() { }
+    constructor(private uploader: UploaderService) { }
 
     get sideLocal(): FTASide {
         return FTASide.LOCAL;
@@ -80,56 +80,9 @@ export class BrowserPanelComponent implements OnInit {
     ngOnInit(): void {
         console.log('ngOnInit this.connection.name=' + this.connection.name);
 
+        this.uploadHandlerSetup();
+
         this.fileView = 'tree';
-
-        const form = <HTMLFormElement> document.getElementById('file-form');
-        const fileSelect = <HTMLInputElement> document.getElementById('file-upload');
-        const uploadButton = <HTMLButtonElement> document.getElementById('upload-button');
-
-        form.onsubmit = event => {
-            event.preventDefault();
-            console.log('Submit Event Triggered');
-
-            uploadButton.innerHTML = 'Uploading...'; // prevents browser from submitting form
-            const files = <FileList> fileSelect.files;
-            // const formData = new FormData();
-
-            for (let i = 0; i < files.length; i++) {
-                const file = files[i];
-
-                const reader = new FileReader();
-
-                reader.addEventListener('load', () => {
-                    // Sending AJAX Request
-                    const xhr = new XMLHttpRequest();
-
-                    xhr.open('PUT', '/unixfile/contents/u/ts6531/'
-                    + 'arbitraryfilename'
-                    + '?sourceEncoding=BINARY&targetEncoding=BINARY',
-                    true);
-
-                    xhr.setRequestHeader('Content-Type', 'image/png');
-
-                    xhr.onload = () => {
-                        if (xhr.status === 200) {
-                            uploadButton.innerHTML = 'Upload';
-                        } else {
-                            alert('An error occurred!');
-                        }
-                    };
-
-                    if (reader.result) {
-                        const res = reader.result.toString();
-                        console.log(res);
-                        xhr.send(res.substring(res.indexOf('base64,') + 'base64,'.length, res.length));
-                    }
-                });
-
-                reader.readAsDataURL(file);
-
-                // formData.append('uploader', file, file.name);
-            }
-        };
 
         this.connection.ftaWs.onError((err) => {
             this.showError(err);
@@ -212,8 +165,26 @@ export class BrowserPanelComponent implements OnInit {
         a.click();
     }
 
-    upload(): void {
-        // let form = document.getElementById('')
+    uploadHandlerSetup(): void {
+
+        const form = <HTMLFormElement> document.getElementById('file-form');
+        const fileSelect = <HTMLInputElement> document.getElementById('file-upload');
+        const uploadButton = <HTMLButtonElement> document.getElementById('upload-button');
+
+        form.onsubmit = (event) => {
+            event.preventDefault();
+            console.log('Submit Event Triggered');
+
+            uploadButton.innerHTML = 'Uploading...'; // prevents browser from submitting form
+            const files = <FileList> fileSelect.files;
+            // const formData = new FormData();
+
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+
+                this.uploader.chunkAndSendFile(file);
+            }
+        };
     }
 
     // saveFile(side: FTASide, filePath: string, filename: string): void {
