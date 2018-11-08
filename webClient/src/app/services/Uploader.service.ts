@@ -3,91 +3,87 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 
 @Injectable()
 export class UploaderService {
-    chunkIdx: number;
+    constructor(private http: HttpClient) { }
 
-    // constructor(private http: HttpClient) {
-    constructor(private http: HttpClient) {
-        this.chunkIdx = 0;
-    }
-
-    getSessionID(): any {
-        const uri = ZoweZLUX.uriBroker.unixFileUri('contents', 'u/ts6531/rocket_key.txt', 'UTF-8', 'IBM-1047', undefined, true);
-
-        return this.http.put(uri, '');
-    }
-
-    sendChunk(blob: Blob, lastChunk: boolean, sessionID: number): any { // any should actually be an observable of some kind
-        let parameters = new HttpParams();
-
-        parameters = parameters.append('chunkIndex', this.chunkIdx.toString());
-
-        if (sessionID) {
-            parameters = parameters.append('sessionID', sessionID.toString());
-        }
-
-        if (lastChunk) {
-            parameters = parameters.append('lastChunk', 'true');
-        }
-
-        const options = {
-            params: parameters
-        }
-
-        const uri = ZoweZLUX.uriBroker.unixFileUri('contents', 'u/ts6531/rocket_key.txt', 'UTF-8', 'IBM-1047', undefined, true);
-
-        return this.http.put(uri, blob, options);
-    }
-
-    chunkAndSendFile(file: File): void {
+    chunkAndSendFile(file: File, uploadDirPath: string): void {
         const fileSize = file.size;
-        const chunkSize = 64 * 1024; // 64 KB
+        const chunkSize =  3 * 1024 * 1024; // bytes
+        let sourceEncoding = 'BINARY';
+        let targetEncoding = 'BINARY';
+        let chunkIdx = 0;
         let offset = 0;
         let sessionID: number;
+        let uri = ZoweZLUX.uriBroker.unixFileUri('contents', uploadDirPath.slice(1) + '/' + file.name, sourceEncoding, targetEncoding, undefined, true);
 
+        console.table({'URI': uri, 'File Name': file.name, 'File Size': fileSize, 'Chunk Size': chunkSize});
+
+        // Initiate connection with the zssServer
+        const getSessionID = () => {
+            return this.http.put(uri, '');
+        }
+
+        // Generate the HTTP PUT request and return an Observable for the response
+        const sendChunk = (blob: Blob, lastChunk: boolean, sessionID: number) => { // any should actually be an observable of some kind
+            let parameters = new HttpParams();
+            parameters = parameters.append('chunkIndex', chunkIdx.toString());
+
+            if (sessionID) {
+                parameters = parameters.append('sessionID', sessionID.toString());
+            }
+            if (lastChunk) {
+                parameters = parameters.append('lastChunk', 'true');
+            }
+            const options = {
+                params: parameters
+            }
+
+            return this.http.put(uri, blob, options);
+        }
+
+        // Once the chunk is read we must package it in an HTTP request and send it to the zss Server
         const readEventHandler = (event: any) => {
             if (event.target.error === null) {
                 offset += chunkSize;
-                console.table({'offset': offset, 'fileSize': fileSize});
 
                 let lastChunk = false;
                 if (offset >= fileSize) {
-                    lastChunk = true;
+                  offset = fileSize;
+                  lastChunk = true;
+                  console.log('Sending last chunk');
                 }
 
-                const commaIdx = event.target.result.indexOf(',');
-                console.log(event.target.result.slice(commaIdx + 1));
+                console.table({'offset': offset, 'fileSize': fileSize, 'progress': offset/fileSize});
 
-                this.sendChunk(event.target.result.slice(commaIdx + 1), lastChunk, sessionID)
+                const commaIdx = event.target.result.indexOf(',');
+
+                sendChunk(event.target.result.slice(commaIdx + 1), lastChunk, sessionID)
                     .subscribe(
                         (response: any) => { // successful PUT
-                            console.log('Observable notified - chunkIdx:', this.chunkIdx, ', offset:', offset);
-                            console.log('Subscribe response: ', response);
+                            console.log('Chunk sent - chunkIdx:', chunkIdx, ', offset:', offset);
                             if (offset < fileSize) {
                                 chunkReaderBlock(offset, chunkSize, file);
-                                this.chunkIdx++;
+                                chunkIdx++;
                             }
                         },
                         (error: any) => {
-                            console.log('There was an error!!', error);
+                            console.log(error);
                         }
                     );
             } else {
                 console.log('Read Error: ' + event.target.error);
                 return;
             }
-            if (offset >= fileSize) {
-                console.log('Done Reading File');
-            }
         };
 
+        // Read slice of file, then run the readEventHandler
         const chunkReaderBlock = (_offset: number, length: number, _file: File) => {
             const reader = new FileReader();
             const blob = _file.slice(_offset, length + _offset);
             reader.onload = readEventHandler;
-            reader.readAsDataURL(blob);
+            reader.readAsDataURL(blob); // Base 64
         }
 
-        this.getSessionID()
+        getSessionID()
             .subscribe((response: any) => {
                 sessionID = response['sessionID'];
                 chunkReaderBlock(offset, chunkSize, file);
