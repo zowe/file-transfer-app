@@ -183,7 +183,7 @@ export class BrowserPanelComponent implements OnInit {
             for (let i = 0; i < files.length; i++) {
                 const file = files[i];
 
-                this.uploader.chunkAndSendFile(file);
+                this.uploader.chunkAndSendFile(file, this.leftPath);
             }
         };
     }
