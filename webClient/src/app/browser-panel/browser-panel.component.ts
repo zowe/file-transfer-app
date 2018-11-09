@@ -3,8 +3,6 @@ import { TreeNode } from 'primeng/api';
 import { Connection } from '../Connection';
 import { Message } from 'primeng/components/common/api';
 import { FTASide, FTAFileInfo, FTAFileMode } from '../../../../common/FTATypes';
-import { UploaderService } from '../services/Uploader.service';
-// import { declaredViewContainer } from '@angular/core/src/view/util';
 
 class TreeNodeData {
     attributes: any;
@@ -47,7 +45,9 @@ class FileRow {
     ]
 })
 export class BrowserPanelComponent implements OnInit {
+    // @ts-ignore
     @Input() connection: Connection;
+    // @ts-ignore
     @Input() ftaSide: FTASide;
 
     fileView: string;
@@ -60,7 +60,7 @@ export class BrowserPanelComponent implements OnInit {
 
     list: FileRow[];
 
-    leftPath: string;
+    selectedPath: string;
 
     errorMessages: Message[] = [];
 
@@ -68,7 +68,7 @@ export class BrowserPanelComponent implements OnInit {
     contextTreeNode: TreeNode;
     contextRow: FileRow;
 
-    constructor(private uploader: UploaderService) { }
+    constructor() { }
 
     get sideLocal(): FTASide {
         return FTASide.LOCAL;
@@ -79,8 +79,6 @@ export class BrowserPanelComponent implements OnInit {
 
     ngOnInit(): void {
         console.log('ngOnInit this.connection.name=' + this.connection.name);
-
-        this.uploadHandlerSetup();
 
         this.fileView = 'tree';
 
@@ -94,7 +92,7 @@ export class BrowserPanelComponent implements OnInit {
                 this.showError(err);
                 return;
             }
-            this.leftPath = path;
+            this.selectedPath = path;
             this.treeSelectedNode = this.ensurePath(this.tree, path);
             this.expandNode(this.treeSelectedNode);
             this.connection.ftaWs.ls(this.ftaSide, path);
@@ -113,7 +111,7 @@ export class BrowserPanelComponent implements OnInit {
                     this.getOrCreateChildNode(node, fileinfo.name, fileinfo);
                 });
                 this.sortFileRows(this.list);
-                this.leftPath = this.getPathFromRoot(node);
+                this.selectedPath = this.getPathFromRoot(node);
                 this.treeSelectedNode = node;
                 this.expandNode(this.treeSelectedNode);
         });
@@ -141,18 +139,17 @@ export class BrowserPanelComponent implements OnInit {
         this.connection.ftaWs.fopen(side, pathToOpen, mode, onOpen);
     }
 
-    // downloadFile(side: FTASide, filePath: string, dataHandler: (chunk: ArrayBuffer) => void, completeHandler: (err: any) => void): void {
-    //     this.fopen(side, filePath, FTAFileMode.read, (err, streamId) => {
-    //         this.connection.ftaWs.onBinaryData(streamId, (binData: FTABinaryData) => {
-    //             dataHandler(binData.data);
-    //         }, () => {
-    //             completeHandler(null);
-    //         });
-    //     });
-    // }
-
     sendTo(): void {
 
+    }
+
+    getSelectedDirectory(): string {
+        console.log('Getting the correct directory');
+        if(this.isFolder(this.treeSelectedNode)) {
+            return this.selectedPath;
+        } else {
+            return this.getPathFromRoot(this.treeSelectedNode.parent);
+        }
     }
 
     saveAs(): void {
@@ -167,52 +164,6 @@ export class BrowserPanelComponent implements OnInit {
         a.click();
     }
 
-    uploadHandlerSetup(): void {
-
-        const form = <HTMLFormElement> document.getElementById('file-form');
-        const fileSelect = <HTMLInputElement> document.getElementById('file-upload');
-        const uploadButton = <HTMLButtonElement> document.getElementById('upload-button');
-
-        form.onsubmit = (event) => {
-            event.preventDefault();
-            console.log('Submit Event Triggered');
-
-            uploadButton.innerHTML = 'Uploading...'; // prevents browser from submitting form
-            const files = <FileList> fileSelect.files;
-            // const formData = new FormData();
-
-            for (let i = 0; i < files.length; i++) {
-                const file = files[i];
-
-                this.uploader.chunkAndSendFile(file, this.leftPath);
-            }
-        };
-    }
-
-    // saveFile(side: FTASide, filePath: string, filename: string): void {
-    //     const contentType = 'application/octet-stream';
-    //     let blob = new Blob([], {'type': contentType});
-    //     this.downloadFile(side, filePath, (chunk) => {
-    //         console.log('downloadFile chunk ' + chunk.byteLength);
-    //         blob = new Blob([blob, chunk], {'type': contentType});
-    //     }, (err) => {
-    //         console.log('downloadFile complete');
-    //         if (err) {
-    //             console.error(err);
-    //         } else {
-    //             this.saveAs(blob, filename);
-    //         }
-    //     });
-    // }
-
-    // browserDownload(): void {
-    //     const selected: TreeNode = this.treeSelectedNode;
-
-    //     if (selected && !this.isFolder(selected)) {
-    //         this.saveFile(this.ftaSide, this.getPathFromRoot(selected), this.getName(selected));
-    //     }
-    // }
-
     needUpdate(subtree: TreeNode): boolean {
         return (<TreeNodeData>subtree.data).needUpdate;
     }
@@ -223,10 +174,10 @@ export class BrowserPanelComponent implements OnInit {
     }
 
     treeNodeSelect(event: any): void {
-        this.leftPath = this.getPathFromRoot(event.node);
+        this.selectedPath = this.getPathFromRoot(event.node);
         if (this.isFolder(event.node)) {
             if (this.needUpdate(event.node)) {
-                this.connection.ftaWs.ls(this.ftaSide, this.leftPath);
+                this.connection.ftaWs.ls(this.ftaSide, this.selectedPath);
             }
             this.list = (<TreeNodeData>event.node.data).files;
             this.listSelection = this.list[0];
@@ -272,9 +223,9 @@ export class BrowserPanelComponent implements OnInit {
         console.log('listRowDblclick ' + event.data);
         const fileRow: FileRow  = <FileRow>event.data;
         if (fileRow.isDir && fileRow.treeNode) {
-            this.leftPath = this.getPathFromRoot(fileRow.treeNode);
+            this.selectedPath = this.getPathFromRoot(fileRow.treeNode);
             if (this.needUpdate(fileRow.treeNode)) {
-                this.connection.ftaWs.ls(this.ftaSide, this.leftPath);
+                this.connection.ftaWs.ls(this.ftaSide, this.selectedPath);
             }
             this.treeSelectedNode = fileRow.treeNode;
             this.treeSelectedNode.expanded = true;

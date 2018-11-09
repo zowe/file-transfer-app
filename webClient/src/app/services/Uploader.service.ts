@@ -5,6 +5,8 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 export class UploaderService {
     constructor(private http: HttpClient) { }
 
+    // uploadDirPath should be a directory on the remote server without a / at the end.
+    // Example: '/u/ts6531'
     chunkAndSendFile(file: File, uploadDirPath: string): void {
         const fileSize = file.size;
         const chunkSize =  3 * 1024 * 1024; // bytes
@@ -13,6 +15,7 @@ export class UploaderService {
         let chunkIdx = 0;
         let offset = 0;
         let sessionID: number;
+        // TODO Add code to validate this URI (in particular the upload path)
         let uri = ZoweZLUX.uriBroker.unixFileUri('contents', uploadDirPath.slice(1) + '/' + file.name, sourceEncoding, targetEncoding, undefined, true);
 
         console.table({'URI': uri, 'File Name': file.name, 'File Size': fileSize, 'Chunk Size': chunkSize});
@@ -36,7 +39,6 @@ export class UploaderService {
             const options = {
                 params: parameters
             }
-
             return this.http.put(uri, blob, options);
         }
 

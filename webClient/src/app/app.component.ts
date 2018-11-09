@@ -4,9 +4,9 @@
   This program and the accompanying materials are
   made available under the terms of the Eclipse Public License v2.0 which accompanies
   this distribution, and is available at https://www.eclipse.org/legal/epl-v20.html
-  
+
   SPDX-License-Identifier: EPL-2.0
-  
+
   Copyright Contributors to the Zowe Project.
 */
 
@@ -17,8 +17,8 @@ import { Connection } from './Connection';
 import { FTAWebsocketService } from './services/FTAWebsocket.service';
 import { FTASide } from '../../../common/FTATypes';
 
-import {SelectItem} from 'primeng/api';
-import {Message} from 'primeng/components/common/api';
+import { SelectItem } from 'primeng/api';
+import { Message } from 'primeng/components/common/api';
 
 
 @Component({
@@ -67,10 +67,10 @@ export class AppComponent {
   response: any;
 
   constructor(
-    // @Inject(DOCUMENT) 
-    // private document: any,
-    @Inject(Angular2InjectionTokens.PLUGIN_DEFINITION) 
-    private pluginDefinition: ZLUX.ContainerPluginDefinition
+    @Inject(DOCUMENT)
+    private document: any,
+    @Inject(Angular2InjectionTokens.PLUGIN_DEFINITION)
+    private pluginDefinition: ZLUX.ContainerPluginDefinition,
     ) {
 
     const host = window.location.hostname;
@@ -142,4 +142,3 @@ export class AppComponent {
 
   Copyright Contributors to the Zowe Project.
 */
-
