@@ -35,7 +35,15 @@ export class ConnectionPanelComponent {
   connectionMessages: Message[];
 
   constructor(@Inject(Angular2InjectionTokens.PLUGIN_DEFINITION) private pluginDefinition: ZLUX.ContainerPluginDefinition) {
+<<<<<<< HEAD
     this.ftaServiceUrl = ZoweZLUX.uriBroker.pluginWSUri(this.pluginDefinition.getBasePlugin(), 'fs', '');
+=======
+<<<<<<< HEAD
+    this.ftaServiceUrl = (window as any).ZoweZLUX.uriBroker.pluginWSUri(this.pluginDefinition.getBasePlugin(), 'fs', '');
+=======
+    this.ftaServiceUrl = ZoweZLUX.uriBroker.pluginWSUri(this.pluginDefinition.getBasePlugin(), 'fs', '');
+>>>>>>> updated package json
+>>>>>>> updated package json
   }
 
   ngOnInit(): void {
