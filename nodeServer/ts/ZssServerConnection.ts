@@ -11,6 +11,7 @@
 import { FTAConnectionTarget, FTAFileInfo, FTAFileAttributes, LinuxStatsMask, FTASide } from "../../common/FTATypes";
 import { FTAConnection, FTAErrorHandler, FTAConnectionEvents } from "./FTAConnection";
 
+
 let httpEndpoint = '/unixfile/contents';
 var http = require('http');
 
