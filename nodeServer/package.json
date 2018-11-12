@@ -9,7 +9,7 @@
   "dependencies": {
     "ftp": "~0.3.10",
     "ssh2": "~0.6.1",
-    "ssh2-sftp-client": "^2.4.0"
+    "ssh2-sftp-client": "~2.4.0"
   },
   "devDependencies": {
     "@types/express": "~4.16.0",

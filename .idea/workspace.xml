@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1801a2b0-55ea-4a90-8814-b683542f9f74" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/webClient/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/webClient/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webClient/src/app/connection-panel/connection-panel.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/webClient/src/app/connection-panel/connection-panel.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nodeServer/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/nodeServer/package.json" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -34,14 +33,14 @@
         <counts>
           <entry key="gitignore" value="14" />
           <entry key="html" value="39" />
-          <entry key="json" value="44" />
+          <entry key="json" value="45" />
           <entry key="ts" value="363" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="HTML" value="39" />
-          <entry key="JSON" value="44" />
+          <entry key="JSON" value="45" />
           <entry key="PLAIN_TEXT" value="14" />
           <entry key="TypeScript" value="363" />
         </counts>
@@ -51,7 +50,7 @@
           <entry key="css" value="2" />
           <entry key="gitignore" value="1" />
           <entry key="html" value="1" />
-          <entry key="json" value="1" />
+          <entry key="json" value="2" />
           <entry key="ts" value="8" />
         </counts>
       </usages-collector>
@@ -59,7 +58,7 @@
         <counts>
           <entry key="CSS" value="2" />
           <entry key="HTML" value="1" />
-          <entry key="JSON" value="1" />
+          <entry key="JSON" value="2" />
           <entry key="PLAIN_TEXT" value="1" />
           <entry key="TypeScript" value="8" />
         </counts>
@@ -85,16 +84,27 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/webClient/package.json">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="731">
-              <caret line="43" selection-start-line="43" selection-end-line="43" />
+            <state relative-caret-position="357">
+              <caret line="30" column="31" lean-forward="true" selection-start-line="30" selection-start-column="31" selection-end-line="30" selection-end-column="31" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/nodeServer/package.json">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="255">
+              <caret line="15" column="30" lean-forward="true" selection-start-line="15" selection-start-column="30" selection-end-line="15" selection-end-column="30" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/webClient/src/app/connection-panel/connection-panel.component.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-510" />
+            <state relative-caret-position="447">
+              <caret line="43" column="3" lean-forward="true" selection-start-line="43" selection-start-column="3" selection-end-line="43" selection-end-column="3" />
+            </state>
           </provider>
         </entry>
       </file>
@@ -169,6 +179,7 @@
         <option value="$PROJECT_DIR$/webClient/src/app/connection-panel/connection-panel.component.ts" />
         <option value="$PROJECT_DIR$/nodeServer/ts/ZssServerConnection.ts" />
         <option value="$PROJECT_DIR$/webClient/package.json" />
+        <option value="$PROJECT_DIR$/nodeServer/package.json" />
       </list>
     </option>
   </component>
@@ -316,12 +327,12 @@
       <option name="presentableId" value="Default" />
       <updated>1541788969983</updated>
       <workItem from="1541788979840" duration="10211000" />
-      <workItem from="1542037298445" duration="1655000" />
+      <workItem from="1542037298445" duration="1836000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="11866000" />
+    <option name="totallyTimeSpent" value="12047000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="3832" y="-8" width="1936" height="1056" extended-state="6" />
@@ -452,14 +463,23 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/webClient/package.json">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="731">
-          <caret line="43" selection-start-line="43" selection-end-line="43" />
+        <state relative-caret-position="357">
+          <caret line="30" column="31" lean-forward="true" selection-start-line="30" selection-start-column="31" selection-end-line="30" selection-end-column="31" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/webClient/src/app/connection-panel/connection-panel.component.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-510" />
+        <state relative-caret-position="447">
+          <caret line="43" column="3" lean-forward="true" selection-start-line="43" selection-start-column="3" selection-end-line="43" selection-end-column="3" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nodeServer/package.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="15" column="30" lean-forward="true" selection-start-line="15" selection-start-column="30" selection-end-line="15" selection-end-column="30" />
+        </state>
       </provider>
     </entry>
   </component>
