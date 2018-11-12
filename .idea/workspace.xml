@@ -2,9 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1801a2b0-55ea-4a90-8814-b683542f9f74" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/nodeServer/ts/ZssServerConnection.ts" beforeDir="false" afterPath="$PROJECT_DIR$/nodeServer/ts/ZssServerConnection.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/webClient/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/webClient/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webClient/src/app/connection-panel/connection-panel.component.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/webClient/src/app/connection-panel/connection-panel.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/webClient/src/app/connection-panel/connection-panel.component.ts" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -53,7 +52,7 @@
           <entry key="gitignore" value="1" />
           <entry key="html" value="1" />
           <entry key="json" value="1" />
-          <entry key="ts" value="7" />
+          <entry key="ts" value="8" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
@@ -62,7 +61,7 @@
           <entry key="HTML" value="1" />
           <entry key="JSON" value="1" />
           <entry key="PLAIN_TEXT" value="1" />
-          <entry key="TypeScript" value="7" />
+          <entry key="TypeScript" value="8" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.vcs.git.usages">
@@ -83,12 +82,19 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/webClient/package.json">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="221">
-              <caret line="13" column="32" lean-forward="true" selection-start-line="13" selection-start-column="32" selection-end-line="13" selection-end-column="32" />
+            <state relative-caret-position="731">
+              <caret line="43" selection-start-line="43" selection-end-line="43" />
             </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/webClient/src/app/connection-panel/connection-panel.component.ts">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-510" />
           </provider>
         </entry>
       </file>
@@ -96,7 +102,7 @@
         <entry file="file://$PROJECT_DIR$/nodeServer/ts/ZssServerConnection.ts">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="527">
-              <caret line="31" column="6" lean-forward="true" selection-start-line="31" selection-start-column="6" selection-end-line="31" selection-end-column="6" />
+              <caret line="31" column="6" selection-start-line="31" selection-start-column="6" selection-end-line="31" selection-end-column="6" />
               <folding>
                 <element signature="e#314#431#0" expanded="true" />
               </folding>
@@ -240,6 +246,35 @@
               <item name="file-transfer-app" type="462c0819:PsiDirectoryNode" />
               <item name="webClient" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="file-transfer-app" type="b2602c69:ProjectViewProjectNode" />
+              <item name="file-transfer-app" type="462c0819:PsiDirectoryNode" />
+              <item name="webClient" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="file-transfer-app" type="b2602c69:ProjectViewProjectNode" />
+              <item name="file-transfer-app" type="462c0819:PsiDirectoryNode" />
+              <item name="webClient" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="file-transfer-app" type="b2602c69:ProjectViewProjectNode" />
+              <item name="file-transfer-app" type="462c0819:PsiDirectoryNode" />
+              <item name="webClient" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="browser-panel" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="file-transfer-app" type="b2602c69:ProjectViewProjectNode" />
+              <item name="file-transfer-app" type="462c0819:PsiDirectoryNode" />
+              <item name="webClient" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="connection-panel" type="462c0819:PsiDirectoryNode" />
+            </path>
           </expand>
           <select />
         </subPane>
@@ -281,12 +316,12 @@
       <option name="presentableId" value="Default" />
       <updated>1541788969983</updated>
       <workItem from="1541788979840" duration="10211000" />
-      <workItem from="1542037298445" duration="1258000" />
+      <workItem from="1542037298445" duration="1655000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="11469000" />
+    <option name="totallyTimeSpent" value="11866000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="3832" y="-8" width="1936" height="1056" extended-state="6" />
@@ -305,7 +340,7 @@
       <window_info anchor="bottom" id="Version Control" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Docker" order="8" show_stripe_button="false" />
       <window_info anchor="bottom" id="TypeScript" order="9" />
-      <window_info anchor="bottom" id="Terminal" order="10" visible="true" weight="0.1681128" />
+      <window_info anchor="bottom" id="Terminal" order="10" visible="true" weight="0.27874187" />
       <window_info anchor="bottom" id="Event Log" order="11" side_tool="true" weight="0.329718" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -398,11 +433,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/webClient/src/app/connection-panel/connection-panel.component.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-125" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/webClient/src/app/uploader-panel/uploader-panel.component.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="425">
@@ -413,7 +443,7 @@
     <entry file="file://$PROJECT_DIR$/nodeServer/ts/ZssServerConnection.ts">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="527">
-          <caret line="31" column="6" lean-forward="true" selection-start-line="31" selection-start-column="6" selection-end-line="31" selection-end-column="6" />
+          <caret line="31" column="6" selection-start-line="31" selection-start-column="6" selection-end-line="31" selection-end-column="6" />
           <folding>
             <element signature="e#314#431#0" expanded="true" />
           </folding>
@@ -422,9 +452,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/webClient/package.json">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="221">
-          <caret line="13" column="32" lean-forward="true" selection-start-line="13" selection-start-column="32" selection-end-line="13" selection-end-column="32" />
+        <state relative-caret-position="731">
+          <caret line="43" selection-start-line="43" selection-end-line="43" />
         </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/webClient/src/app/connection-panel/connection-panel.component.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-510" />
       </provider>
     </entry>
   </component>
