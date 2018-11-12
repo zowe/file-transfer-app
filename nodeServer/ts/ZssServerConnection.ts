@@ -3,9 +3,9 @@
   This program and the accompanying materials are
   made available under the terms of the Eclipse Public License v2.0 which accompanies
   this distribution, and is available at https://www.eclipse.org/legal/epl-v20.html
-  
+
   SPDX-License-Identifier: EPL-2.0
-  
+
   Copyright Contributors to the Zowe Project.
 */
 import { FTAConnectionTarget, FTAFileInfo, FTAFileAttributes, LinuxStatsMask, FTASide } from "../../common/FTATypes";
@@ -13,6 +13,7 @@ import { FTAConnection, FTAErrorHandler, FTAConnectionEvents } from "./FTAConnec
 
 
 let httpEndpoint = '/unixfile/contents';
+
 var http = require('http');
 
 var httpRequest = function(method, hostname, port, path, cookie, data, handler, httpAgent, timeout = 5000) {
@@ -54,7 +55,7 @@ var httpRequest2 = function(method, hostname, port, path, cookie, data, streamRe
         opts.headers['Content-Length'] = len;
         opts.headers['content-type'] = 'application/json';
     }
-    
+
     try {
         var timeoutTimer: any;
         var request = http.request(opts, function (response) {
@@ -108,7 +109,7 @@ export class ZssServerConnection extends FTAConnection {
         this.zssCookies = zssCookies;
     }
   connect(to: FTAConnectionTarget): void {
-    
+
   }
   disconnect(): void {
     super.disconnect();
@@ -193,11 +194,11 @@ export class ZssServerConnection extends FTAConnection {
                     readyHandler('statusCode = ' + readStream.statusCode + ' message=' + errMessage);
                 });
             }
-        } 
-        
-    }, 
-    null, 
-    null, 
+        }
+
+    },
+    null,
+    null,
     (err) => {
         readyHandler(err);
     }, this.httpAgent);
@@ -222,21 +223,21 @@ export class ZssServerConnection extends FTAConnection {
                 }
             });
         }
-    }, 
-    null, 
-    null, 
+    },
+    null,
+    null,
     (err) => {
         if (end) end(err);
     }, this.httpAgent);
   }
-  
+
 }
 /*
   This program and the accompanying materials are
   made available under the terms of the Eclipse Public License v2.0 which accompanies
   this distribution, and is available at https://www.eclipse.org/legal/epl-v20.html
-  
+
   SPDX-License-Identifier: EPL-2.0
-  
+
   Copyright Contributors to the Zowe Project.
 */
