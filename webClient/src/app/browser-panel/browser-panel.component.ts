@@ -156,11 +156,13 @@ export class BrowserPanelComponent implements OnInit {
     }
 
     saveAs(): void {
+        let uri = ZoweZLUX.uriBroker.unixFileUri('contents', this.leftPath.slice(1), undefined, undefined, undefined, true);
+        console.log(uri);
         const tokens = this.leftPath.split('/');
         const filename = tokens[tokens.length - 1];
         console.log('saveAs filename=' + filename);
         const a = document.createElement('a');
-        a.href = '/unixFileContents' + this.leftPath;
+        a.href = uri;
         a.download = filename;
         a.click();
     }
