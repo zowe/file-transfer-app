@@ -22,14 +22,17 @@ export enum FTAConnectionEvents {
 export abstract class FTAConnection extends EventEmitter {
     side: FTASide;
     streamMap: Map<number, any> = new Map();
+
     protected constructor(side: FTASide) {
       super();
       this.side = side;
     }
+
     abstract toString(): string;
     getStream(streamId: number): any {
       return this.streamMap.get(streamId);
     }
+
     addStream(stream: any, endHandler?: (err: any, streamId?: number) => void): number {
       var streamId: number = this.streamMap.size;
       this.streamMap.set(streamId, stream);
@@ -107,7 +110,6 @@ export abstract class FTAConnection extends EventEmitter {
       });
       this.streamMap.clear();
     }
-
 
     abstract connect(to: FTAConnectionTarget): void;
     abstract getHomePath(handler: (err: any, absPath) => void): void;

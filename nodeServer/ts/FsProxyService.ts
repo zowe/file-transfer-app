@@ -8,6 +8,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 //import { LocalConnection } from "./LocalConnection";
 import { ZssServerConnection } from "./ZssServerConnection";
+import { SFTPConnector } from "./SFTPConnector";
 //import { WebSocket } from '@types/websocket';
 
 
@@ -32,7 +33,7 @@ class FTAWebsocketProxy {
   websocket: WebSocket;
   remoteConnection: FTAConnection;
   localConnection: FTAConnection;
-  constructor(clientIP: string, clientPort: number, context: any, session: any, websocket: WebSocket) {
+  constructor(clientIP: string, clientPort: number, context: any, session: any, username: string, websocket: WebSocket) {
     this.clientIP = clientIP;
     this.clientPort = clientPort;
     websocket.onmessage = this.onmessage.bind(this);
@@ -40,9 +41,7 @@ class FTAWebsocketProxy {
     websocket.onerror = this.onerror;
     this.websocket = websocket;
     //this.localConnection = new LocalConnection(FTASide.LOCAL);
-    if (session["com.rs.auth.zssAuth"] && session["com.rs.auth.zssAuth"].authenticated) {
-      this.localConnection = new ZssServerConnection(FTASide.LOCAL, context.plugin.server.config.startUp.proxiedHost, context.plugin.server.config.startUp.proxiedPort, session["com.rs.auth.zssAuth"].zssUsername, session["com.rs.auth.zssAuth"].zssCookies);
-    }
+    this.localConnection = new ZssServerConnection(FTASide.LOCAL, context.plugin.server.config.startUp.proxiedHost, context.plugin.server.config.startUp.proxiedPort, username, session["com.rs.auth.zssAuth"].zssCookies);
     
   }
   onmessage(messageEvent: MessageEvent): void {
@@ -94,6 +93,7 @@ class FTAWebsocketProxy {
         return this.sendError(message.type, err.message);
       }
       this.remoteConnection = remoteConnection;
+    
     } else if(message.type === FTAMessageType.DISCONNECT) {
       if (this.remoteConnection) {
         console.log('disconnect');
@@ -102,6 +102,7 @@ class FTAWebsocketProxy {
       } else {
         console.log('not connected');
       }
+    
     } else if(message.type === FTAMessageType.LS) {
       let lsPath: FTAPath = <FTAPath>message.payload;
       let lsHandler = (err, list: FTAFileInfo[]) => {
@@ -111,12 +112,13 @@ class FTAWebsocketProxy {
           this.sendData(message.type, new FTAFolder(lsPath.side, lsPath.path, list));
       };
       if (lsPath.side == FTASide.LOCAL) {
-        this.localConnection.ls(lsPath.path, lsHandler);
+        this.localConnection.ls(lsPath.path, lsHandler); // this separation of remote and local is unnecessary if we make an individual service to serve each browserpanel
       } else if (this.remoteConnection) {
         this.remoteConnection.ls(lsPath.path, lsHandler);
       } else {
         this.sendError(message.type, "not connected");
       }
+    
     } else if (message.type === FTAMessageType.getHomePath) {
       let side: FTASide = <FTASide>message.payload;
       let resolvePathHander = (err, absPath) => {
@@ -133,6 +135,7 @@ class FTAWebsocketProxy {
       } else {
         this.sendError(message.type, "not connected");
       }
+    
     } else if (message.type === FTAMessageType.fastGet) {
       if (!this.remoteConnection) {
         return this.sendError(message.type, "not connected");
@@ -145,6 +148,7 @@ class FTAWebsocketProxy {
         }
         this.sendSuccess(message.type);
       });
+    
     } else if (message.type === FTAMessageType.fastPut) {
       if (!this.remoteConnection) {
         return this.sendError(message.type, "not connected");
@@ -156,6 +160,7 @@ class FTAWebsocketProxy {
         }
         this.sendSuccess(message.type);
       });
+    
     } else if (message.type === FTAMessageType.makeDir) {
       let pathToCreate: FTAPath = <FTAPath>message.payload;
       var statsHandler = (err: any, fileInfo: FTAFileInfo) => {
@@ -183,6 +188,7 @@ class FTAWebsocketProxy {
       } else {
         return this.sendError(message.type, "not connected");
       }
+    
     } else if (message.type === FTAMessageType.rmdir) {
       let pathToDelete: FTAPath = <FTAPath>message.payload;
       var rmHandler = (err: any) => {
@@ -198,6 +204,7 @@ class FTAWebsocketProxy {
       } else {
         return this.sendError(message.type, "not connected");
       }
+    
     } else if (message.type === FTAMessageType.delete) {
       let pathToDelete: FTAPath = <FTAPath>message.payload;
       var rmHandler = (err: any) => {
@@ -213,6 +220,7 @@ class FTAWebsocketProxy {
       } else {
         return this.sendError(message.type, "not connected");
       }
+    
     } else if (message.type === FTAMessageType.rename) {
       let pathes: any[] = <any[]>message.payload;
       let pathToRename: FTAPath = <FTAPath>pathes[0];
@@ -230,6 +238,7 @@ class FTAWebsocketProxy {
       } else {
         return this.sendError(message.type, "not connected");
       }
+    
     } else if (message.type === FTAMessageType.fopen) {
       let modePath: any[] = <any[]>message.payload;
       let mode: FTAFileMode = <FTAFileMode>modePath[0];
@@ -276,6 +285,7 @@ class FTAWebsocketProxy {
       } else {
         return this.sendError(message.type, "side not connected " + filePath.side);
       }
+    
     } else if (message.type === FTAMessageType.fclose) {
       let sideModeStream: any[] = <any[]>message.payload;
       let side: FTASide = <FTASide>sideModeStream[0];
@@ -286,6 +296,7 @@ class FTAWebsocketProxy {
       } else if (side == FTASide.REMOTE && this.remoteConnection) {
         this.remoteConnection.closeStream(streamId);
       }
+    
     } else if (message.type === FTAMessageType.pipeLR) {
       //two files path to open on local and remote sides and pipe them
       let localRemotePath: any[] = <any[]>message.payload;
@@ -331,6 +342,7 @@ class FTAWebsocketProxy {
         }
         this.sendData(message.type, [localPath, remotePath, readStreamId, writeStreamId, 0, true]);
       });
+    
     } else if (message.type === FTAMessageType.pipeRL) {
       let pipeRLArgs: any[] = <any[]>message.payload;
       if (!this.localConnection || !this.remoteConnection) {
@@ -371,6 +383,7 @@ class FTAWebsocketProxy {
         //this.localConnection.closeStream(writeStreamId);
         this.sendData(message.type, [remotePath, localPath, readStreamId, writeStreamId, 0, true]);
       });
+
     } else {
       console.log('FTA Unhandled message type ' + message.type);
       this.sendError(message.type, 'FTA Unhandled message type ' + message.type);
@@ -472,7 +485,10 @@ exports.fsRouter = function(context): Router {
     });
     router.ws('/',function(ws,req) {
       console.log('FTAWebsocketProxy creating');
-      new FTAWebsocketProxy(req.ip, req.port, context, req.session, ws);
+      new FTAWebsocketProxy(req.ip, req.port, context, req.session, req.username, ws);
+    });
+    router.get('/', (req, res) => {
+      new SFTPConnector();
     });
     resolve(router);
   });

@@ -13,58 +13,31 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import {GrowlModule} from 'primeng/growl';
-import {TabViewModule} from 'primeng/tabview';
-import {ButtonModule} from 'primeng/button';
-import {TreeModule} from 'primeng/tree';
-import {DataTableModule} from 'primeng/primeng';
-import {TableModule} from 'primeng/table';
-import {MenubarModule} from 'primeng/menubar'
-import {ContextMenuModule} from 'primeng/contextmenu';
-import {DialogModule} from 'primeng/dialog';
-import {InputTextModule} from 'primeng/inputtext';
-import {DropdownModule} from 'primeng/dropdown';
-import {PasswordModule} from 'primeng/password';
-import {MessagesModule} from 'primeng/messages';
-import {ProgressBarModule} from 'primeng/progressbar';
-import {FileUploadModule} from 'primeng/fileupload';
-
+import { TreeModule } from 'primeng/tree';
+import { DataTableModule } from 'primeng/primeng';
+import { HttpClientModule } from '@angular/common/http';
+import { UploaderService } from './services/Uploader.service'
 
 import { AppComponent } from './app.component';
-import { ConnectionViewComponent } from './connection-view-component';
+import { BrowserPanelComponent } from './browser-panel/browser-panel.component';
+import { ConnectionPanelComponent } from './connection-panel/connection-panel.component';
+import { FTAWebsocketService } from './services/FTAWebsocket.service';
 
 @NgModule({
   declarations: [
     AppComponent,
-    ConnectionViewComponent
+    BrowserPanelComponent,
+    ConnectionPanelComponent
   ],
   imports: [
     // BrowserModule, /* remove this for within-MVD development */
-    GrowlModule,
     CommonModule,
-    DialogModule,
-    DropdownModule,
-    InputTextModule,
-    PasswordModule,
-    ButtonModule,
-    TabViewModule,
+    DataTableModule,
     TreeModule,
     FormsModule,
-    MessagesModule,
-    ProgressBarModule,
-    TableModule,
-    DataTableModule,
-    MenubarModule,
-    ContextMenuModule,
-    FileUploadModule
-    
-    
-    
-
-
-
+    HttpClientModule
   ],
-  providers: [],
+  providers: [FTAWebsocketService, UploaderService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

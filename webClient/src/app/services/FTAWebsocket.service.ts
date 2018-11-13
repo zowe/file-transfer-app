@@ -12,19 +12,20 @@ import { Injectable, EventEmitter } from '@angular/core';
 //import { Observable } from 'rxjs/Observable';
 //import { Observer } from 'rxjs/Observer';
 import {FTAMessageType, FTAMessage, FTAConnectOptions, FTAError, FTAConnectionTarget, FTAFileInfo, FTASide, FTAPath, FTAFolder, FTABinaryData, FTAFileMode} from '../../../../common/FTATypes';
- 
+
 @Injectable()
 export class FTAWebsocketService extends EventEmitter<any> {
   private ws: WebSocket;
   private handlersMap: Map<string, any[]> = new Map<string, any[]>();
   private completeHandlersMap: Map<string, any[]> = new Map<string, any[]>();
   public remoteConnected: boolean = false;
+
   constructor() {
     super();
   }
 
   private addHandler(name: string, handler: any): void {
-    var handlers: any[] | undefined = this.handlersMap.get(name);
+    let handlers: any[] | undefined = this.handlersMap.get(name);
     if (!handlers) {
       handlers = [];
       this.handlersMap.set(name, handlers);
@@ -35,7 +36,7 @@ export class FTAWebsocketService extends EventEmitter<any> {
   }
 
   private invokeAll(name: string, args: any[]) {
-    var handlers: any[] | undefined = this.handlersMap.get(name);
+    const handlers: any[] | undefined = this.handlersMap.get(name);
     if (handlers) {
       handlers.forEach(handler => {
         handler.apply(this, args);
@@ -44,8 +45,8 @@ export class FTAWebsocketService extends EventEmitter<any> {
   }
 
   private addCompleteHandler(name: string, handler: any): void {
-    //TODO tomeout handler for all all entries
-    var handlers: any[] | undefined = this.completeHandlersMap.get(name);
+    // TODO tomeout handler for all all entries
+    let handlers: any[] | undefined = this.completeHandlersMap.get(name);
     if (!handlers) {
       handlers = [];
       this.completeHandlersMap.set(name, handlers);
@@ -55,8 +56,8 @@ export class FTAWebsocketService extends EventEmitter<any> {
     }
   }
 
-  public invokeComplete(name: string, complete: boolean, args: any[]) {
-    var handlers: any[] | undefined = this.completeHandlersMap.get(name);
+  public invokeComplete(name: string, complete: boolean, args: any[]): void {
+    const handlers: any[] | undefined = this.completeHandlersMap.get(name);
     if (handlers) {
       if (complete) {
         this.completeHandlersMap.delete(name);
@@ -71,13 +72,13 @@ export class FTAWebsocketService extends EventEmitter<any> {
   }
 
   public removeListener(name: string, handler?: any) {
-    var handlers: any[] | undefined = this.handlersMap.get(name);
+    const handlers: any[] | undefined = this.handlersMap.get(name);
     console.log('removeListener ' + name + ': ' + handlers)
     if (handler && handlers && handlers.includes(handler)) {
       console.log('removeListener handlers includes ' + handler)
       handlers.splice(handlers.indexOf(handler), 1);
       console.log('removeListener splice ' + handlers);
-      if (handlers.length == 0) {
+      if (handlers.length === 0) {
         this.handlersMap.delete(name);
       }
     } else if (!handler) {
@@ -99,7 +100,7 @@ export class FTAWebsocketService extends EventEmitter<any> {
       this.ws.binaryType = 'arraybuffer';
       this.ws.onmessage = (ev: MessageEvent) => {
         if (ev.data instanceof ArrayBuffer) {
-          var binData: FTABinaryData = FTABinaryData.parseMessage(new DataView(ev.data));
+          const binData: FTABinaryData = FTABinaryData.parseMessage(new DataView(ev.data));
           this.handleBinaryData(binData);
         } else {
           console.log('onmessage ' + ev.data);
@@ -107,7 +108,7 @@ export class FTAWebsocketService extends EventEmitter<any> {
         }
       };
       this.ws.onopen = (ev: Event) => this.wsOnOpen(ev);
-    } catch(err) {
+    } catch (err) {
       this.invokeAll('error', [err]);
     }
   }
@@ -129,7 +130,8 @@ export class FTAWebsocketService extends EventEmitter<any> {
   }
   public remoteConnect(protocol: string, address: string, port: number, username: string, password: string) {
     console.log('sendConnect protocol=' + protocol + ' address=' + address + ' port=' + port);
-    this.send(new FTAMessage(FTAMessageType.CONNECT, new FTAConnectOptions(protocol, new FTAConnectionTarget(address, port, username, password) )));
+    this.send(new FTAMessage(FTAMessageType.CONNECT,
+      new FTAConnectOptions(protocol, new FTAConnectionTarget(address, port, username, password))));
   }
 
   public send(object: any): boolean {
@@ -138,7 +140,7 @@ export class FTAWebsocketService extends EventEmitter<any> {
       this.ws.send(JSON.stringify(object));
       return true;
     } else {
-      var errMessage = 'Websocket readyState=' + this.ws.readyState;
+      let errMessage = 'Websocket readyState=' + this.ws.readyState;
       console.log(errMessage);
       this.invokeAll('error', [errMessage]);
       return false;
@@ -152,18 +154,18 @@ export class FTAWebsocketService extends EventEmitter<any> {
       this.ws.send(FTABinaryData.buildMessage(0, sideCode, streamId, buffer));
       return true;
     } else {
-      var errMessage = 'Websocket readyState=' + this.ws.readyState;
+      let errMessage = 'Websocket readyState=' + this.ws.readyState;
       console.log(errMessage);
       this.invokeAll('error', [errMessage]);
       return false;
     }
   }
 
-  private handleMessage(message: FTAMessage) {
+  private handleMessage(message: FTAMessage): void {
     console.log('handleMessage type=' + message.type);
-    if (message.type == FTAMessageType.CONNECT) {
+    if (message.type === FTAMessageType.CONNECT) {
       if ('errorMessage' in message.payload) {
-        let err = <FTAError>message.payload;
+        const err = <FTAError>message.payload;
         this.remoteConnected = false;
         this.invokeAll('targetConnect', [new Error(err.errorMessage), false]);
       } else {
@@ -171,142 +173,144 @@ export class FTAWebsocketService extends EventEmitter<any> {
         this.remoteConnected = true;
         this.invokeAll('targetConnect', [null, true]);
       }
-    } else if(message.type == FTAMessageType.LS) {
+    } else if (message.type === FTAMessageType.LS) {
       if ('path' in message.payload) {
-        let folder: FTAFolder = <FTAFolder>message.payload;
+        const folder: FTAFolder = <FTAFolder>message.payload;
         this.invokeAll('targetLs', [null, folder.side, folder.path, folder.content]);
       } else {
-        let error: FTAError = <FTAError>message.payload;
+        const error: FTAError = <FTAError>message.payload;
         this.invokeAll('targetLs', [error.errorMessage, null, null]);
       }
-    } else if(message.type == FTAMessageType.getHomePath) {
+    } else if (message.type === FTAMessageType.getHomePath) {
       if ('path' in message.payload) {
-        let path: FTAPath = <FTAPath>message.payload;
+        const path: FTAPath = <FTAPath>message.payload;
         this.invokeAll('resolvePath', [null, path.side, path.path]);
       } else {
-        let error: FTAError = <FTAError>message.payload;
+        const error: FTAError = <FTAError>message.payload;
         this.invokeAll('resolvePath', [error.errorMessage, null, null]);
       }
-    } else if(message.type == FTAMessageType.fastGet) {
+    } else if (message.type === FTAMessageType.fastGet) {
       if ('success' in message.payload) {
         this.invokeAll('fastGet', [null, 1]);
       } else {
-        let error: FTAError = <FTAError>message.payload;
+        const error: FTAError = <FTAError>message.payload;
         this.invokeAll('fastGet', [error.errorMessage, 0]);
       }
-    } else if(message.type == FTAMessageType.fastPut) {
+    } else if (message.type === FTAMessageType.fastPut) {
       if ('success' in message.payload) {
         this.invokeAll('fastPut', [null, 1]);
       } else {
-        let error: FTAError = <FTAError>message.payload;
+        const error: FTAError = <FTAError>message.payload;
         this.invokeAll('fastPut', [error.errorMessage, 0]);
       }
-    } else if(message.type == FTAMessageType.makeDir) {
+    } else if (message.type === FTAMessageType.makeDir) {
       if ('errorMessage' in message.payload) {
-        let error: FTAError = <FTAError>message.payload;
+        const error: FTAError = <FTAError>message.payload;
         this.invokeAll('makeDir', [error.errorMessage]);
       } else {
-        let pathInfo: any[] = <any[]>message.payload;
-        let pathCreated: FTAPath = <FTAPath>pathInfo[0];
-        let info: FTAFileInfo = <FTAFileInfo>pathInfo[1];
+        const pathInfo: any[] = <any[]>message.payload;
+        const pathCreated: FTAPath = <FTAPath>pathInfo[0];
+        const info: FTAFileInfo = <FTAFileInfo>pathInfo[1];
         this.invokeAll('makeDir', [null, pathCreated.side, pathCreated.path, info]);
       }
-    } else if(message.type == FTAMessageType.rmdir) {
+    } else if (message.type === FTAMessageType.rmdir) {
       if ('errorMessage' in message.payload) {
-        let error: FTAError = <FTAError>message.payload;
+        const error: FTAError = <FTAError>message.payload;
         this.invokeAll('delete', [error.errorMessage]);
       } else {
-        let pathDeleted: FTAPath = <FTAPath>message.payload;
+        const pathDeleted: FTAPath = <FTAPath>message.payload;
         this.invokeAll('delete', [null, pathDeleted.side, pathDeleted.path]);
       }
-    } else if(message.type == FTAMessageType.delete) {
+    } else if (message.type === FTAMessageType.delete) {
       if ('errorMessage' in message.payload) {
-        let error: FTAError = <FTAError>message.payload;
+        const error: FTAError = <FTAError>message.payload;
         this.invokeAll('delete', [error.errorMessage]);
       } else {
-        let pathDeleted: FTAPath = <FTAPath>message.payload;
+        const pathDeleted: FTAPath = <FTAPath>message.payload;
         this.invokeAll('delete', [null, pathDeleted.side, pathDeleted.path]);
       }
-    } else if(message.type == FTAMessageType.rename) {
+    } else if (message.type === FTAMessageType.rename) {
       if ('errorMessage' in message.payload) {
-        let error: FTAError = <FTAError>message.payload;
+        const error: FTAError = <FTAError>message.payload;
         this.invokeAll('rename', [error.errorMessage]);
       } else {
-        let pathes: any[] = <any[]>message.payload;
-        let oldPath: FTAPath = pathes[0];
-        let newPath: string = <string>pathes[1];
+        const pathes: any[] = <any[]>message.payload;
+        const oldPath: FTAPath = pathes[0];
+        const newPath: string = <string>pathes[1];
         this.invokeAll('rename', [null, oldPath.side, oldPath.path, newPath]);
       }
     } else if(message.type == FTAMessageType.fopen) {
       if ('errorMessage' in message.payload) {
-        let error: FTAError = <FTAError>message.payload;
+        const error: FTAError = <FTAError>message.payload;
         if (error.errorContext) {
-          //var mode: FTAFileMode = <FTAFileMode>error.errorContext[0];
-          var openPath: FTAPath = <FTAPath>error.errorContext[1];
+          //const mode: FTAFileMode = <FTAFileMode>error.errorContext[0];
+          const openPath: FTAPath = <FTAPath>error.errorContext[1];
           return this.invokeComplete('fopen:' + openPath.path, true, [error.errorMessage]);
         }
         this.invokeAll('error', [error.errorMessage]);
       } else {
-        let modePathStream: any[] = <any[]>message.payload;
-        //var mode: FTAFileMode = <FTAFileMode>modePathStream[0];
-        var filePath: FTAPath = <FTAPath>modePathStream[1];
-        var newStreamId: number = <number>modePathStream[2];
+        const modePathStream: any[] = <any[]>message.payload;
+        //let mode: FTAFileMode = <FTAFileMode>modePathStream[0];
+        const filePath: FTAPath = <FTAPath>modePathStream[1];
+        const newStreamId: number = <number>modePathStream[2];
         this.invokeComplete('fopen:' + filePath.path, true, [null, newStreamId]);
       }
-    } else if(message.type == FTAMessageType.fclose) {
-      let errStream: any[] = <any[]>message.payload;
-      var err: string = <string>errStream[0];
-      let streamId: number = <number>errStream[1];
+    } else if (message.type === FTAMessageType.fclose) {
+      const errStream: any[] = <any[]>message.payload;
+      const err: string = <string>errStream[0];
+      const streamId: number = <number>errStream[1];
       setImmediate(() => {
         this.invokeAll('end:' + streamId, []);
         this.invokeComplete('fclose:' + streamId, true, [err]);
         this.removeListener('end:' + streamId);
         this.removeListener('data:' + streamId);
       });
-    } else if(message.type == FTAMessageType.data) {
+    } else if (message.type === FTAMessageType.data) {
       if ('errorMessage' in message.payload) {
-        let error: FTAError = <FTAError>message.payload;
+        const error: FTAError = <FTAError>message.payload;
         let sideCode: number = <number>error.errorContext[0];
         let streamId: number = <number>error.errorContext[1];
         return this.invokeComplete('data:' + sideCode + ':' + streamId, true, [error.errorMessage]);
       }
-      let dataArgs: any[] = <any[]>message.payload;
-      let sideCode: number = <number>dataArgs[0];
-      let streamId: number = <number>dataArgs[1];
-      let length: number = <number>dataArgs[2];
+      const dataArgs: any[] = <any[]>message.payload;
+      const sideCode: number = <number>dataArgs[0];
+      const streamId: number = <number>dataArgs[1];
+      const length: number = <number>dataArgs[2];
       return this.invokeComplete('data:' + sideCode + ':' + streamId, true, [null, length]);
     } else if(message.type == FTAMessageType.pipeLR) {
       if ('errorMessage' in message.payload) {
-        let error: FTAError = <FTAError>message.payload;
-        let localFilePath: string = <string>error.errorContext[0];
-        let remoteFilePath: string = <string>error.errorContext[1];
+        const error: FTAError = <FTAError>message.payload;
+        const localFilePath: string = <string>error.errorContext[0];
+        const remoteFilePath: string = <string>error.errorContext[1];
         return this.invokeComplete('pipeLR:' + localFilePath + ':' + remoteFilePath, true, [error.errorMessage]);
       }
-      let pipeArgs: any[] = <any[]>message.payload;
-      let localFilePath: string = <string>pipeArgs[0];
-      let remoteFilePath: string = <string>pipeArgs[1];
-      let readStreamId: number = <number>pipeArgs[2];
-      let writeStreamId: number = <number>pipeArgs[3];
-      let chunkSize: number = <number>pipeArgs[4];
-      let complete: boolean = <boolean>pipeArgs[5];
-      this.invokeComplete('pipeLR:' + localFilePath + ':' + remoteFilePath, complete, [null, readStreamId, writeStreamId, chunkSize, complete]);
+      const pipeArgs: any[] = <any[]>message.payload;
+      const localFilePath: string = <string>pipeArgs[0];
+      const remoteFilePath: string = <string>pipeArgs[1];
+      const readStreamId: number = <number>pipeArgs[2];
+      const writeStreamId: number = <number>pipeArgs[3];
+      const chunkSize: number = <number>pipeArgs[4];
+      const complete: boolean = <boolean>pipeArgs[5];
+      this.invokeComplete('pipeLR:' + localFilePath + ':' + remoteFilePath,
+        complete, [null, readStreamId, writeStreamId, chunkSize, complete]);
     } else if(message.type == FTAMessageType.pipeRL) {
       if ('errorMessage' in message.payload) {
-        let error: FTAError = <FTAError>message.payload;
-        let remoteFilePath: string = <string>error.errorContext[0];
-        let localFilePath: string = <string>error.errorContext[1];
+        const error: FTAError = <FTAError>message.payload;
+        const remoteFilePath: string = <string>error.errorContext[0];
+        const localFilePath: string = <string>error.errorContext[1];
         return this.invokeComplete('pipeRL:' + remoteFilePath + ':' + localFilePath, true, [error.errorMessage]);
       }
-      let pipeArgs: any[] = <any[]>message.payload;
-      let remoteFilePath: string = <string>pipeArgs[0];
-      let localFilePath: string = <string>pipeArgs[1];
-      let readStreamId: number = <number>pipeArgs[2];
-      let writeStreamId: number = <number>pipeArgs[3];
-      let chunkSize: number = <number>pipeArgs[4];
-      let complete: boolean = <boolean>pipeArgs[5];
-      this.invokeComplete('pipeRL:' + remoteFilePath + ':' + localFilePath, complete, [null, readStreamId, writeStreamId, chunkSize, complete]);
+      const pipeArgs: any[] = <any[]>message.payload;
+      const remoteFilePath: string = <string>pipeArgs[0];
+      const localFilePath: string = <string>pipeArgs[1];
+      const readStreamId: number = <number>pipeArgs[2];
+      const writeStreamId: number = <number>pipeArgs[3];
+      const chunkSize: number = <number>pipeArgs[4];
+      const complete: boolean = <boolean>pipeArgs[5];
+      this.invokeComplete('pipeRL:' + remoteFilePath + ':' + localFilePath, complete,
+        [null, readStreamId, writeStreamId, chunkSize, complete]);
     } else {
-      var errmsg = 'unhandled message type=' + message.type;
+      const errmsg = 'unhandled message type=' + message.type;
       console.log(errmsg);
       this.invokeAll('error', [errmsg]);
     }
@@ -317,7 +321,6 @@ export class FTAWebsocketService extends EventEmitter<any> {
     this.invokeAll('data:' + binData.streamId, [binData]);
   }
 
-  
   public onLs(handler: (err: any, system: FTASide, path: string, fileInfos: FTAFileInfo[]) => void): void {
     this.addHandler('targetLs', handler);
   }
@@ -325,7 +328,6 @@ export class FTAWebsocketService extends EventEmitter<any> {
     console.log('ls side=' + side + ' path=' + path);
     this.send(new FTAMessage(FTAMessageType.LS, new FTAPath(side, path)));
   }
- 
 
   public onHomePath(handler: (err: any, system: FTASide, path: string) => void): void {
     this.addHandler('resolvePath', handler);
@@ -335,20 +337,19 @@ export class FTAWebsocketService extends EventEmitter<any> {
     this.send(new FTAMessage(FTAMessageType.getHomePath, side));
   }
 
-
-  public onFastPut(handler: (err: any, progress: number) => void) {//TODO may be return attributes of uploaded file?
+  public onFastPut(handler: (err: any, progress: number) => void): void {//TODO may be return attributes of uploaded file?
     this.addHandler('fastPut', handler);
   }
-  public fastPut(localPath: string, remotePath: string) {
+  public fastPut(localPath: string, remotePath: string): void{
     console.log('fastPut localPath=' + localPath + ' remotePath=' + remotePath);
     this.send(new FTAMessage(FTAMessageType.fastPut, [localPath, remotePath]));
   }
 
-  
-  public onFastGet(handler: (err: any, progress: number) => void) {//TODO may be return attributes of downloaded file?
+  public onFastGet(handler: (err: any, progress: number) => void): void {//TODO may be return attributes of downloaded file?
     this.addHandler('fastGet', handler);
   }
-  public fastGet(remotePath: string, localPath: string) {
+
+  public fastGet(remotePath: string, localPath: string): void {
     console.log('fastGet remotePath=' + remotePath + ' localPath=' + localPath);
     this.send(new FTAMessage(FTAMessageType.fastGet, [remotePath, localPath]));
   }
@@ -360,7 +361,6 @@ export class FTAWebsocketService extends EventEmitter<any> {
     console.log('md side=' + side + ' pathToCrate=' + pathToCrate);
     this.send(new FTAMessage(FTAMessageType.makeDir, new FTAPath(side, pathToCrate)));
   }
-
 
   public onDelete(handler: (err: any, side: FTASide, path: string) => void): void {
     this.addHandler('delete', handler);
@@ -392,17 +392,19 @@ export class FTAWebsocketService extends EventEmitter<any> {
     this.send(new FTAMessage(FTAMessageType.fclose, [side, mode, streamId]));
   }
 
-  public onBinaryData(streamId: number, handler: (data: FTABinaryData) => void, completeHandler: () => void) {
+  public onBinaryData(streamId: number, handler: (data: FTABinaryData) => void, completeHandler: () => void): void {
     this.addHandler('data:' + streamId, handler);
     this.addHandler('end:' + streamId, completeHandler);
   }
 
-  public pipeLR(localFilePath: string, remoteFilePath: string, handler: (err: any, readStreamId: number, writeStreamId: number, chunkSize: number, complete: boolean) => void): void {
+  public pipeLR(localFilePath: string, remoteFilePath: string,
+    handler: (err: any, readStreamId: number, writeStreamId: number, chunkSize: number, complete: boolean) => void): void {
     this.addCompleteHandler('pipeLR:' + localFilePath + ':' + remoteFilePath, handler);
     this.send(new FTAMessage(FTAMessageType.pipeLR, [localFilePath, remoteFilePath]));
   }
 
-  public pipeRL(remoteFilePath: string, localFilePath: string, handler: (err: any, readStreamId: number, writeStreamId: number, chunkSize: number, complete: boolean) => void): void {
+  public pipeRL(remoteFilePath: string, localFilePath: string,
+    handler: (err: any, readStreamId: number, writeStreamId: number, chunkSize: number, complete: boolean) => void): void {
     this.addCompleteHandler('pipeRL:' + remoteFilePath + ':' + localFilePath, handler);
     this.send(new FTAMessage(FTAMessageType.pipeRL, [remoteFilePath, localFilePath]));
   }
