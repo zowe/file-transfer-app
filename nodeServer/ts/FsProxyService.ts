@@ -33,7 +33,7 @@ class FTAWebsocketProxy {
   websocket: WebSocket;
   remoteConnection: FTAConnection;
   localConnection: FTAConnection;
-  constructor(clientIP: string, clientPort: number, context: any, session: any, websocket: WebSocket) {
+  constructor(clientIP: string, clientPort: number, context: any, session: any, username: string, websocket: WebSocket) {
     this.clientIP = clientIP;
     this.clientPort = clientPort;
     websocket.onmessage = this.onmessage.bind(this);
@@ -41,9 +41,7 @@ class FTAWebsocketProxy {
     websocket.onerror = this.onerror;
     this.websocket = websocket;
     //this.localConnection = new LocalConnection(FTASide.LOCAL);
-    if (session["com.rs.auth.zssAuth"] && session["com.rs.auth.zssAuth"].authenticated) {
-      this.localConnection = new ZssServerConnection(FTASide.LOCAL, context.plugin.server.config.startUp.proxiedHost, context.plugin.server.config.startUp.proxiedPort, session["com.rs.auth.zssAuth"].zssUsername, session["com.rs.auth.zssAuth"].zssCookies);
-    }
+    this.localConnection = new ZssServerConnection(FTASide.LOCAL, context.plugin.server.config.startUp.proxiedHost, context.plugin.server.config.startUp.proxiedPort, username, session["com.rs.auth.zssAuth"].zssCookies);
     
   }
   onmessage(messageEvent: MessageEvent): void {
@@ -487,7 +485,7 @@ exports.fsRouter = function(context): Router {
     });
     router.ws('/',function(ws,req) {
       console.log('FTAWebsocketProxy creating');
-      new FTAWebsocketProxy(req.ip, req.port, context, req.session, ws);
+      new FTAWebsocketProxy(req.ip, req.port, context, req.session, req.username, ws);
     });
     router.get('/', (req, res) => {
       new SFTPConnector();
