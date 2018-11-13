@@ -11,6 +11,7 @@
 import { FTAConnectionTarget, FTAFileInfo, FTAFileAttributes, LinuxStatsMask, FTASide } from "../../common/FTATypes";
 import { FTAConnection, FTAErrorHandler, FTAConnectionEvents } from "./FTAConnection";
 
+const httpEndpoint = '/unixfile/contents';
 var http = require('http');
 
 var httpRequest = function(method, hostname, port, path, cookie, data, handler, httpAgent, timeout = 5000) {
@@ -115,7 +116,7 @@ export class ZssServerConnection extends FTAConnection {
     return 'Zss Connection';
   }
   ls(path: string, handler: (err: any, list: FTAFileInfo[]) => void): void {
-    httpRequest('GET', this.zssHost, this.zssPort, '/unixFileContents' + path, this.zssCookies, null, (err, code, data, cookie) => {
+    httpRequest('GET', this.zssHost, this.zssPort, httpEndpoint + path, this.zssCookies, null, (err, code, data, cookie) => {
         if (!err) {
             console.log('unixFileContents: ' + data);
             let result: FTAFileInfo[] = [];
@@ -172,7 +173,7 @@ export class ZssServerConnection extends FTAConnection {
     renameHandler('not supported yet');
   }
   createReadStream(pathToFile: string, readyHandler: (err: any, streamId?: number, readStream?: any) => void, dataHandler?: (err: any, streamId: number, data: Buffer) => void, end?: (err: any, streamId: number) => void): void {
-    httpRequest2('GET', this.zssHost, this.zssPort, '/unixFileContents' + pathToFile, this.zssCookies, null, (writeStream, readStream) => {
+    httpRequest2('GET', this.zssHost, this.zssPort, httpEndpoint + pathToFile, this.zssCookies, null, (writeStream, readStream) => {
         if (writeStream) {//http request
             writeStream.end();
         }

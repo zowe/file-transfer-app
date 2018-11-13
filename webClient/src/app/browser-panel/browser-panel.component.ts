@@ -515,5 +515,4 @@ export class BrowserPanelComponent implements OnInit {
         }
         return undefined;
     }
-
 }
