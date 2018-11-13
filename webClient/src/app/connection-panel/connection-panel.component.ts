@@ -71,7 +71,7 @@ export class ConnectionPanelComponent {
         console.log('FTA Connected to the service');
         ftaWs.remoteConnect(this.selectedProtocol.value,
           this.address,
-          this.selectedProtocol.value === 'sftp' ? 1234 : 21,
+          this.selectedProtocol.value === 'sftp' ? 22 : 21,
           this.username,
           this.password);
     });

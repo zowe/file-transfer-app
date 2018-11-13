@@ -11,7 +11,7 @@
 */
 
 import { Component, Inject } from '@angular/core';
-import { DOCUMENT } from '@angular/platform-browser'; // DEPRECATED
+// import { DOCUMENT } from '@angular/platform-browser'; // DEPRECATED
 import { Angular2InjectionTokens } from 'pluginlib/inject-resources';
 import { Connection } from './Connection';
 import { FTAWebsocketService } from './services/FTAWebsocket.service';
@@ -67,14 +67,15 @@ export class AppComponent {
   response: any;
 
   constructor(
-    @Inject(DOCUMENT) 
-    private document: any,
+    // @Inject(DOCUMENT) 
+    // private document: any,
     @Inject(Angular2InjectionTokens.PLUGIN_DEFINITION) 
-    private pluginDefinition: ZLUX.ContainerPluginDefinition,
+    private pluginDefinition: ZLUX.ContainerPluginDefinition
     ) {
 
-    const host = this.document.location.hostname;
-    this.ftaServiceUrl = (window as any).ZoweZLUX.uriBroker.pluginWSUri(this.pluginDefinition.getBasePlugin(), 'fs', '');
+    const host = window.location.hostname;
+    // const host = this.document.location.hostname;
+    this.ftaServiceUrl = ZoweZLUX.uriBroker.pluginWSUri(this.pluginDefinition.getBasePlugin(), 'fs', '');
 
     this.credentialsSubmitted = false;
 
