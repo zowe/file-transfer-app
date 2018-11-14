@@ -41,7 +41,8 @@ class FTAWebsocketProxy {
     websocket.onerror = this.onerror;
     this.websocket = websocket;
     //this.localConnection = new LocalConnection(FTASide.LOCAL);
-    this.localConnection = new ZssServerConnection(FTASide.LOCAL, context.plugin.server.config.startUp.proxiedHost, context.plugin.server.config.startUp.proxiedPort, username, session["com.rs.auth.zssAuth"].zssCookies);
+    //this is a terrible, terrible hack that needs a more elegant solution and appears to be caused by lack of websocket-to-http proxy utility that the server could provide
+    this.localConnection = new ZssServerConnection(FTASide.LOCAL, context.plugin.server.config.startUp.proxiedHost, context.plugin.server.config.startUp.proxiedPort, username, session["org.zowe.zlux.auth.zss"].zssCookies);
     
   }
   onmessage(messageEvent: MessageEvent): void {
