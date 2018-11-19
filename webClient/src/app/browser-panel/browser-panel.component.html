@@ -94,7 +94,11 @@
             </div>
         </div>
     </div>
-
-    <app-uploader-panel [uploadPath]="getSelectedDirectory()"></app-uploader-panel>
+    <div class="row">
+        <button ibmButton="primary" (click)="showUploadModal()">Upload</button>
+    </div>
+    <div *ngIf="uploadModalVisible">
+        <app-uploader-panel [uploadPath]="getSelectedDirectory()" (onClose)="closeUploadModal()"></app-uploader-panel>
+    </div>
     <!-- <button class="bx--btn bx--btn--secondary mt-3" style="width:100%;" (click)="uploadBtn(rightUpload, sideRemote)">Upload files to z/OS...</button> -->
 </div>

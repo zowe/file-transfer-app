@@ -1,16 +1,32 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { UploaderService } from '../services/Uploader.service';
 
 @Component({
   selector: 'app-uploader-panel',
   templateUrl: './uploader-panel.component.html',
   styleUrls: [
-    '../../../node_modules/carbon-components/css/carbon-components.min.css',
-    './uploader-panel.component.css'
+    // '../../../node_modules/carbon-components/css/carbon-components.min.css',
+    './uploader-panel.component.scss'
   ]
 })
 export class UploaderPanelComponent {
   @Input() uploadPath: string;
+  @Output() onClose: EventEmitter<null> = new EventEmitter<null>();
+
+  encodings = [
+    {
+        content: 'BINARY',
+        selected: true
+    },
+    {
+        content: 'IBM-1047',
+        selected: false,
+    },
+    {
+        content: 'UTF-8',
+        selected: false
+    }
+  ];
 
   files: Set<File>;
 
@@ -19,6 +35,10 @@ export class UploaderPanelComponent {
   ngOnInit(): void {
     this.uploadHandlerSetup();
     this.files = new Set<File>();
+  }
+
+  close(): void {
+    this.onClose.emit();
   }
 
   onFilesAdded(event: any): void {

@@ -1,0 +1,39 @@
+:host ::ng-deep {
+    @import "../../../node_modules/carbon-components/scss/globals/scss/styles.scss";
+
+    svg {
+        fill: #ffffff;
+    }
+
+    .download-copy-panel {
+        display: flex;
+    }
+
+    #download-button {
+        flex-grow: 1;
+    }
+
+    #copy-button {
+        flex-grow: 1;
+    }
+
+    .path-bar {
+        display: flex;
+    }
+
+    #path-label {
+        display: block;
+    }
+
+    #path-input {
+        flex-grow: 1;
+        min-width: 0px;
+        order: 0;
+    }
+
+    #tree {
+        width: 100%;
+        min-height: 150px;
+    }
+
+}

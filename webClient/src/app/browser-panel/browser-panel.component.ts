@@ -39,9 +39,9 @@ class FileRow {
     selector: 'app-browser-panel',
     templateUrl: './browser-panel.component.html',
     styleUrls: [
-    '../../../node_modules/carbon-components/css/carbon-components.min.css',
+    // '../../../node_modules/carbon-components/css/carbon-components.min.css',
     '../../../node_modules/primeng/resources/primeng.min.css',
-    './browser-panel.component.css'
+    './browser-panel.component.scss'
     ]
 })
 export class BrowserPanelComponent implements OnInit {
@@ -68,6 +68,8 @@ export class BrowserPanelComponent implements OnInit {
     contextTreeNode: TreeNode;
     contextRow: FileRow;
 
+    uploadModalVisible: boolean;
+
     constructor() { }
 
     get sideLocal(): FTASide {
@@ -81,6 +83,7 @@ export class BrowserPanelComponent implements OnInit {
         console.log('ngOnInit this.connection.name=' + this.connection.name);
 
         this.fileView = 'tree';
+        this.uploadModalVisible = false;
 
         this.connection.ftaWs.onError((err) => {
             this.showError(err);
@@ -143,9 +146,17 @@ export class BrowserPanelComponent implements OnInit {
 
     }
 
+    showUploadModal(): void {
+        this.uploadModalVisible = true;
+    }
+
+    closeUploadModal(): void {
+        this.uploadModalVisible = false;
+    }
+
     getSelectedDirectory(): string {
-        console.log('Getting the correct directory');
-        if(this.isFolder(this.treeSelectedNode)) {
+        // console.log('Getting the correct directory');
+        if (this.isFolder(this.treeSelectedNode)) {
             return this.selectedPath;
         } else {
             return this.getPathFromRoot(this.treeSelectedNode.parent);

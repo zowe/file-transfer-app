@@ -1,34 +1,55 @@
 <div>
-  <h4>Add files to the remote server</h4>
-  <p>Check the file type designation for all files before initiating the upload process.</p>
-  <!-- Upload Button for z/OS -->
-  <form class="bx--form-item" id="file-form">
-      <div class="bx--form-item mt-3" style="width:100%">
-          <div class="bx--file" style="width:100%" data-file>
-              <label
-                  for="file-upload"
-                  class="bx--file-btn bx--btn bx--btn--secondary"
-                  role="button"
-                  tabindex="0">Add Files</label>
-              <input
-                  type="file"
-                  #filepickers
-                  (change)="onFilesAdded($event)"
-                  name="uploader"
-                  class="bx--file-input"
-                  id="file-upload"
-                  data-file-uploader
-                  data-target="[data-file-container]"
-                  style="width:100%"
-                  multiple
-                  />
-              <div data-file-container class="bx--file-container">
-                <ul>
-                  <li *ngFor="let file of files">{{ file.name }}</li>
-                </ul>
-              </div>
-              <button ibmButton type="submit" id="upload-button">Upload</button>
-          </div>
-      </div>
-  </form>
+
+    <!-- Upload Button for z/OS -->
+
 </div>
+
+<ibm-modal #modal [size]="lg">
+    <ibm-modal-header>
+        <h1>Add Files</h1>
+        <p>Check the file encoding designation for all files before initiating the upload process.</p>
+    </ibm-modal-header>
+    <section class="modal-body">
+        <form class="bx--form-item" id="file-form">
+            <div class="bx--form-item mt-3" style="width:100%">
+                <div class="bx--file" style="width:100%" data-file>
+                    <label
+                        for="file-upload"
+                        class="bx--file-btn bx--btn bx--btn--secondary"
+                        role="button"
+                        tabindex="0">Add Files</label>
+                    <input
+                        type="file"
+                        #filepickers
+                        (change)="onFilesAdded($event)"
+                        name="uploader"
+                        class="bx--file-input"
+                        id="file-upload"
+                        data-file-uploader
+                        data-target="[data-file-container]"
+                        style="width:100%"
+                        multiple
+                        />
+                    <ul>
+                        <li class="mt-3" *ngFor="let file of files" style="display: flex;">
+                            <p>
+                                {{ file.name }}
+                            </p>
+                            <ibm-dropdown
+                                placeholder="BINARY"
+                                value="content"
+                                type="single"
+                                >
+                                <ibm-dropdown-list [items]="encodings"></ibm-dropdown-list>
+                            </ibm-dropdown>
+                        </li>
+                    </ul>
+                    </div>
+                </div>
+        </form>
+    </section>
+    <ibm-modal-footer>
+        <button ibmButton="ghost" (click)="close()">Cancel</button>
+        <button ibmButton type="submit" id="upload-button">Submit</button>
+    </ibm-modal-footer>
+</ibm-modal>
