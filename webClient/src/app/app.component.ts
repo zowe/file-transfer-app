@@ -27,9 +27,10 @@ import { ModalService } from 'carbon-components-angular/modal/modal.service';
   templateUrl: './app.component.html',
   styleUrls: [
                 // '../../node_modules/carbon-components/css/carbon-components.min.css',
-                // '../../node_modules/bootstrap/dist/css/bootstrap.min.css',
-                '../../node_modules/primeng/resources/primeng.min.css',
-                '../../node_modules/primeng/resources/themes/omega/theme.css',
+                '../../node_modules/bootstrap/dist/css/bootstrap.min.css',
+                // '../../node_modules/primeng/resources/primeng.min.css',
+                // '../../node_modules/primeng/resources/themes/omega/theme.css',
+                '../styles.scss',
                 './app.component.scss'
                 ],
   providers: [FTAWebsocketService]

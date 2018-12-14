@@ -14,15 +14,12 @@ import { FormsModule } from '@angular/forms';
 
 import { TreeModule } from 'primeng/tree';
 import { DataTableModule } from 'primeng/primeng';
-<<<<<<< HEAD
-=======
 
 import { ButtonModule } from 'carbon-components-angular/button/button.module';
 import { InputModule } from 'carbon-components-angular/input/input.module';
 import { ModalModule } from 'carbon-components-angular/modal/modal.module';
 import { DropdownModule } from 'carbon-components-angular/dropdown/dropdown.module';
 
->>>>>>> 08f3f01a... added dropdown to modal
 import { HttpClientModule } from '@angular/common/http';
 import { UploaderService } from './services/Uploader.service'
 import { FTAWebsocketService } from './services/FTAWebsocket.service';
@@ -37,11 +34,7 @@ import { UploaderPanelComponent } from './uploader-panel/uploader-panel.componen
     AppComponent,
     BrowserPanelComponent,
     ConnectionPanelComponent,
-<<<<<<< HEAD
-    UploaderPanelComponent,
-=======
     UploaderPanelComponent
->>>>>>> 08f3f01a... added dropdown to modal
   ],
   imports: [
     // BrowserModule, /* remove this for within-MVD development */
@@ -55,11 +48,6 @@ import { UploaderPanelComponent } from './uploader-panel/uploader-panel.componen
     ModalModule,
     DropdownModule
   ],
-<<<<<<< HEAD
-=======
-  exports: [
-  ],
->>>>>>> 08f3f01a... added dropdown to modal
   providers: [FTAWebsocketService, UploaderService],
   bootstrap: [AppComponent]
 })

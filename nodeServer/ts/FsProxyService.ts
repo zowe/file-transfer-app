@@ -41,7 +41,7 @@ class FTAWebsocketProxy {
     websocket.onerror = this.onerror;
     this.websocket = websocket;
     //this.localConnection = new LocalConnection(FTASide.LOCAL);
-    this.localConnection = new ZssServerConnection(FTASide.LOCAL, context.plugin.server.config.startUp.proxiedHost, context.plugin.server.config.startUp.proxiedPort, username, session["com.rs.auth.zssAuth"].zssCookies);
+    this.localConnection = new ZssServerConnection(FTASide.LOCAL, context.plugin.server.config.startUp.proxiedHost, context.plugin.server.config.startUp.proxiedPort, session["org.zowe.zlux.auth.zss"].zssUsername, session["org.zowe.zlux.auth.zss"].zssCookies);
     
   }
   onmessage(messageEvent: MessageEvent): void {

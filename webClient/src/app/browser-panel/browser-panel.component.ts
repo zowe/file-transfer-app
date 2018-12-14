@@ -40,8 +40,9 @@ class FileRow {
     templateUrl: './browser-panel.component.html',
     styleUrls: [
     // '../../../node_modules/carbon-components/css/carbon-components.min.css',
-    '../../../node_modules/primeng/resources/primeng.min.css',
-    './browser-panel.component.scss'
+    // '../../../node_modules/primeng/resources/primeng.min.css',
+    './browser-panel.component.scss',
+    '../../styles.scss'
     ]
 })
 export class BrowserPanelComponent implements OnInit {
@@ -69,6 +70,21 @@ export class BrowserPanelComponent implements OnInit {
     contextRow: FileRow;
 
     uploadModalVisible: boolean;
+
+    encodings = [
+        {
+            content: 'BINARY',
+            selected: true
+        },
+        {
+            content: 'IBM-1047',
+            selected: false,
+        },
+        {
+            content: 'UTF-8',
+            selected: false
+        }
+    ];
 
     constructor() { }
 

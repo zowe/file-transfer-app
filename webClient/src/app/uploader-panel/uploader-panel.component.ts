@@ -6,67 +6,86 @@ import { UploaderService } from '../services/Uploader.service';
   templateUrl: './uploader-panel.component.html',
   styleUrls: [
     // '../../../node_modules/carbon-components/css/carbon-components.min.css',
-    './uploader-panel.component.scss'
+    './uploader-panel.component.scss',
+    '../../styles.scss'
   ]
 })
 export class UploaderPanelComponent {
   @Input() uploadPath: string;
   @Output() onClose: EventEmitter<null> = new EventEmitter<null>();
 
-  encodings = [
-    {
-        content: 'BINARY',
-        selected: true
-    },
-    {
-        content: 'IBM-1047',
-        selected: false,
-    },
-    {
-        content: 'UTF-8',
-        selected: false
-    }
-  ];
-
-  files: Set<File>;
+  files: Array<File>;
+  fileEncodings: Array<string>;
 
   constructor(private uploader: UploaderService) { }
 
   ngOnInit(): void {
     this.uploadHandlerSetup();
-    this.files = new Set<File>();
+    this.files = new Array<File>();
+    this.fileEncodings = new Array<string>();
   }
 
   close(): void {
+    this.files = [];
+    this.fileEncodings = [];
     this.onClose.emit();
   }
 
   onFilesAdded(event: any): void {
     for (let file of event.target.files) {
-      if (!this.files.has(file)) {
-        this.files.add(file);
+      if (!(file in this.files)) {
+        this.files.push(file);
+        this.fileEncodings.push('BINARY');
       }
     }
     console.log(this.files);
+    console.log(this.fileEncodings);
+  }
+
+  changeFileEncoding(event: any): void {
+    console.log(event);
+    // this.fileEncodings.set(event.file, event.fileEncoding);
+    console.log(this.fileEncodings);
   }
 
   uploadHandlerSetup(): void {
-      const form = <HTMLFormElement> document.getElementById('file-form');
-      const fileSelect = <HTMLInputElement> document.getElementById('file-upload');
-      const uploadButton = <HTMLButtonElement> document.getElementById('upload-button');
+    const form = <HTMLFormElement> document.getElementById('file-form');
 
-      form.onsubmit = (event) => {
-          event.preventDefault();
-          console.log('Submit Event Triggered');
+    form.onsubmit = (event) => {
+      event.preventDefault();
 
-          uploadButton.innerHTML = 'Uploading...'; // prevents browser from submitting form
-          const files = <FileList> fileSelect.files;
+      console.log(this.files);
 
-          for (let i = 0; i < files.length; i++) {
-              const file = files[i];
+      // This code will asynchronously trigger all the files to be uploaded at once.
+      // Not sure if this is the way we want to go or if we want to do uploads one file at a time.
 
-              this.uploader.chunkAndSendFile(file, this.uploadPath);
-          }
-      };
+      // for (let i = 0; i < this.files.length; i++) {
+      //   this.uploader.chunkAndSendFile(this.files[i], this.uploadPath, this.fileEncodings[i])
+      //     .subscribe(
+      //       value => console.log('Progress:', value),
+      //       error => {},
+      //       () => console.log('Finished uploading', this.files[i].name)
+      //     );
+      // }
+
+      let fileIdx = 0;
+      const uploadFiles = () => {
+        if (fileIdx < this.files.length) {
+          const file = this.files[fileIdx];
+          this.uploader.chunkAndSendFile(file, this.uploadPath, this.fileEncodings[fileIdx])
+          .subscribe(
+            value => { console.log('Progress:', value) },
+            error => {},
+            () => {
+              console.log('Finished with', file.name);
+              fileIdx++;
+              uploadFiles();
+            }
+          );
+        }
+      }
+
+      uploadFiles();
+    };
   }
 }

@@ -1,9 +1,4 @@
-<div>
-
-    <!-- Upload Button for z/OS -->
-
-</div>
-
+<!DOCTYPE html>
 <ibm-modal #modal [size]="lg">
     <ibm-modal-header>
         <h1>Add Files</h1>
@@ -30,26 +25,30 @@
                         style="width:100%"
                         multiple
                         />
-                    <ul>
-                        <li class="mt-3" *ngFor="let file of files" style="display: flex;">
-                            <p>
-                                {{ file.name }}
-                            </p>
-                            <ibm-dropdown
-                                placeholder="BINARY"
-                                value="content"
-                                type="single"
-                                >
-                                <ibm-dropdown-list [items]="encodings"></ibm-dropdown-list>
-                            </ibm-dropdown>
-                        </li>
-                    </ul>
+                        <ul>
+                            <li class="file-item mt-1" *ngFor="let file of files; index as i">
+                                <label>
+                                    {{ file.name }}
+                                </label>
+                            
+                                <div class="bx--form-item">
+                                    <div class="bx--select bx--select--light">
+                                        <select class="bx--select-input" id="select-input" [(ngModel)]="fileEncodings[i]" [ngModelOptions]="{standalone: true}">
+                                            <option class="bx--select-option" value="BINARY" selected>BINARY</option>
+                                            <option class="bx--select-option" value="IBM-1047">IBM-1047</option>
+                                            <option class="bx--select-option" value="UTF-8">UTF-8</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    <!-- <app-file-item [file]="file" (encoding)="changeFileEncoding($event)" *ngFor="let file of files"></app-file-item> -->
                     </div>
                 </div>
         </form>
     </section>
-    <ibm-modal-footer>
-        <button ibmButton="ghost" (click)="close()">Cancel</button>
-        <button ibmButton type="submit" id="upload-button">Submit</button>
+    <ibm-modal-footer class="mt-3">
+        <button ibmButton="ghost" (click)="close()" class="mr-3">Cancel</button>
+        <button ibmButton type="submit" id="upload-button" form="file-form">Submit</button>
     </ibm-modal-footer>
 </ibm-modal>
