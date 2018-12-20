@@ -180,13 +180,13 @@ export class BrowserPanelComponent implements OnInit {
     }
 
     saveAs(): void {
-        let uri = ZoweZLUX.uriBroker.unixFileUri('contents', this.leftPath.slice(1), undefined, undefined, undefined, true);
-        console.log(uri);
-        const tokens = this.leftPath.split('/');
+        const tokens = this.selectedPath.split('/');
         const filename = tokens[tokens.length - 1];
         console.log('saveAs filename=' + filename);
         const a = document.createElement('a');
-        a.href = uri;
+        // TODO replace this call with a uri from the URI Broker
+        a.href = '/unixfile/contents' + this.selectedPath;
+        console.log(a.href);
         a.download = filename;
         a.click();
     }
@@ -495,4 +495,5 @@ export class BrowserPanelComponent implements OnInit {
         }
         return undefined;
     }
+
 }
