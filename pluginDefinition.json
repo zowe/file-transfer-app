@@ -25,7 +25,8 @@
       "serviceLookupMethod": "external",
       "fileName": "nodeServer/ts/FsProxyService.js",
       "routerFactory": "fsRouter",
-      "dependenciesIncluded": true
+      "dependenciesIncluded": true,
+      "version": "1.0.0"
     }
   ]
 }
