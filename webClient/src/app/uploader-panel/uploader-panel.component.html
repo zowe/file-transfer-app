@@ -25,26 +25,23 @@
                         style="width:100%"
                         multiple
                         />
-                        <ul>
-                            <li class="file-item mt-1" *ngFor="let file of files; index as i">
-                                <label>
-                                    {{ file.name }}
-                                </label>
-                            
-                                <div class="bx--form-item">
-                                    <div class="bx--select bx--select--light">
-                                        <select class="bx--select-input" id="select-input" [(ngModel)]="fileEncodings[i]" [ngModelOptions]="{standalone: true}">
-                                            <option class="bx--select-option" value="BINARY" selected>BINARY</option>
-                                            <option class="bx--select-option" value="IBM-1047">IBM-1047</option>
-                                            <option class="bx--select-option" value="UTF-8">UTF-8</option>
-                                        </select>
-                                    </div>
+                    <ul>
+                        <li class="file-item mt-1" *ngFor="let file of files; index as i">
+                            <label>
+                                {{ file.name }}
+                            </label>
+                        
+                            <div class="bx--form-item">
+                                <div class="bx--select bx--select--light">
+                                    <select class="bx--select-input" id="select-input" [(ngModel)]="fileEncodings[i]" [ngModelOptions]="{standalone: true}">
+                                        <option *ngFor="let encoding of encodings" [value]="encoding.value" [attr.selected]="encoding.selected === true ? true : null"> {{ encoding.name }} </option>
+                                    </select>
                                 </div>
-                            </li>
-                        </ul>
-                    <!-- <app-file-item [file]="file" (encoding)="changeFileEncoding($event)" *ngFor="let file of files"></app-file-item> -->
-                    </div>
+                            </div>
+                        </li>
+                    </ul>
                 </div>
+            </div>
         </form>
     </section>
     <ibm-modal-footer class="mt-3">

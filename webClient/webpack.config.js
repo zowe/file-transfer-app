@@ -41,7 +41,6 @@ var config = {
       }  
     ],
   },
-  'mode': 'development',
   'plugins': [
     new CopyWebpackPlugin([
       {

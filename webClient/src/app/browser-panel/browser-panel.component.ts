@@ -1,8 +1,10 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Inject } from '@angular/core';
 import { TreeNode } from 'primeng/api';
 import { Connection } from '../Connection';
 import { Message } from 'primeng/components/common/api';
 import { FTASide, FTAFileInfo, FTAFileMode } from '../../../../common/FTATypes';
+
+import { Angular2InjectionTokens } from 'pluginlib/inject-resources';
 
 class TreeNodeData {
     attributes: any;
@@ -71,22 +73,7 @@ export class BrowserPanelComponent implements OnInit {
 
     uploadModalVisible: boolean;
 
-    encodings = [
-        {
-            content: 'BINARY',
-            selected: true
-        },
-        {
-            content: 'IBM-1047',
-            selected: false,
-        },
-        {
-            content: 'UTF-8',
-            selected: false
-        }
-    ];
-
-    constructor() { }
+    constructor(@Inject(Angular2InjectionTokens.LOGGER) private log: ZLUX.ComponentLogger) { }
 
     get sideLocal(): FTASide {
         return FTASide.LOCAL;
@@ -96,7 +83,7 @@ export class BrowserPanelComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        console.log('ngOnInit this.connection.name=' + this.connection.name);
+        this.log.debug('ngOnInit this.connection.name=' + this.connection.name);
 
         this.fileView = 'tree';
         this.uploadModalVisible = false;
@@ -106,7 +93,7 @@ export class BrowserPanelComponent implements OnInit {
         });
 
         this.connection.ftaWs.onHomePath((err: any, system: FTASide, path: string) => {
-            console.log('FTA onHomePath system= ' + system + ' path=' + path);
+            this.log.debug('FTA onHomePath system= ' + system + ' path=' + path);
             if (err) {
                 this.showError(err);
                 return;
@@ -118,7 +105,7 @@ export class BrowserPanelComponent implements OnInit {
         });
 
         this.connection.ftaWs.onLs((err: any, system: FTASide, path: string, fileInfos: FTAFileInfo[]) => {
-            console.log('FTA onLs system= ' + system + ' path=' + path + ' ' + JSON.stringify(fileInfos));
+            this.log.debug('FTA onLs system= ' + system + ' path=' + path + ' ' + JSON.stringify(fileInfos));
             if (err) {
                 this.showError(err);
                 return;
@@ -154,7 +141,7 @@ export class BrowserPanelComponent implements OnInit {
     }
 
     fopen(side: FTASide, pathToOpen: string, mode: FTAFileMode, onOpen: (err: any, streamId: number) => void): void {
-        console.log('fopen side=' + side + ' pathToOpen=' + pathToOpen + ' mode=' + mode);
+        this.log.debug('fopen side=' + side + ' pathToOpen=' + pathToOpen + ' mode=' + mode);
         this.connection.ftaWs.fopen(side, pathToOpen, mode, onOpen);
     }
 
@@ -171,7 +158,7 @@ export class BrowserPanelComponent implements OnInit {
     }
 
     getSelectedDirectory(): string {
-        // console.log('Getting the correct directory');
+        // this.log.debug('Getting the correct directory');
         if (this.isFolder(this.treeSelectedNode)) {
             return this.selectedPath;
         } else {
@@ -180,13 +167,13 @@ export class BrowserPanelComponent implements OnInit {
     }
 
     saveAs(): void {
+        const uri = ZoweZLUX.uriBroker.unixFileUri('contents', this.selectedPath.slice(1), undefined, undefined, undefined, true);
+        this.log.debug(uri);
         const tokens = this.selectedPath.split('/');
         const filename = tokens[tokens.length - 1];
-        console.log('saveAs filename=' + filename);
+        this.log.debug('saveAs filename=' + filename);
         const a = document.createElement('a');
-        // TODO replace this call with a uri from the URI Broker
-        a.href = '/unixfile/contents' + this.selectedPath;
-        console.log(a.href);
+        a.href = uri;
         a.download = filename;
         a.click();
     }
@@ -196,7 +183,7 @@ export class BrowserPanelComponent implements OnInit {
     }
 
     pathFieldEnter(side: FTASide, pathEntered: string): void {
-        console.log('pathFieldEnter side=' + side + ' pathEntered=' + pathEntered);
+        this.log.debug('pathFieldEnter side=' + side + ' pathEntered=' + pathEntered);
         this.connection.ftaWs.ls(this.ftaSide, pathEntered);
     }
 
@@ -221,7 +208,7 @@ export class BrowserPanelComponent implements OnInit {
 
     treeNodeExpand(event: any): void {
         if (event.node) {
-            console.log('treeNodeExpand ' + this.getPathFromRoot(event.node));
+            this.log.debug('treeNodeExpand ' + this.getPathFromRoot(event.node));
         }
     }
 
@@ -237,7 +224,7 @@ export class BrowserPanelComponent implements OnInit {
     }
 
     listSelect(event: any): void {
-        console.log('listSelect ' + event.data);
+        this.log.debug('listSelect ' + event.data);
         const fileRow: FileRow  = <FileRow>event.data;
         if (this.isUpRow(fileRow)) {
             this.treeSelectedNode = this.getParent(this.treeSelectedNode);
@@ -247,7 +234,7 @@ export class BrowserPanelComponent implements OnInit {
     }
 
     listRowDblclick(event: any): void {
-        console.log('listRowDblclick ' + event.data);
+        this.log.debug('listRowDblclick ' + event.data);
         const fileRow: FileRow  = <FileRow>event.data;
         if (fileRow.isDir && fileRow.treeNode) {
             this.selectedPath = this.getPathFromRoot(fileRow.treeNode);
@@ -261,7 +248,7 @@ export class BrowserPanelComponent implements OnInit {
     }
 
     rowDataInputEnter(row: FileRow): void {
-        console.log('rowDataInputEnter on ' + row.nameBackup + ' -> ' + row.name);
+        this.log.debug('rowDataInputEnter on ' + row.nameBackup + ' -> ' + row.name);
         this.contextRow = row;
         row.isEditable = false;
         const newName = row.name;
@@ -273,14 +260,14 @@ export class BrowserPanelComponent implements OnInit {
     }
 
     rowDataInputEscape(row: FileRow): void {
-        console.log('rowDataInputEscape on ' + row.nameBackup);
+        this.log.debug('rowDataInputEscape on ' + row.nameBackup);
         row.name = row.nameBackup;
         row.isEditable = false;
         delete this.contextRow;
     }
 
     rename(side: FTASide, pathToRename: string, newPath: string): void {
-        console.log('rename side=' + side + ' pathToRename=' + pathToRename + ' newPath=' + newPath);
+        this.log.debug('rename side=' + side + ' pathToRename=' + pathToRename + ' newPath=' + newPath);
         this.connection.ftaWs.rename(side, pathToRename, newPath);
     }
 
@@ -298,7 +285,7 @@ export class BrowserPanelComponent implements OnInit {
     }
 
     uploadBtn(uploadElement: any, side: FTASide): void {
-        console.log('testUpload ' + uploadElement);
+        this.log.debug('testUpload ' + uploadElement);
         uploadElement.basicFileInput.nativeElement.click()
     }
 
@@ -450,7 +437,7 @@ export class BrowserPanelComponent implements OnInit {
 
     // Populates the treenode list for the p-tree
     ensurePath(tree: TreeNode[], path: string): TreeNode {
-        console.log('ensurePath ' + path);
+        this.log.debug('ensurePath ' + path);
         let root: TreeNode;
         if (tree.length > 0) {
             root = tree[0];
