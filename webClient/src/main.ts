@@ -13,10 +13,6 @@
 import { enableProdMode } from '@angular/core';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 
-/*import '../node_modules/primeng/resources/themes/afterdark/theme.css';
-//import '../node_modules/font-awesome/css/font-awesome.min.css';
-import '../node_modules/primeng/resources/primeng.min.css';*/
-
 import { AppModule } from './app/app.module';
 import { environment } from './environments/environment';
 

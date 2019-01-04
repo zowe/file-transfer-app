@@ -10,8 +10,9 @@ import { Angular2InjectionTokens } from 'pluginlib/inject-resources';
   selector: 'app-connection-panel',
   templateUrl: './connection-panel.component.html',
   styleUrls: [
-  '../../../node_modules/carbon-components/css/carbon-components.min.css',
-  './connection-panel.component.css'
+  // '../../../node_modules/carbon-components/css/carbon-components.min.css',
+  './connection-panel.component.scss',
+  '../../styles.scss'
   ],
   providers: [FTAWebsocketService]
 })

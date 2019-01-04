@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<ibm-modal #modal [size]="lg">
+    <ibm-modal-header>
+        <h1>Add Files</h1>
+        <p>Check the file encoding designation for all files before initiating the upload process.</p>
+    </ibm-modal-header>
+    <section class="modal-body">
+        <form class="bx--form-item" id="file-form">
+            <div class="bx--form-item mt-3" style="width:100%">
+                <div class="bx--file" style="width:100%" data-file>
+                    <label
+                        for="file-upload"
+                        class="bx--file-btn bx--btn bx--btn--secondary"
+                        role="button"
+                        tabindex="0">Add Files</label>
+                    <input
+                        type="file"
+                        #filepickers
+                        (change)="onFilesAdded($event)"
+                        name="uploader"
+                        class="bx--file-input"
+                        id="file-upload"
+                        data-file-uploader
+                        data-target="[data-file-container]"
+                        style="width:100%"
+                        multiple
+                        />
+                    <ul>
+                        <li class="file-item mt-1" *ngFor="let file of files; index as i">
+                            <label>
+                                {{ file.name }}
+                            </label>
+                        
+                            <div class="bx--form-item">
+                                <div class="bx--select bx--select--light">
+                                    <select class="bx--select-input" id="select-input" [(ngModel)]="fileEncodings[i]" [ngModelOptions]="{standalone: true}">
+                                        <option *ngFor="let encoding of encodings" [value]="encoding.value" [attr.selected]="encoding.selected === true ? true : null"> {{ encoding.name }} </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </form>
+    </section>
+    <ibm-modal-footer class="mt-3">
+        <button ibmButton="ghost" (click)="close()" class="mr-3">Cancel</button>
+        <button ibmButton type="submit" id="upload-button" form="file-form">Submit</button>
+    </ibm-modal-footer>
+</ibm-modal>

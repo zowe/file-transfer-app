@@ -21,29 +21,8 @@
           <div *ngIf="credentialsSubmitted" class="col-sm-6 mt-3">
             <app-browser-panel [connection]="remoteConnection" [ftaSide]="sideRemote"></app-browser-panel>
           </div>
-      </div>
+      </div>    
   </div>
-  <!-- <p-growl [value]="connectionMessages" (click)="hideMessages()"></p-growl>
-  <div>
-    <div [style]="{'display':'flex'}">
-      <p-dropdown [options]="protocols" [(ngModel)]="selectedProtocol" optionLabel="label" [style]="{'width':'80px'}"></p-dropdown>
-      <input type="text" pInputText [(ngModel)]="address" placeholder="IP Address"/>
-      <input type="text" pInputText [(ngModel)]="username" placeholder="Username"/>
-      <input type="password" pPassword [(ngModel)]="password" placeholder="Password" (keyup.enter)="passwordInputEnter()"/>
-      <button pButton type="button" label="Connect..." (click)="onConnectionDialogOk()"></button>
-    </div>
-    <div *ngIf="localConnection && connections.length == 0">
-      <connection-view-component [connection]="localConnection" >
-      </connection-view-component>
-    </div>
-    <p-tabView>
-        <p-tabPanel *ngFor="let connection of connections; let i = index" [header]="connection.name" [selected]="i == (connections.length-1)" [closable]="true" >
-            <connection-view-component [connection]="connection">
-            </connection-view-component>
-        </p-tabPanel>
-    </p-tabView>
-  </div> -->
-
 <!-- 
   This program and the accompanying materials are
   made available under the terms of the Eclipse Public License v2.0 which accompanies
