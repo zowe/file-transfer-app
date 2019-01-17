@@ -28,6 +28,11 @@ export class UploaderPanelComponent {
         selected: false
     },
     {
+        name: 'ISO-8859-1',
+        value: 'ISO-8859-1',
+        selected: false
+    },
+    {
         name: 'International EBCDIC 1047',
         value: 'IBM-1047',
         selected: false
@@ -179,8 +184,9 @@ export class UploaderPanelComponent {
   }
 
   onFilesAdded(event: any): void {
+    const names = Array.from(this.files, file => file.name);
     for (let file of event.target.files) {
-      if (!(file in this.files)) {
+      if (!(names.includes(file.name))) {
         this.files.push(file);
         this.fileEncodings.push('BINARY');
       }
@@ -218,11 +224,13 @@ export class UploaderPanelComponent {
       // We should make a queue that holds the list of files we wish to upload
       // That queue should likely be stored in a service (probably the uploader service that exists)
 
+      const filesCopy = this.files;
+      const fileEncodingsCopy = this.fileEncodings;
       let fileIdx = 0;
       const uploadFiles = () => {
-        if (fileIdx < this.files.length) {
-          const file = this.files[fileIdx];
-          this.uploader.chunkAndSendFile(file, this.uploadPath, this.fileEncodings[fileIdx])
+        if (fileIdx < filesCopy.length) {
+          const file = filesCopy[fileIdx];
+          this.uploader.chunkAndSendFile(file, this.uploadPath, fileEncodingsCopy[fileIdx])
           .subscribe(
             value => { console.log('Progress:', value) },
             error => {},
@@ -236,6 +244,7 @@ export class UploaderPanelComponent {
       }
 
       uploadFiles();
+      this.close();
     };
   }
 }

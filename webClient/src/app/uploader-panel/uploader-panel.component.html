@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <ibm-modal #modal [size]="lg">
-    <ibm-modal-header>
+    <ibm-modal-header (closeSelect)="close()">
         <h1>Add Files</h1>
         <p>Check the file encoding designation for all files before initiating the upload process.</p>
     </ibm-modal-header>
@@ -25,21 +25,24 @@
                         style="width:100%"
                         multiple
                         />
-                    <ul>
-                        <li class="file-item mt-1" *ngFor="let file of files; index as i">
-                            <label>
-                                {{ file.name }}
-                            </label>
                         
-                            <div class="bx--form-item">
-                                <div class="bx--select bx--select--light">
-                                    <select class="bx--select-input" id="select-input" [(ngModel)]="fileEncodings[i]" [ngModelOptions]="{standalone: true}">
-                                        <option *ngFor="let encoding of encodings" [value]="encoding.value" [attr.selected]="encoding.selected === true ? true : null"> {{ encoding.name }} </option>
-                                    </select>
+                    <div style="max-height: 400px; overflow-y:scroll;">
+                        <ul>
+                            <li class="file-item mt-1" *ngFor="let file of files; index as i">
+                                <label>
+                                    {{ file.name }}
+                                </label>
+                            
+                                <div class="bx--form-item">
+                                    <div class="bx--select bx--select--light">
+                                        <select class="bx--select-input" [(ngModel)]="fileEncodings[i]" [ngModelOptions]="{standalone: true}">
+                                            <option *ngFor="let encoding of encodings" [value]="encoding.value" [attr.selected]="encoding.selected === true ? true : null"> {{ encoding.name }} </option>
+                                        </select>
+                                    </div>
                                 </div>
-                            </div>
-                        </li>
-                    </ul>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </form>
