@@ -38,6 +38,8 @@ export class UploaderService {
                     }
                     if (lastChunk) {
                         parameters = parameters.append('lastChunk', 'true');
+                    } else {
+                        parameters = parameters.append('lastChunk', 'false');
                     }
                     const options = {
                         params: parameters
