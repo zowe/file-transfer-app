@@ -8,11 +8,14 @@
   Copyright Contributors to the Zowe Project.
 */
 
-import { Component, OnInit, Input, Inject } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, Inject } from '@angular/core';
 import { TreeNode } from 'primeng/api';
 import { Connection } from '../Connection';
 import { Message } from 'primeng/components/common/api';
 import { FTASide, FTAFileInfo, FTAFileMode } from '../../../../common/FTATypes';
+import { FileBrowserUSSComponent } from '@zlux/file-explorer/src/app/components/filebrowseruss/filebrowseruss.component';
+import { ZluxFileExplorerComponent } from '@zlux/file-explorer/src/app/components/zlux-file-explorer/zlux-file-explorer.component';
+
 
 import { Angular2InjectionTokens } from 'pluginlib/inject-resources';
 
@@ -62,6 +65,10 @@ export class BrowserPanelComponent implements OnInit {
     @Input() connection: Connection;
     // @ts-ignore
     @Input() ftaSide: FTASide;
+
+    @ViewChild(ZluxFileExplorerComponent)
+    private fileExplorer: ZluxFileExplorerComponent;
+  
 
     fileView: string;
 

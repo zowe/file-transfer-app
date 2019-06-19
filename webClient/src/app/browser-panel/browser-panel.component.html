@@ -28,24 +28,36 @@
         </div>
     </div>
 
-    <!-- Path Input and Display -->
-    <form>
+    Path Input and Display
+    <!-- <form>
         <label for="path" id="path-label" class="bx--label">Path:</label>
         <div class="path-bar">
             <input ibmText name="path-input" id="path-input" type="text" class="browser-list mr-2" placeholder="" [(ngModel)]="selectedPath" (keyup.enter)="pathFieldEnter(ftaSide, leftPath)">
-            <div data-content-switcher  class="bx--content-switcher" role="tablist" aria-label="Demo switch content">
+            <div data-content-switcher  class="bx--content-switcher" role="tablist" aria-label="Demo switch content"> -->
                 <!-- List View Button -->
-                <button class="bx--content-switcher-btn" [ngClass]="{'bx--content-switcher--selected' : fileView === 'list' ? true : false}" (click)="listView()" role="tab">
+                <!-- <button class="bx--content-switcher-btn" [ngClass]="{'bx--content-switcher--selected' : fileView === 'list' ? true : false}" (click)="listView()" role="tab">
                     <svg width="24" height="24" viewBox="0 0 20 20" [ngStyle]="{'fill': fileView === 'list' ? '#ffffff' : '#3d70b2'}"><path d="M3 4h14v1H3zm0 6h14v1H3zm0 6h14v1H3z"></path></svg>
-                </button>
+                </button> -->
                 <!-- Tree View Button -->
-                <button class="bx--content-switcher-btn" [ngClass]="{'bx--content-switcher--selected' : fileView === 'tree' ? true : false}" (click)="treeView()" role="tab">
+                <!-- <button class="bx--content-switcher-btn" [ngClass]="{'bx--content-switcher--selected' : fileView === 'tree' ? true : false}" (click)="treeView()" role="tab">
                     <svg width="24" height="24" viewBox="0 0 23 24" [ngStyle]="{'fill': fileView === 'tree' ? '#ffffff' : '#3d70b2'}"><path d="M20.5 18v-6h-9V5.9C12.9 5.7 14 4.5 14 3c0-1.7-1.3-3-3-3S8 1.3 8 3c0 1.5 1.1 2.7 2.5 2.9V12h-8v6.1C1.1 18.4 0 19.6 0 21c0 1.7 1.3 3 3 3s3-1.3 3-3c0-1.5-1.1-2.7-2.5-2.9V13h16v5.1c-1.4.2-2.5 1.5-2.5 2.9 0 1.7 1.3 3 3 3s3-1.3 3-3c0-1.5-1-2.8-2.5-3zM9 3c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zM5 21c0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2 2 .9 2 2zm15 2c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"></path></svg>
                 </button>
             </div>
         </div>
-    </form>
-
+    </form> -->
+    <div class="explorer-container">
+        <zlux-file-explorer #fileExplorer
+        (nodeClick)="onNodeClick($event)"
+        (newFileClick)="onNewFileClick($event)"
+        (newFolderClick)="onNewFolderClick($event)"
+        (deleteClick)="onDeleteClick($event)"
+        (copyClick)="onCopyClick($event)"
+        (datasetSelect)="onDatasetSelect()"
+        (ussSelect)="onUssSelect()"
+        (pathChanged)="onPathChanged($event)"
+        >
+        </zlux-file-explorer>
+    </div>
     <!-- Tree Browser -->
     <div *ngIf="fileView === 'tree'" class="row flex-grow-1 mt-3">
         <div class="col">
@@ -56,7 +68,7 @@
     </div>
 
     <!-- List Browser -->
-    <div *ngIf="fileView ==='list'" class="row flex-grow-1 mt-3">
+    <!-- <div *ngIf="fileView ==='list'" class="row flex-grow-1 mt-3">
         <div class="col">
             <div class="box box box-stretched">
                 <p-dataTable
@@ -82,7 +94,10 @@
                 </p-dataTable>
             </div>
         </div>
-    </div>
+    </div> -->
+
+
+
     <!-- Download, Copy Panel -->
     <div class="download-copy-panel mt-3">
         <div id="download-button" class="col-xs-3">

@@ -29,6 +29,7 @@ import { AppComponent } from './app.component';
 import { BrowserPanelComponent } from './browser-panel/browser-panel.component';
 import { ConnectionPanelComponent } from './connection-panel/connection-panel.component';
 import { UploaderPanelComponent } from './uploader-panel/uploader-panel.component';
+import { FileExplorerModule } from '@zlux/file-explorer/src/plugin';
 
 @NgModule({
   declarations: [
@@ -45,6 +46,7 @@ import { UploaderPanelComponent } from './uploader-panel/uploader-panel.componen
     FormsModule,
     HttpClientModule,
     ButtonModule,
+    FileExplorerModule,
     InputModule,
     ModalModule,
     DropdownModule,
