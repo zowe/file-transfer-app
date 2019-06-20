@@ -182,7 +182,14 @@ export class BrowserPanelComponent implements OnInit {
             return this.getPathFromRoot(this.treeSelectedNode.parent);
         }
     }
-
+    onNodeClick($event:any){
+        if ($event.directory == false) {
+            this.selectedPath = $event.path;
+        } else {
+            this.selectedPath = '';
+        }
+    }
+    
     saveAs(): void {
         const uri = ZoweZLUX.uriBroker.unixFileUri('contents', this.selectedPath.slice(1), undefined, undefined, undefined, true);
         this.log.debug(uri);
@@ -190,9 +197,11 @@ export class BrowserPanelComponent implements OnInit {
         const filename = tokens[tokens.length - 1];
         this.log.debug('saveAs filename=' + filename);
         const a = document.createElement('a');
+        console.log('downloading from uri', uri);
         a.href = uri;
         a.download = filename;
         a.click();
+        console.log('clicked link');
     }
 
     needUpdate(subtree: TreeNode): boolean {
