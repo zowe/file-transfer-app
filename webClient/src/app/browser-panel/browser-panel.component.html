@@ -28,7 +28,7 @@
         </div>
     </div>
 
-    Path Input and Display
+    <!-- Path Input and Display -->
     <!-- <form>
         <label for="path" id="path-label" class="bx--label">Path:</label>
         <div class="path-bar">
@@ -45,26 +45,27 @@
             </div>
         </div>
     </form> -->
-    <div class="explorer-container">
-        <zlux-file-explorer #fileExplorer
-        (nodeClick)="onNodeClick($event)"
-        (newFileClick)="onNewFileClick($event)"
-        (newFolderClick)="onNewFolderClick($event)"
-        (deleteClick)="onDeleteClick($event)"
-        (copyClick)="onCopyClick($event)"
-        (datasetSelect)="onDatasetSelect()"
-        (ussSelect)="onUssSelect()"
-        (pathChanged)="onPathChanged($event)"
-        >
-        </zlux-file-explorer>
-    </div>
+   
     <!-- Tree Browser -->
     <div *ngIf="fileView === 'tree'" class="row flex-grow-1 mt-3">
-        <div class="col">
+        <div class="col"> 
             <div class="box box box-stretched">
-                <p-tree id="tree" [value]="tree" selectionMode="single" [(selection)]="treeSelectedNode" (onNodeSelect)="treeNodeSelect($event)" (onNodeExpand)="treeNodeExpand($event)" [style]="{'width':'100%', 'height':'350px'}"></p-tree>
+                    <div class="explorer-container">
+                            <zlux-file-explorer #fileExplorer
+                            (nodeClick)="onNodeClick($event)"
+                            (newFileClick)="onNewFileClick($event)"
+                            (newFolderClick)="onNewFolderClick($event)"
+                            (deleteClick)="onDeleteClick($event)"
+                            (copyClick)="onCopyClick($event)"
+                            (datasetSelect)="onDatasetSelect()"
+                            (ussSelect)="onUssSelect()"
+                            (pathChanged)="onPathChanged($event)">
+                            </zlux-file-explorer>
+                        </div>
+                <!-- <p-tree id="tree" [value]="tree" selectionMode="single" [(selection)]="treeSelectedNode" (onNodeSelect)="treeNodeSelect($event)" (onNodeExpand)="treeNodeExpand($event)" [style]="{'width':'100%', 'height':'350px'}"></p-tree> -->
             </div>
         </div>
+
     </div>
 
     <!-- List Browser -->
