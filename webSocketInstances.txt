@@ -1,0 +1,29 @@
+nodeServer:
+  ts:
+    FsProxyService.ts:
+      line 12: * import WebSocket commented out *
+      line 30: begins WebSocketProxy class
+        includes constructor which establishes a WS connection using client IP, port, etc
+      line 45: establishes local connection with new ZssServerConnection()
+      many subsequent conditional checks w.r.t. connection, messages sent/received,  especially FTAMessageType
+      (seems to be standard documentation)
+          unclear if these conditional checks are necessitated by WS, or just any HTTP connection
+      line 480: establishes websockets router
+webClient:
+  src:
+    app:
+      connection-panel:
+        connection-panel-components.ts:
+          line 17: makes component provider FTAWebsocketService
+          line 38-40: inside constructor makes the ftaServiceUrl WS?
+          line 51: establishing + possibly initiating WS connection onConnectionDialogOk()
+      services:
+        FTAWebsocket.service.ts:
+          line 17: makes an angular Injectable class w/ private WS  variable
+          line 97:in case of event (ev) connect...then trigger connection (wsOnOpen)
+          line 137: send the WS if the WS is open if not, error
+          line 150: same as above, but sending the binary data (??) in particular
+      app.components.ts:
+        line 86-: makes a new WS instance & connection & if there is an error, make a local connection?
+      Connection.ts:
+        line 21-: constructs the Connection by instantiating / attaching the WS object + instance
