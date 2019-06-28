@@ -59,8 +59,9 @@
                             (copyClick)="onCopyClick($event)"
                             (datasetSelect)="onDatasetSelect()"
                             (ussSelect)="onUssSelect()"
-                            (pathChanged)="onPathChanged($event)">
-                            </zlux-file-explorer>
+                            (pathChanged)="onPathChanged($event)"
+                            [style] = "{'background-color': 'hotpink'}"
+                            ></zlux-file-explorer>
                         </div>
                 <!-- <p-tree id="tree" [value]="tree" selectionMode="single" [(selection)]="treeSelectedNode" (onNodeSelect)="treeNodeSelect($event)" (onNodeExpand)="treeNodeExpand($event)" [style]="{'width':'100%', 'height':'350px'}"></p-tree> -->
             </div>

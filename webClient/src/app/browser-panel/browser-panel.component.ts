@@ -62,7 +62,7 @@ class FileRow {
     ],
     
 })
-export class BrowserPanelComponent implements OnInit {
+export class BrowserPanelComponent implements AfterViewInit, OnInit {
     // @ts-ignore
     @Input() connection: Connection;
     // @ts-ignore
@@ -97,7 +97,9 @@ export class BrowserPanelComponent implements OnInit {
 
     uploadModalVisible: boolean;
 
-    constructor(@Inject(Angular2InjectionTokens.LOGGER) private log: ZLUX.ComponentLogger) { }
+    constructor(@Inject(Angular2InjectionTokens.LOGGER) private log: ZLUX.ComponentLogger) {
+       
+     }
 
     get sideLocal(): FTASide {
         return FTASide.LOCAL;
@@ -154,7 +156,8 @@ export class BrowserPanelComponent implements OnInit {
     }
 
     ngAfterViewInit(){
-        // this.child.uploadPath = this.selectedPath;
+        this.fileExplorer.tabs = [{ index: 0, name: "USS" }];
+        // this.fileExplorer.style
     }
 
     treeView(): void {
