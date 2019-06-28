@@ -8,13 +8,14 @@
   Copyright Contributors to the Zowe Project.
 */
 
-import { Component, OnInit, Input, ViewChild, Inject } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, Inject, AfterViewInit, forwardRef } from '@angular/core';
 import { TreeNode } from 'primeng/api';
 import { Connection } from '../Connection';
 import { Message } from 'primeng/components/common/api';
 import { FTASide, FTAFileInfo, FTAFileMode } from '../../../../common/FTATypes';
 import { FileBrowserUSSComponent } from '@zlux/file-explorer/src/app/components/filebrowseruss/filebrowseruss.component';
 import { ZluxFileExplorerComponent } from '@zlux/file-explorer/src/app/components/zlux-file-explorer/zlux-file-explorer.component';
+import { UploaderPanelComponent } from '../uploader-panel/uploader-panel.component';
 
 
 import { Angular2InjectionTokens } from 'pluginlib/inject-resources';
@@ -58,7 +59,8 @@ class FileRow {
     // '../../../node_modules/primeng/resources/primeng.min.css',
     './browser-panel.component.scss',
     '../../styles.scss'
-    ]
+    ],
+    
 })
 export class BrowserPanelComponent implements OnInit {
     // @ts-ignore
@@ -66,9 +68,14 @@ export class BrowserPanelComponent implements OnInit {
     // @ts-ignore
     @Input() ftaSide: FTASide;
 
+    // @ViewChild(UploaderPanelComponent) child: UploaderPanelComponent;
+
+    @ViewChild(UploaderPanelComponent)
+    private child: UploaderPanelComponent; 
+
     @ViewChild(ZluxFileExplorerComponent)
     private fileExplorer: ZluxFileExplorerComponent;
-  
+
 
     fileView: string;
 
@@ -99,8 +106,12 @@ export class BrowserPanelComponent implements OnInit {
         return FTASide.REMOTE;
     }
 
+
+
     ngOnInit(): void {
         this.log.debug('ngOnInit this.connection.name=' + this.connection.name);
+        // this.child.uploadPath = this.selectedPath;
+
 
         this.fileView = 'tree';
         this.uploadModalVisible = false;
@@ -142,6 +153,10 @@ export class BrowserPanelComponent implements OnInit {
         this.connection.ftaWs.getHomePath(this.ftaSide);
     }
 
+    ngAfterViewInit(){
+        // this.child.uploadPath = this.selectedPath;
+    }
+
     treeView(): void {
         this.fileView = 'tree';
     }
@@ -149,6 +164,8 @@ export class BrowserPanelComponent implements OnInit {
     listView(): void {
         this.fileView = 'list';
     }
+
+
 
     isFolder(subtree: TreeNode): boolean {
         if (subtree.data && (<TreeNodeData>subtree.data).attributes) {
@@ -175,33 +192,46 @@ export class BrowserPanelComponent implements OnInit {
     }
 
     getSelectedDirectory(): string {
+        return this.selectedPath;
         // this.log.debug('Getting the correct directory');
-        if (this.isFolder(this.treeSelectedNode)) {
-            return this.selectedPath;
-        } else {
-            return this.getPathFromRoot(this.treeSelectedNode.parent);
-        }
+        // if (this.isFolder(this.treeSelectedNode)) {
+        //     return this.selectedPath;
+        // } else {
+        //     return this.getPathFromRoot(this.treeSelectedNode.parent);
+        // }
+
+        
     }
     onNodeClick($event:any){
-        if ($event.directory == false) {
+        if ($event.directory == false) { 
             this.selectedPath = $event.path;
+            // this.child.uploadPath = this.selectedPath;
         } else {
-            this.selectedPath = '';
+            let folderPath = $event.path.substring($event.path.lastIndexOf("\\") + 1, $event.path.length);
+            console.log(folderPath);
+            this.selectedPath = folderPath;
         }
+        console.log(this.selectedPath);
     }
     
     saveAs(): void {
+        
         const uri = ZoweZLUX.uriBroker.unixFileUri('contents', this.selectedPath.slice(1), undefined, undefined, undefined, true);
         this.log.debug(uri);
         const tokens = this.selectedPath.split('/');
         const filename = tokens[tokens.length - 1];
         this.log.debug('saveAs filename=' + filename);
         const a = document.createElement('a');
-        console.log('downloading from uri', uri);
+        console.log('downloading from uri', uri, 'with path ',this.selectedPath);
         a.href = uri;
         a.download = filename;
         a.click();
         console.log('clicked link');
+    }
+
+    getSelectedPath(){
+        console.log('selected path',this.selectedPath);
+        return this.selectedPath;
     }
 
     needUpdate(subtree: TreeNode): boolean {
@@ -309,6 +339,8 @@ export class BrowserPanelComponent implements OnInit {
         }
         return undefined;
     }
+
+    
 
     uploadBtn(uploadElement: any, side: FTASide): void {
         this.log.debug('testUpload ' + uploadElement);

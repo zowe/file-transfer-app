@@ -8,8 +8,9 @@
   Copyright Contributors to the Zowe Project.
 */
 
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ViewChild, AfterViewInit } from '@angular/core';
 import { UploaderService } from '../services/Uploader.service';
+// import { BrowserPanelComponent } from '../browser-panel/browser-panel.component';
 
 @Component({
   selector: 'app-uploader-panel',
@@ -19,10 +20,28 @@ import { UploaderService } from '../services/Uploader.service';
     './uploader-panel.component.scss',
     '../../styles.scss'
   ]
+  
 })
-export class UploaderPanelComponent {
+export class UploaderPanelComponent implements AfterViewInit {
   @Input() uploadPath: string;
+
+  ngOnInit(): void {
+    this.uploadHandlerSetup();
+    this.files = new Array<File>();
+    this.fileEncodings = new Array<string>();
+
+    
+  }
+
+  ngAfterViewInit(){
+
+ 
+  }
+
   @Output() onClose: EventEmitter<null> = new EventEmitter<null>();
+
+ 
+
 
   files: Array<File>;
   fileEncodings: Array<string>;
@@ -181,16 +200,17 @@ export class UploaderPanelComponent {
 
   constructor(private uploader: UploaderService) { }
 
-  ngOnInit(): void {
-    this.uploadHandlerSetup();
-    this.files = new Array<File>();
-    this.fileEncodings = new Array<string>();
-  }
+
 
   close(): void {
     this.files = [];
     this.fileEncodings = [];
     this.onClose.emit();
+  }
+
+
+  getSelectedDirectory(){
+    console.log('test');
   }
 
   onFilesAdded(event: any): void {
@@ -234,12 +254,15 @@ export class UploaderPanelComponent {
       // We should make a queue that holds the list of files we wish to upload
       // That queue should likely be stored in a service (probably the uploader service that exists)
 
+
+      // this.uploadPath = '/u/ts4051/zss/dco-signoffs';
       const filesCopy = this.files;
       const fileEncodingsCopy = this.fileEncodings;
       let fileIdx = 0;
       const uploadFiles = () => {
         if (fileIdx < filesCopy.length) {
           const file = filesCopy[fileIdx];
+          console.log('uploaduploaduploader path: ',this.uploadPath);
           this.uploader.chunkAndSendFile(file, this.uploadPath, fileEncodingsCopy[fileIdx])
           .subscribe(
             value => { console.log('Progress:', value) },
