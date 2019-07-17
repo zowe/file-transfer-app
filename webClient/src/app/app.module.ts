@@ -30,6 +30,7 @@ import { BrowserPanelComponent } from './browser-panel/browser-panel.component';
 import { ConnectionPanelComponent } from './connection-panel/connection-panel.component';
 import { UploaderPanelComponent } from './uploader-panel/uploader-panel.component';
 import { FileExplorerModule } from '@zlux/file-explorer/src/plugin';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material'
 
 @NgModule({
   declarations: [
@@ -50,7 +51,8 @@ import { FileExplorerModule } from '@zlux/file-explorer/src/plugin';
     InputModule,
     ModalModule,
     DropdownModule,
-    LoadingModule
+    LoadingModule,
+    MatSnackBarModule
   ],
   providers: [FTAWebsocketService, UploaderService],
   bootstrap: [AppComponent]

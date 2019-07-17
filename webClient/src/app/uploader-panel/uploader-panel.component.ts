@@ -11,6 +11,7 @@
 import { Component, OnInit, Input, Output, EventEmitter, ViewChild, AfterViewInit } from '@angular/core';
 import { UploaderService } from '../services/Uploader.service';
 // import { BrowserPanelComponent } from '../browser-panel/browser-panel.component';
+import {MatSnackBar} from '@angular/material';
 
 @Component({
   selector: 'app-uploader-panel',
@@ -198,7 +199,7 @@ export class UploaderPanelComponent implements AfterViewInit {
     }
   ];
 
-  constructor(private uploader: UploaderService) { }
+  constructor(private uploader: UploaderService, private _snackbar: MatSnackBar) { }
 
 
 
@@ -278,6 +279,11 @@ export class UploaderPanelComponent implements AfterViewInit {
 
       uploadFiles();
       this.close();
+      this._snackbar.open('Upload Successful!', 'Dismiss', {
+        duration: 2000,
+        panelClass: ['my-snackbar']
+      });
+      
     };
   }
 }

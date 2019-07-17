@@ -156,7 +156,7 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
     }
 
     ngAfterViewInit(){
-        // this.fileExplorer.tabs = [{ index: 0, name: "USS" }];
+        this.fileExplorer.tabs = [{ index: 0, name: "USS" }, {index:1, name: ""}];
         // this.fileExplorer.style
     }
 

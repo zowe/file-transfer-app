@@ -36,3 +36,13 @@
 .bx--select-input {
     width: 100%;
 }
+
+::ng-deep .my-snackbar{
+    background-color: lightgray;
+    color: black;
+    position: absolute;
+    left: 45%;
+    right: 50%;
+    bottom: 0px;
+
+}
