@@ -280,7 +280,7 @@ export class UploaderPanelComponent implements AfterViewInit {
       uploadFiles();
       this.close();
       this._snackbar.open('Upload Successful!', 'Dismiss', {
-        duration: 2000,
+        duration: 3000,
         panelClass: ['my-snackbar']
       });
       
