@@ -270,6 +270,10 @@ export class UploaderPanelComponent implements AfterViewInit {
             error => {},
             () => {
               console.log('Finished with', file.name);
+              this._snackbar.open('Upload Successful!', 'Dismiss', {
+                duration: 3000,
+                panelClass: ['my-snackbar']
+              });
               fileIdx++;
               uploadFiles();
             }
@@ -279,10 +283,7 @@ export class UploaderPanelComponent implements AfterViewInit {
 
       uploadFiles();
       this.close();
-      this._snackbar.open('Upload Successful!', 'Dismiss', {
-        duration: 3000,
-        panelClass: ['my-snackbar']
-      });
+    
       
     };
   }
