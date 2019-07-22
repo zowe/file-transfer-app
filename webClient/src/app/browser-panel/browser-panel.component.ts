@@ -211,10 +211,10 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
             // this.child.uploadPath = this.selectedPath;
         } else {
             let folderPath = $event.path.substring($event.path.lastIndexOf("\\") + 1, $event.path.length);
-            console.log(folderPath);
+            this.log.debug(folderPath);
             this.selectedPath = folderPath;
         }
-        console.log(this.selectedPath);
+        this.log.debug(this.selectedPath);
     }
     
     saveAs(): void {
@@ -225,15 +225,15 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
         const filename = tokens[tokens.length - 1];
         this.log.debug('saveAs filename=' + filename);
         const a = document.createElement('a');
-        console.log('downloading from uri', uri, 'with path ',this.selectedPath);
+        this.log.debug('downloading from uri', uri, 'with path ',this.selectedPath);
         a.href = uri;
         a.download = filename;
         a.click();
-        console.log('clicked link');
+        this.log.debug('clicked link');
     }
 
     getSelectedPath(){
-        console.log('selected path',this.selectedPath);
+        this.log.debug('selected path',this.selectedPath);
         return this.selectedPath;
     }
 

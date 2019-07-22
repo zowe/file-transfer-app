@@ -211,7 +211,7 @@ export class UploaderPanelComponent implements AfterViewInit {
 
 
   getSelectedDirectory(){
-    console.log('test');
+  
   }
 
   onFilesAdded(event: any): void {
@@ -263,7 +263,7 @@ export class UploaderPanelComponent implements AfterViewInit {
       const uploadFiles = () => {
         if (fileIdx < filesCopy.length) {
           const file = filesCopy[fileIdx];
-          console.log('uploaduploaduploader path: ',this.uploadPath);
+          
           this.uploader.chunkAndSendFile(file, this.uploadPath, fileEncodingsCopy[fileIdx])
           .subscribe(
             value => { console.log('Progress:', value) },
