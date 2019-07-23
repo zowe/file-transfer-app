@@ -22,6 +22,9 @@ import { Message } from 'primeng/components/common/api';
 
 import { ModalService } from 'carbon-components-angular/modal/modal.service';
 
+
+
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -37,6 +40,9 @@ import { ModalService } from 'carbon-components-angular/modal/modal.service';
 })
 
 export class AppComponent {
+
+  
+private showMenu:boolean;
   title = 'app';
 
   get sideLocal(): FTASide {
@@ -76,6 +82,8 @@ export class AppComponent {
     public modalService: ModalService
     ) {
 
+  
+
     const host = this.document.location.hostname;
     this.ftaServiceUrl = (window as any).ZoweZLUX.uriBroker.pluginWSUri(this.pluginDefinition.getBasePlugin(), 'fs', '');
 
@@ -96,6 +104,28 @@ export class AppComponent {
     this.credentialsSubmitted = true;
     this.remoteConnection = connection;
   }
+
+ toggleMenu() {
+    var connect = document.getElementById("connection-panel");
+    var expand = <HTMLButtonElement>document.getElementById("expand");
+  
+
+    if (connect.style.display === "none") {
+      connect.style.display = "block";
+      expand.className = "toggle-menu contract-menu";
+
+    } else {
+      connect.style.display = "none";
+      expand.className = "toggle-menu expand-menu";
+;
+     
+    }
+  }
+
+
+
+
+ 
 }
 
 /*
