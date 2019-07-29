@@ -8,7 +8,7 @@
   Copyright Contributors to the Zowe Project.
 */
 
-import { Component, OnInit, Input, ViewChild, Inject, AfterViewInit, forwardRef } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, Inject, AfterViewInit } from '@angular/core';
 import { TreeNode } from 'primeng/api';
 import { Connection } from '../Connection';
 import { Message } from 'primeng/components/common/api';
@@ -16,8 +16,6 @@ import { FTASide, FTAFileInfo, FTAFileMode } from '../../../../common/FTATypes';
 import { FileBrowserUSSComponent } from '@zlux/file-explorer/src/app/components/filebrowseruss/filebrowseruss.component';
 import { ZluxFileExplorerComponent } from '@zlux/file-explorer/src/app/components/zlux-file-explorer/zlux-file-explorer.component';
 import { UploaderPanelComponent } from '../uploader-panel/uploader-panel.component';
-
-
 import { Angular2InjectionTokens } from 'pluginlib/inject-resources';
 
 class TreeNodeData {
@@ -59,7 +57,7 @@ class FileRow {
     // '../../../node_modules/primeng/resources/primeng.min.css',
     './browser-panel.component.scss',
     '../../styles.scss'
-    ],
+    ]
     
 })
 export class BrowserPanelComponent implements AfterViewInit, OnInit {
@@ -97,9 +95,7 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
 
     uploadModalVisible: boolean;
 
-    constructor(@Inject(Angular2InjectionTokens.LOGGER) private log: ZLUX.ComponentLogger) {
-       
-     }
+    constructor(@Inject(Angular2InjectionTokens.LOGGER) private log: ZLUX.ComponentLogger) {}
 
     get sideLocal(): FTASide {
         return FTASide.LOCAL;
@@ -108,13 +104,8 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
         return FTASide.REMOTE;
     }
 
-
-
     ngOnInit(): void {
         this.log.debug('ngOnInit this.connection.name=' + this.connection.name);
-        // this.child.uploadPath = this.selectedPath;
-
-
         this.fileView = 'tree';
         this.uploadModalVisible = false;
 
@@ -157,7 +148,6 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
 
     ngAfterViewInit(){
         this.fileExplorer.tabs = [{ index: 0, name: "USS" }, {index:1, name: ""}];
-        // this.fileExplorer.style
     }
 
     treeView(): void {
@@ -167,8 +157,6 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
     listView(): void {
         this.fileView = 'list';
     }
-
-
 
     isFolder(subtree: TreeNode): boolean {
         if (subtree.data && (<TreeNodeData>subtree.data).attributes) {
@@ -196,14 +184,6 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
 
     getSelectedDirectory(): string {
         return this.selectedPath;
-        // this.log.debug('Getting the correct directory');
-        // if (this.isFolder(this.treeSelectedNode)) {
-        //     return this.selectedPath;
-        // } else {
-        //     return this.getPathFromRoot(this.treeSelectedNode.parent);
-        // }
-
-        
     }
     onNodeClick($event:any){
         if ($event.directory == false) { 
@@ -218,7 +198,6 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
     }
     
     saveAs(): void {
-        
         const uri = ZoweZLUX.uriBroker.unixFileUri('contents', this.selectedPath.slice(1), undefined, undefined, undefined, true);
         this.log.debug(uri);
         const tokens = this.selectedPath.split('/');
@@ -342,8 +321,6 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
         }
         return undefined;
     }
-
-    
 
     uploadBtn(uploadElement: any, side: FTASide): void {
         this.log.debug('testUpload ' + uploadElement);

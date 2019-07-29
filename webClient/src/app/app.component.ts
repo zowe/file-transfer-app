@@ -22,9 +22,6 @@ import { Message } from 'primeng/components/common/api';
 
 import { ModalService } from 'carbon-components-angular/modal/modal.service';
 
-
-
-
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -41,8 +38,7 @@ import { ModalService } from 'carbon-components-angular/modal/modal.service';
 
 export class AppComponent {
 
-  
-private showMenu:boolean;
+  private showMenu:boolean;
   title = 'app';
 
   get sideLocal(): FTASide {
@@ -82,8 +78,6 @@ private showMenu:boolean;
     public modalService: ModalService
     ) {
 
-  
-
     const host = this.document.location.hostname;
     this.ftaServiceUrl = (window as any).ZoweZLUX.uriBroker.pluginWSUri(this.pluginDefinition.getBasePlugin(), 'fs', '');
 
@@ -120,10 +114,6 @@ private showMenu:boolean;
     }
   }
 
-
-
-
- 
 }
 
 /*

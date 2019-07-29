@@ -8,7 +8,7 @@
   Copyright Contributors to the Zowe Project.
 */
 
-import { Component, OnInit, Input, Output, EventEmitter, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, AfterViewInit } from '@angular/core';
 import { UploaderService } from '../services/Uploader.service';
 // import { BrowserPanelComponent } from '../browser-panel/browser-panel.component';
 import {MatSnackBar} from '@angular/material';
@@ -23,26 +23,16 @@ import {MatSnackBar} from '@angular/material';
   ]
   
 })
-export class UploaderPanelComponent implements AfterViewInit {
+export class UploaderPanelComponent {
   @Input() uploadPath: string;
 
   ngOnInit(): void {
     this.uploadHandlerSetup();
     this.files = new Array<File>();
-    this.fileEncodings = new Array<string>();
-
-    
-  }
-
-  ngAfterViewInit(){
-
- 
+    this.fileEncodings = new Array<string>(); 
   }
 
   @Output() onClose: EventEmitter<null> = new EventEmitter<null>();
-
- 
-
 
   files: Array<File>;
   fileEncodings: Array<string>;
@@ -201,17 +191,10 @@ export class UploaderPanelComponent implements AfterViewInit {
 
   constructor(private uploader: UploaderService, private _snackbar: MatSnackBar) { }
 
-
-
   close(): void {
     this.files = [];
     this.fileEncodings = [];
     this.onClose.emit();
-  }
-
-
-  getSelectedDirectory(){
-  
   }
 
   onFilesAdded(event: any): void {
@@ -255,15 +238,12 @@ export class UploaderPanelComponent implements AfterViewInit {
       // We should make a queue that holds the list of files we wish to upload
       // That queue should likely be stored in a service (probably the uploader service that exists)
 
-
-      // this.uploadPath = '/u/ts4051/zss/dco-signoffs';
       const filesCopy = this.files;
       const fileEncodingsCopy = this.fileEncodings;
       let fileIdx = 0;
       const uploadFiles = () => {
         if (fileIdx < filesCopy.length) {
           const file = filesCopy[fileIdx];
-          
           this.uploader.chunkAndSendFile(file, this.uploadPath, fileEncodingsCopy[fileIdx])
           .subscribe(
             value => { console.log('Progress:', value) },
@@ -280,11 +260,8 @@ export class UploaderPanelComponent implements AfterViewInit {
           );
         }
       }
-
       uploadFiles();
       this.close();
-    
-      
     };
   }
 }

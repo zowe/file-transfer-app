@@ -13,11 +13,9 @@
 
   <div class="container">
       <div class="row">
-
           <div *ngIf="localConnection && connections.length === 0" class="col-sm-6 mt-3" >
             <app-browser-panel [connection]="localConnection" [ftaSide]="sideLocal"></app-browser-panel>
           </div>
-
           <div *ngIf="!credentialsSubmitted" class="col-sm-6 mt-3" id = "connection-panel" style="display: none; padding-right: 20px">
             <app-connection-panel (submitted)="onCredentialsSubmitted($event)"></app-connection-panel>
           </div>
