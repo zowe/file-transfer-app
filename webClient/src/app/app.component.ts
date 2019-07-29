@@ -109,7 +109,6 @@ private showMenu:boolean;
     var connect = document.getElementById("connection-panel");
     var expand = <HTMLButtonElement>document.getElementById("expand");
   
-
     if (connect.style.display === "none") {
       connect.style.display = "block";
       expand.className = "toggle-menu contract-menu";
@@ -117,7 +116,6 @@ private showMenu:boolean;
     } else {
       connect.style.display = "none";
       expand.className = "toggle-menu expand-menu";
-;
      
     }
   }
