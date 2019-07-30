@@ -37,6 +37,8 @@ import { ModalService } from 'carbon-components-angular/modal/modal.service';
 })
 
 export class AppComponent {
+
+  private showMenu:boolean;
   title = 'app';
 
   get sideLocal(): FTASide {
@@ -95,6 +97,21 @@ export class AppComponent {
     console.log('Credentials Submitted');
     this.credentialsSubmitted = true;
     this.remoteConnection = connection;
+  }
+
+ toggleMenu() {
+    var connect = document.getElementById("connection-panel");
+    var expand = <HTMLButtonElement>document.getElementById("expand");
+  
+    if (connect.style.display === "none") {
+      connect.style.display = "block";
+      expand.className = "toggle-menu contract-menu";
+
+    } else {
+      connect.style.display = "none";
+      expand.className = "toggle-menu expand-menu";
+     
+    }
   }
 }
 

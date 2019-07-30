@@ -8,8 +8,10 @@
   Copyright Contributors to the Zowe Project.
 */
 
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, AfterViewInit } from '@angular/core';
 import { UploaderService } from '../services/Uploader.service';
+// import { BrowserPanelComponent } from '../browser-panel/browser-panel.component';
+import { MatSnackBar } from '@angular/material';
 
 @Component({
   selector: 'app-uploader-panel',
@@ -22,6 +24,13 @@ import { UploaderService } from '../services/Uploader.service';
 })
 export class UploaderPanelComponent {
   @Input() uploadPath: string;
+
+  ngOnInit(): void {
+    this.uploadHandlerSetup();
+    this.files = new Array<File>();
+    this.fileEncodings = new Array<string>(); 
+  }
+
   @Output() onClose: EventEmitter<null> = new EventEmitter<null>();
 
   files: Array<File>;
@@ -179,13 +188,7 @@ export class UploaderPanelComponent {
     }
   ];
 
-  constructor(private uploader: UploaderService) { }
-
-  ngOnInit(): void {
-    this.uploadHandlerSetup();
-    this.files = new Array<File>();
-    this.fileEncodings = new Array<string>();
-  }
+  constructor(private uploader: UploaderService, private _snackbar: MatSnackBar) { }
 
   close(): void {
     this.files = [];
@@ -246,13 +249,16 @@ export class UploaderPanelComponent {
             error => {},
             () => {
               console.log('Finished with', file.name);
+              this._snackbar.open('Upload Successful!', 'Dismiss', {
+                duration: 3000,
+                panelClass: ['my-snackbar']
+              });
               fileIdx++;
               uploadFiles();
             }
           );
         }
       }
-
       uploadFiles();
       this.close();
     };

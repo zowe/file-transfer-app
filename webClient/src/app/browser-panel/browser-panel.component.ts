@@ -8,12 +8,14 @@
   Copyright Contributors to the Zowe Project.
 */
 
-import { Component, OnInit, Input, Inject } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, Inject, AfterViewInit } from '@angular/core';
 import { TreeNode } from 'primeng/api';
 import { Connection } from '../Connection';
 import { Message } from 'primeng/components/common/api';
 import { FTASide, FTAFileInfo, FTAFileMode } from '../../../../common/FTATypes';
-
+import { FileBrowserUSSComponent } from '@zlux/file-explorer/src/app/components/filebrowseruss/filebrowseruss.component';
+import { ZluxFileExplorerComponent } from '@zlux/file-explorer/src/app/components/zlux-file-explorer/zlux-file-explorer.component';
+import { UploaderPanelComponent } from '../uploader-panel/uploader-panel.component';
 import { Angular2InjectionTokens } from 'pluginlib/inject-resources';
 
 class TreeNodeData {
@@ -56,12 +58,22 @@ class FileRow {
     './browser-panel.component.scss',
     '../../styles.scss'
     ]
+    
 })
-export class BrowserPanelComponent implements OnInit {
+export class BrowserPanelComponent implements AfterViewInit, OnInit {
     // @ts-ignore
     @Input() connection: Connection;
     // @ts-ignore
     @Input() ftaSide: FTASide;
+
+    // @ViewChild(UploaderPanelComponent) child: UploaderPanelComponent;
+
+    @ViewChild(UploaderPanelComponent)
+    private child: UploaderPanelComponent; 
+
+    @ViewChild(ZluxFileExplorerComponent)
+    private fileExplorer: ZluxFileExplorerComponent;
+
 
     fileView: string;
 
@@ -83,7 +95,7 @@ export class BrowserPanelComponent implements OnInit {
 
     uploadModalVisible: boolean;
 
-    constructor(@Inject(Angular2InjectionTokens.LOGGER) private log: ZLUX.ComponentLogger) { }
+    constructor(@Inject(Angular2InjectionTokens.LOGGER) private log: ZLUX.ComponentLogger) {}
 
     get sideLocal(): FTASide {
         return FTASide.LOCAL;
@@ -94,7 +106,6 @@ export class BrowserPanelComponent implements OnInit {
 
     ngOnInit(): void {
         this.log.debug('ngOnInit this.connection.name=' + this.connection.name);
-
         this.fileView = 'tree';
         this.uploadModalVisible = false;
 
@@ -135,6 +146,10 @@ export class BrowserPanelComponent implements OnInit {
         this.connection.ftaWs.getHomePath(this.ftaSide);
     }
 
+    ngAfterViewInit(){
+        this.fileExplorer.tabs = [{ index: 0, name: "USS" }, {index:1, name: ""}];
+    }
+
     treeView(): void {
         this.fileView = 'tree';
     }
@@ -168,14 +183,20 @@ export class BrowserPanelComponent implements OnInit {
     }
 
     getSelectedDirectory(): string {
-        // this.log.debug('Getting the correct directory');
-        if (this.isFolder(this.treeSelectedNode)) {
-            return this.selectedPath;
-        } else {
-            return this.getPathFromRoot(this.treeSelectedNode.parent);
-        }
+        return this.selectedPath;
     }
-
+    onNodeClick($event:any){
+        if ($event.directory == false) { 
+            this.selectedPath = $event.path;
+            // this.child.uploadPath = this.selectedPath;
+        } else {
+            let folderPath = $event.path.substring($event.path.lastIndexOf("\\") + 1, $event.path.length);
+            this.log.debug(folderPath);
+            this.selectedPath = folderPath;
+        }
+        this.log.debug(this.selectedPath);
+    }
+    
     saveAs(): void {
         const uri = ZoweZLUX.uriBroker.unixFileUri('contents', this.selectedPath.slice(1), undefined, undefined, undefined, true);
         this.log.debug(uri);
@@ -183,9 +204,16 @@ export class BrowserPanelComponent implements OnInit {
         const filename = tokens[tokens.length - 1];
         this.log.debug('saveAs filename=' + filename);
         const a = document.createElement('a');
+        this.log.debug('downloading from uri', uri, 'with path ',this.selectedPath);
         a.href = uri;
         a.download = filename;
         a.click();
+        this.log.debug('clicked link');
+    }
+
+    getSelectedPath(){
+        this.log.debug('selected path',this.selectedPath);
+        return this.selectedPath;
     }
 
     needUpdate(subtree: TreeNode): boolean {
