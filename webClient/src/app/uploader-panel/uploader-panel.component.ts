@@ -8,9 +8,8 @@
   Copyright Contributors to the Zowe Project.
 */
 
-import { Component, OnInit, Input, Output, EventEmitter, AfterViewInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { UploaderService } from '../services/Uploader.service';
-// import { BrowserPanelComponent } from '../browser-panel/browser-panel.component';
 import { MatSnackBar } from '@angular/material';
 
 @Component({

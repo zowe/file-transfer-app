@@ -37,8 +37,6 @@ import { ModalService } from 'carbon-components-angular/modal/modal.service';
 })
 
 export class AppComponent {
-
-  private showMenu:boolean;
   title = 'app';
 
   get sideLocal(): FTASide {

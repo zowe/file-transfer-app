@@ -95,7 +95,7 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
 
     uploadModalVisible: boolean;
 
-    constructor(@Inject(Angular2InjectionTokens.LOGGER) private log: ZLUX.ComponentLogger) {}
+    constructor(@Inject(Angular2InjectionTokens.LOGGER) private log: ZLUX.ComponentLogger) { }
 
     get sideLocal(): FTASide {
         return FTASide.LOCAL;
@@ -106,6 +106,7 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
 
     ngOnInit(): void {
         this.log.debug('ngOnInit this.connection.name=' + this.connection.name);
+
         this.fileView = 'tree';
         this.uploadModalVisible = false;
 
@@ -196,7 +197,7 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
         }
         this.log.debug(this.selectedPath);
     }
-    
+
     saveAs(): void {
         const uri = ZoweZLUX.uriBroker.unixFileUri('contents', this.selectedPath.slice(1), undefined, undefined, undefined, true);
         this.log.debug(uri);
