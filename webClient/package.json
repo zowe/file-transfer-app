@@ -10,10 +10,7 @@
   "dependencies": {
     "@angular/material": "~8.1.2",
     "@fortawesome/fontawesome": "~1.1.8",
-    "@fortawesome/fontawesome-free-solid": "~5.0.13",
-    "@fortawesome/fontawesome-svg-core": "~1.2.20",
-    "@fortawesome/free-solid-svg-icons": "~5.10.0",
-    "angular-material": "~1.1.19"
+    "@fortawesome/fontawesome-free-solid": "~5.0.13"
   },
   "devDependencies": {
     "@angular/animations": "~6.0.9",

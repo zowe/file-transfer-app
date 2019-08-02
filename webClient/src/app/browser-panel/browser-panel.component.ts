@@ -9,7 +9,7 @@
 */
 
 import { Component, OnInit, Input, ViewChild, Inject, AfterViewInit } from '@angular/core';
-import { TreeNode } from 'primeng/api';
+import { TreeNode } from 'primeng/primeng';
 import { Connection } from '../Connection';
 import { Message } from 'primeng/components/common/api';
 import { FTASide, FTAFileInfo, FTAFileMode } from '../../../../common/FTATypes';

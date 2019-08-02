@@ -6,8 +6,7 @@
     "build": "ant copy && tsc",
     "start": "ant copy && tsc --watch"
   },
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "ftp": "~0.3.10",
     "ssh2": "~0.6.1",
