@@ -60,11 +60,14 @@ class FTAWebsocketProxy {
     }
   }
   onclose(closeEvent: CloseEvent): void {
-    console.log('FTA onclose');
+    // console.log('FTA onclose');
     if (this.remoteConnection) {
+      console.log("Closing remote connection");
       this.remoteConnection.disconnect();
+    } else if(this.localConnection){
+      console.log("Closing local connection");
+      this.localConnection.disconnect();
     }
-    this.localConnection.disconnect();
   }
   onerror(event: Event): void {
     console.log('FTA onerror ' + event);
