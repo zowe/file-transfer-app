@@ -13,7 +13,6 @@ import { TreeNode } from 'primeng/primeng';
 import { Connection } from '../Connection';
 import { Message } from 'primeng/components/common/api';
 import { FTASide, FTAFileInfo, FTAFileMode } from '../../../../common/FTATypes';
-import { FileBrowserUSSComponent } from '@zlux/file-explorer/src/app/components/filebrowseruss/filebrowseruss.component';
 import { ZluxFileExplorerComponent } from '@zlux/file-explorer/src/app/components/zlux-file-explorer/zlux-file-explorer.component';
 import { UploaderPanelComponent } from '../uploader-panel/uploader-panel.component';
 import { Angular2InjectionTokens } from 'pluginlib/inject-resources';

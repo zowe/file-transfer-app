@@ -19,7 +19,6 @@
     "@angular/platform-browser": "~6.0.9",
     "@angular/platform-browser-dynamic": "~6.0.9",
     "@angular/router": "~6.0.9",
-    "@fortawesome/fontawesome-free": "~5.9.0",
     "@ngx-translate/core": "~11.0.0",
     "@types/node": "~6.14.6",
     "@zlux/file-explorer": "git+ssh://git@github.com:zowe/zlux-file-explorer.git#src-for-widgets",
