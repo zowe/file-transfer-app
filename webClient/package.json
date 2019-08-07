@@ -8,9 +8,7 @@
   },
   "license": "EPL-2.0",
   "dependencies": {
-    "@angular/material": "~8.1.2",
-    "@fortawesome/fontawesome": "~1.1.8",
-    "@fortawesome/fontawesome-free-solid": "~5.0.13"
+    "@angular/material": "~8.1.2"
   },
   "devDependencies": {
     "@angular/animations": "~6.0.9",

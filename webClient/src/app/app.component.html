@@ -11,7 +11,7 @@
 -->
 <button class="toggle-menu expand-menu" id = "expand" type="submit" (click)="toggleMenu()"></button>
 
-  <div class="container" id = "container">
+  <div class="container">
       <div class="row">
           <div *ngIf="localConnection && connections.length === 0" class="col-sm-6 mt-3">
             <app-browser-panel [connection]="localConnection" [ftaSide]="sideLocal"></app-browser-panel>
