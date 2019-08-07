@@ -8,7 +8,7 @@
   Copyright Contributors to the Zowe Project.
 */
 
-:host ::ng-deep {
+:host {
     @import "../../../node_modules/carbon-components/scss/globals/scss/styles.scss";
 
 svg {
@@ -38,4 +38,8 @@ svg {
     min-height: 150px;
 }
 
+.ui-treenode-icon {
+    padding-right: 3px !important;
+    display: table-cell !important;
+  }
 }
