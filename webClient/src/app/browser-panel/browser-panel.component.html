@@ -53,12 +53,6 @@
                     <div class="explorer-container">
                             <zlux-file-explorer #fileExplorer
                             (nodeClick)="onNodeClick($event)"
-                            (newFileClick)="onNewFileClick($event)"
-                            (newFolderClick)="onNewFolderClick($event)"
-                            (deleteClick)="onDeleteClick($event)"
-                            (copyClick)="onCopyClick($event)"
-                            (datasetSelect)="onDatasetSelect()"
-                            (ussSelect)="onUssSelect()"
                             (pathChanged)="onPathChanged($event)"
                             [theme] = "'carbon'"
                             ></zlux-file-explorer>
