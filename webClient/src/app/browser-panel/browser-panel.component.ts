@@ -180,6 +180,7 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
 
     closeUploadModal(): void {
         this.uploadModalVisible = false;
+        this.fileExplorer.updateDirectory(this.getSelectedDirectory());
     }
 
     getSelectedDirectory(): string {
@@ -195,6 +196,10 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
             this.selectedPath = folderPath;
         }
         this.log.debug(this.selectedPath);
+    }
+
+    onPathChanged($event: any) {
+        this.selectedPath = $event;
     }
 
     saveAs(): void {
