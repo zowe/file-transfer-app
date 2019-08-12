@@ -65,6 +65,8 @@ export class AppComponent {
   remoteConnection: Connection;
   connections: Connection[] = [];
   credentialsSubmitted: boolean;
+  showConnectionPanel: boolean;
+  toggleMenuType: string;
 
   response: any;
 
@@ -80,6 +82,8 @@ export class AppComponent {
     this.ftaServiceUrl = (window as any).ZoweZLUX.uriBroker.pluginWSUri(this.pluginDefinition.getBasePlugin(), 'fs', '');
 
     this.credentialsSubmitted = false;
+    this.showConnectionPanel = false;
+    this.toggleMenuType = "toggle-menu expand-menu";
 
     console.log('FTA service url: ' + this.ftaServiceUrl);
 
@@ -98,17 +102,11 @@ export class AppComponent {
   }
 
  toggleMenu() {
-    var connect = document.getElementById("connection-panel");
-    var expand = <HTMLButtonElement>document.getElementById("expand");
-  
-    if (connect.style.display === "none") {
-      connect.style.display = "block";
-      expand.className = "toggle-menu contract-menu";
-
-    } else {
-      connect.style.display = "none";
-      expand.className = "toggle-menu expand-menu";
-     
+    this.showConnectionPanel = !this.showConnectionPanel;
+    if (this.showConnectionPanel) { //If panel is open
+      this.toggleMenuType = "toggle-menu contract-menu"; //Show option to hide it
+    } else { //Otherwise show option to show it
+      this.toggleMenuType = "toggle-menu expand-menu";
     }
   }
 }

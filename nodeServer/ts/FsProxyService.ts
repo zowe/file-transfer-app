@@ -33,7 +33,12 @@ class FTAWebsocketProxy {
   websocket: WebSocket;
   remoteConnection: FTAConnection;
   localConnection: FTAConnection;
-  constructor(clientIP: string, clientPort: number, context: any, session: any, username: string, websocket: WebSocket) {
+  constructor(clientIP: string, 
+    clientPort: number, 
+    context: any, 
+    session: any, 
+    username: string, 
+    websocket: WebSocket) {
     this.clientIP = clientIP;
     this.clientPort = clientPort;
     websocket.onmessage = this.onmessage.bind(this);
@@ -60,12 +65,10 @@ class FTAWebsocketProxy {
     }
   }
   onclose(closeEvent: CloseEvent): void {
-    // console.log('FTA onclose');
+    console.log('FTA onclose');
     if (this.remoteConnection) {
-      console.log("Closing remote connection");
       this.remoteConnection.disconnect();
     } else if(this.localConnection){
-      console.log("Closing local connection");
       this.localConnection.disconnect();
     }
   }

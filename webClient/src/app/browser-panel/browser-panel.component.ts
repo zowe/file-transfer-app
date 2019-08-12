@@ -65,27 +65,15 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
     // @ts-ignore
     @Input() ftaSide: FTASide;
 
-    // @ViewChild(UploaderPanelComponent) child: UploaderPanelComponent;
-
-    @ViewChild(UploaderPanelComponent)
-    private child: UploaderPanelComponent; 
-
     @ViewChild(ZluxFileExplorerComponent)
     private fileExplorer: ZluxFileExplorerComponent;
 
-
     fileView: string;
-
     tree: TreeNode[] = [];
-
     treeSelectedNode: TreeNode;
-
     listSelection: FileRow;
-
     list: FileRow[];
-
     selectedPath: string;
-
     errorMessages: Message[] = [];
 
     contextSide: FTASide;
@@ -190,7 +178,6 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
     onNodeClick($event:any){
         if ($event.directory == false) { 
             this.selectedPath = $event.path;
-            // this.child.uploadPath = this.selectedPath;
         } else {
             let folderPath = $event.path.substring($event.path.lastIndexOf("\\") + 1, $event.path.length);
             this.log.debug(folderPath);

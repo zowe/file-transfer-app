@@ -250,7 +250,7 @@ export class UploaderPanelComponent {
               console.log('Finished with', file.name);
               this._snackbar.open('Upload Successful!', 'Dismiss', {
                 duration: 3000,
-                panelClass: ['my-snackbar']
+                panelClass: ['fta-snackbar']
               });
               fileIdx++;
               uploadFiles();

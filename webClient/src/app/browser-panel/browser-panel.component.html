@@ -18,7 +18,10 @@
 
     <div class="row">
         <div class="col-sm-12">
-            <h6>{{ connection.name }}</h6>
+            <!-- For some reason, some h6 do not pick up styles of other h6. In any case
+            we can remove conflicts of something common by hardcoding style instead of CSS -->
+            <h6 style="font-size: 0.875rem; line-height: 1.25; font-weight: 600;">
+                {{ connection.name }}</h6>
         </div>
     </div>
 
