@@ -13,7 +13,7 @@ import { TreeNode } from 'primeng/primeng';
 import { Connection } from '../Connection';
 import { Message } from 'primeng/components/common/api';
 import { FTASide, FTAFileInfo, FTAFileMode } from '../../../../common/FTATypes';
-import { ZluxFileExplorerComponent } from '@zlux/file-explorer/src/app/components/zlux-file-explorer/zlux-file-explorer.component';
+import { FileTreeComponent as ZluxFileTreeComponent } from '@zowe/zlux-angular-file-tree';
 import { UploaderPanelComponent } from '../uploader-panel/uploader-panel.component';
 import { Angular2InjectionTokens } from 'pluginlib/inject-resources';
 
@@ -60,13 +60,10 @@ class FileRow {
     
 })
 export class BrowserPanelComponent implements AfterViewInit, OnInit {
-    // @ts-ignore
-    @Input() connection: Connection;
-    // @ts-ignore
-    @Input() ftaSide: FTASide;
-
-    @ViewChild(ZluxFileExplorerComponent)
-    private fileExplorer: ZluxFileExplorerComponent;
+    @Input() connection;
+    @Input() ftaSide;
+    @ViewChild(ZluxFileTreeComponent)
+    fileExplorer: ZluxFileTreeComponent;
 
     fileView: string;
     tree: TreeNode[] = [];

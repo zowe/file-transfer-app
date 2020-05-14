@@ -14,8 +14,8 @@
     "descriptionDefault": "File Transfer",
     "isSingleWindowApp": true,
     "defaultWindowStyle": {
-      "width": 800,
-      "height": 880
+      "width": 1100,
+      "height": 800
     }
   },
   "dataServices": [

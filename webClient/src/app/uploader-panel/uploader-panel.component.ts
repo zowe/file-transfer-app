@@ -8,9 +8,10 @@
   Copyright Contributors to the Zowe Project.
 */
 
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, Inject } from '@angular/core';
 import { UploaderService } from '../services/Uploader.service';
 import { MatSnackBar } from '@angular/material';
+import { Angular2InjectionTokens } from 'pluginlib/inject-resources';
 
 @Component({
   selector: 'app-uploader-panel',
@@ -187,7 +188,8 @@ export class UploaderPanelComponent {
     }
   ];
 
-  constructor(private uploader: UploaderService, private _snackbar: MatSnackBar) { }
+  constructor(private uploader: UploaderService, private _snackbar: MatSnackBar, @Inject(Angular2InjectionTokens.LOGGER) private log: ZLUX.ComponentLogger
+  , @Inject(Angular2InjectionTokens.PLUGIN_DEFINITION) private pluginDefinition: ZLUX.ContainerPluginDefinition) { }
 
   close(): void {
     this.files = [];
@@ -203,14 +205,14 @@ export class UploaderPanelComponent {
         this.fileEncodings.push('BINARY');
       }
     }
-    console.log(this.files);
-    console.log(this.fileEncodings);
+    this.log.debug('files ' + this.files);
+    this.log.debug('file encoding' + this.fileEncodings);
   }
 
   changeFileEncoding(event: any): void {
-    console.log(event);
+    this.log.debug(event);
     // this.fileEncodings.set(event.file, event.fileEncoding);
-    console.log(this.fileEncodings);
+    this.log.debug(this.fileEncodings);
   }
 
   uploadHandlerSetup(): void {
@@ -219,8 +221,7 @@ export class UploaderPanelComponent {
     form.onsubmit = (event) => {
       event.preventDefault();
 
-      console.log(this.files);
-
+      this.log.debug('files ' + this.files);
       // This code will asynchronously trigger all the files to be uploaded at once.
       // Not sure if this is the way we want to go or if we want to do uploads one file at a time.
 
@@ -244,14 +245,15 @@ export class UploaderPanelComponent {
           const file = filesCopy[fileIdx];
           this.uploader.chunkAndSendFile(file, this.uploadPath, fileEncodingsCopy[fileIdx])
           .subscribe(
-            value => { console.log('Progress:', value) },
+            value => {this.log.debug('progress ' + value)},
             error => {},
             () => {
-              console.log('Finished with', file.name);
+              this.log.debug('Finished with ' + file.name);
               this._snackbar.open('Upload Successful!', 'Dismiss', {
                 duration: 3000,
                 panelClass: ['fta-snackbar']
               });
+              this.sendNotification('Upload Successful!', 'Finished uploading file ' + file.name);
               fileIdx++;
               uploadFiles();
             }
@@ -261,5 +263,12 @@ export class UploaderPanelComponent {
       uploadFiles();
       this.close();
     };
+  }
+
+  sendNotification(title: string, message: string): number {
+    const pluginId = this.pluginDefinition.getBasePlugin().getIdentifier();
+    // We can specify a different styleClass to theme the notification UI i.e. [...] message, 1, pluginId, "org_zowe_zlux_editor_snackbar"
+    let notification = ZoweZLUX.notificationManager.createNotification(title, message, 1, pluginId);
+    return ZoweZLUX.notificationManager.notify(notification);
   }
 }
