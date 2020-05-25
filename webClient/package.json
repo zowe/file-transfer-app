@@ -47,6 +47,8 @@
     "webpack": "~4.0.1",
     "webpack-cli": "~3.0.0",
     "webpack-config": "~7.5.0",
-    "zone.js": "~0.8.26"
+    "zone.js": "~0.8.26",
+    "streamsaver": "^2.0.3",
+    "web-streams-polyfill": "^2.0.5"
   }
 }
