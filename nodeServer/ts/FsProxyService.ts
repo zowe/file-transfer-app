@@ -23,7 +23,7 @@ import { SFTPConnector } from "./SFTPConnector";
 */
 
 const express = require('express');
-const expressWs = require('express-ws');
+const expressWs = require('@rocketsoftware/express-ws');
 const bbPromise = require('bluebird');
 const http = require('http');
 
