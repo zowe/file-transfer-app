@@ -52,6 +52,7 @@
     "webpack-cli": "~3.0.0",
     "webpack-config": "~7.5.0",
     "zone.js": "~0.8.26",
-    "source-map-loader": "~0.2.4"
+    "source-map-loader": "~0.2.4",
+    "style-loader": "~0.22.1"
   }
 }
