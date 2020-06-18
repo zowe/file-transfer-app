@@ -23,7 +23,7 @@ import { SFTPConnector } from "./SFTPConnector";
 */
 
 const express = require('express');
-const expressWs = require('express-ws');
+const expressWs = require('@rocketsoftware/express-ws');
 const bbPromise = require('bluebird');
 const http = require('http');
 
@@ -33,7 +33,12 @@ class FTAWebsocketProxy {
   websocket: WebSocket;
   remoteConnection: FTAConnection;
   localConnection: FTAConnection;
-  constructor(clientIP: string, clientPort: number, context: any, session: any, username: string, websocket: WebSocket) {
+  constructor(clientIP: string, 
+    clientPort: number, 
+    context: any, 
+    session: any, 
+    username: string, 
+    websocket: WebSocket) {
     this.clientIP = clientIP;
     this.clientPort = clientPort;
     websocket.onmessage = this.onmessage.bind(this);
@@ -63,8 +68,9 @@ class FTAWebsocketProxy {
     console.log('FTA onclose');
     if (this.remoteConnection) {
       this.remoteConnection.disconnect();
+    } else if(this.localConnection){
+      this.localConnection.disconnect();
     }
-    this.localConnection.disconnect();
   }
   onerror(event: Event): void {
     console.log('FTA onerror ' + event);

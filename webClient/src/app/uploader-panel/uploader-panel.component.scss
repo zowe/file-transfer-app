@@ -9,30 +9,39 @@
 */
 
 :host ::ng-deep {
-  @import "../../../node_modules/carbon-components/scss/globals/scss/styles.scss";
-}
-
-.file-item {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.file-item > label {
-    flex-basis: 50%;
-    flex-grow: 1;
-}
-
-.file-item > div {
-    flex-basis: 50%;
-    flex-grow: 1;
-}
-
-.bx--select {
-    width: 100%;
-}
-
-.bx--select-input {
-    width: 100%;
-}
+    @import "../../../node_modules/carbon-components/scss/globals/scss/styles.scss";
+  }
+  
+  .file-item {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+  }
+  
+  .file-item > label {
+      flex-basis: 50%;
+      flex-grow: 1;
+  }
+  
+  .file-item > div {
+      flex-basis: 50%;
+      flex-grow: 1;
+  }
+  
+  .bx--select {
+      width: 100%;
+  }
+  
+  .bx--select-input {
+      width: 100%;
+  }
+  
+  ::ng-deep .fta-snackbar{
+      background-color: lightgray;
+      color: black;
+      position: absolute;
+      left: 45%;
+      right: 50%;
+      bottom: 0px;
+  }

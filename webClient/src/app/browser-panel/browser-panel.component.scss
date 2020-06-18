@@ -8,7 +8,7 @@
   Copyright Contributors to the Zowe Project.
 */
 
-:host ::ng-deep {
+:host {
     @import "../../../node_modules/carbon-components/scss/globals/scss/styles.scss";
 
 svg {
@@ -38,4 +38,9 @@ svg {
     min-height: 150px;
 }
 
+.panel-header{
+    font-size: 0.875rem; 
+    line-height: 1.25; 
+    font-weight: 600;
+}
 }

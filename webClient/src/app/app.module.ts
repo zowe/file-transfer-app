@@ -15,11 +15,13 @@ import { FormsModule } from '@angular/forms';
 import { TreeModule } from 'primeng/tree';
 import { DataTableModule } from 'primeng/primeng';
 
-import { ButtonModule } from 'carbon-components-angular/button/button.module';
-import { InputModule } from 'carbon-components-angular/input/input.module';
-import { ModalModule } from 'carbon-components-angular/modal/modal.module';
-import { DropdownModule } from 'carbon-components-angular/dropdown/dropdown.module';
-import { LoadingModule } from 'carbon-components-angular/loading/loading.module';
+import { ButtonModule} from 'carbon-components-angular/button/button.module';
+import { InputModule} from 'carbon-components-angular/input/input.module';
+import { ModalModule} from 'carbon-components-angular/modal/modal.module';
+import { DropdownModule} from 'carbon-components-angular/dropdown/dropdown.module';
+import { LoadingModule} from 'carbon-components-angular/loading/loading.module';
+
+import { DownloadModule, UploadModule } from '@carbon/icons-angular';
 
 import { HttpClientModule } from '@angular/common/http';
 import { UploaderService } from './services/Uploader.service'
@@ -29,6 +31,8 @@ import { AppComponent } from './app.component';
 import { BrowserPanelComponent } from './browser-panel/browser-panel.component';
 import { ConnectionPanelComponent } from './connection-panel/connection-panel.component';
 import { UploaderPanelComponent } from './uploader-panel/uploader-panel.component';
+import { FileTreeModule } from '@zowe/zlux-angular-file-tree';
+import { MatSnackBarModule } from '@angular/material'
 
 @NgModule({
   declarations: [
@@ -45,10 +49,14 @@ import { UploaderPanelComponent } from './uploader-panel/uploader-panel.componen
     FormsModule,
     HttpClientModule,
     ButtonModule,
+    FileTreeModule,
     InputModule,
+    DownloadModule,
+    UploadModule,
     ModalModule,
     DropdownModule,
-    LoadingModule
+    LoadingModule,
+    MatSnackBarModule
   ],
   providers: [FTAWebsocketService, UploaderService],
   bootstrap: [AppComponent]

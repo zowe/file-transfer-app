@@ -13,6 +13,7 @@
 export { AppModule as pluginModule } from './app/app.module';
 export { AppComponent as pluginComponent } from './app/app.component';
 
+import 'style-loader!./styles/global.css';
 
 /*
   This program and the accompanying materials are

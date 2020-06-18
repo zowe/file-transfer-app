@@ -9,13 +9,14 @@
   
   Copyright Contributors to the Zowe Project.
 -->
+<button class="{{toggleMenuType}}" id = "expand" type="submit" (click)="toggleMenu()"></button>
 
-  <div class="container">
-      <div class="row">
+  <div class="file-transfer-app-container">
+      <div class="file-transfer-app-row">
           <div *ngIf="localConnection && connections.length === 0" class="col-sm-6 mt-3">
             <app-browser-panel [connection]="localConnection" [ftaSide]="sideLocal"></app-browser-panel>
           </div>
-          <div *ngIf="!credentialsSubmitted" class="col-sm-6 mt-3">
+          <div *ngIf="!credentialsSubmitted && showConnectionPanel" class="col-sm-6 mt-3" id = "connection-panel" style="display: block; padding-right: 20px">
             <app-connection-panel (submitted)="onCredentialsSubmitted($event)"></app-connection-panel>
           </div>
           <div *ngIf="credentialsSubmitted" class="col-sm-6 mt-3">

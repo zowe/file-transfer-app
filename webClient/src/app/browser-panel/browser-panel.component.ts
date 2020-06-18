@@ -8,12 +8,13 @@
   Copyright Contributors to the Zowe Project.
 */
 
-import { Component, OnInit, Input, Inject } from '@angular/core';
-import { TreeNode } from 'primeng/api';
+import { Component, OnInit, Input, ViewChild, Inject, AfterViewInit } from '@angular/core';
+import { TreeNode } from 'primeng/primeng';
 import { Connection } from '../Connection';
 import { Message } from 'primeng/components/common/api';
 import { FTASide, FTAFileInfo, FTAFileMode } from '../../../../common/FTATypes';
-
+import { FileTreeComponent as ZluxFileTreeComponent } from '@zowe/zlux-angular-file-tree';
+import { UploaderPanelComponent } from '../uploader-panel/uploader-panel.component';
 import { Angular2InjectionTokens } from 'pluginlib/inject-resources';
 
 class TreeNodeData {
@@ -56,25 +57,20 @@ class FileRow {
     './browser-panel.component.scss',
     '../../styles.scss'
     ]
+    
 })
-export class BrowserPanelComponent implements OnInit {
-    // @ts-ignore
-    @Input() connection: Connection;
-    // @ts-ignore
-    @Input() ftaSide: FTASide;
+export class BrowserPanelComponent implements AfterViewInit, OnInit {
+    @Input() connection;
+    @Input() ftaSide;
+    @ViewChild(ZluxFileTreeComponent)
+    fileExplorer: ZluxFileTreeComponent;
 
     fileView: string;
-
     tree: TreeNode[] = [];
-
     treeSelectedNode: TreeNode;
-
     listSelection: FileRow;
-
     list: FileRow[];
-
     selectedPath: string;
-
     errorMessages: Message[] = [];
 
     contextSide: FTASide;
@@ -135,6 +131,11 @@ export class BrowserPanelComponent implements OnInit {
         this.connection.ftaWs.getHomePath(this.ftaSide);
     }
 
+    ngAfterViewInit(){
+        // Funky dummy tab used for UI alignment
+        this.fileExplorer.tabs = [{ index: 0, name: "USS" }, {index:0, name: ""}];
+    }
+
     treeView(): void {
         this.fileView = 'tree';
     }
@@ -165,15 +166,25 @@ export class BrowserPanelComponent implements OnInit {
 
     closeUploadModal(): void {
         this.uploadModalVisible = false;
+        this.fileExplorer.updateDirectory(this.getSelectedDirectory());
     }
 
     getSelectedDirectory(): string {
-        // this.log.debug('Getting the correct directory');
-        if (this.isFolder(this.treeSelectedNode)) {
-            return this.selectedPath;
+        return this.selectedPath;
+    }
+    onNodeClick($event:any){
+        if ($event.directory == false) { 
+            this.selectedPath = $event.path;
         } else {
-            return this.getPathFromRoot(this.treeSelectedNode.parent);
+            let folderPath = $event.path.substring($event.path.lastIndexOf("\\") + 1, $event.path.length);
+            this.log.debug(folderPath);
+            this.selectedPath = folderPath;
         }
+        this.log.debug(this.selectedPath);
+    }
+
+    onPathChanged($event: any) {
+        this.selectedPath = $event;
     }
 
     saveAs(): void {
@@ -183,9 +194,16 @@ export class BrowserPanelComponent implements OnInit {
         const filename = tokens[tokens.length - 1];
         this.log.debug('saveAs filename=' + filename);
         const a = document.createElement('a');
+        this.log.debug('downloading from uri', uri, 'with path ',this.selectedPath);
         a.href = uri;
         a.download = filename;
         a.click();
+        this.log.debug('clicked link');
+    }
+
+    getSelectedPath(){
+        this.log.debug('selected path',this.selectedPath);
+        return this.selectedPath;
     }
 
     needUpdate(subtree: TreeNode): boolean {

@@ -11,6 +11,33 @@
 
   Copyright Contributors to the Zowe Project.
 */
+
+.expand-menu {
+  background: url(../assets/expand.png);
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.toggle-menu {
+  height: 100%;
+  width: 14px;
+  padding-top: 0;
+  padding-right:15px;
+  padding-bottom: 0;
+  border-top: 2;
+  border-bottom: 2;
+  float: right;
+}
+
+.contract-menu {
+  background: url(../assets/contract.png);
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.file-transfer-app-row {
+  display: flex;
+}
 /*
 h1 {
   text-align: center;
