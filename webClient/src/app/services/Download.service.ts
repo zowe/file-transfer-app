@@ -44,6 +44,7 @@ export class DownloadService {
       this.abortController =  new AbortController();
       this.abortSignal = this.abortController.signal;
       this.fileName = fileName;
+
       // this.totalSize = downnloadObject.size;
       const response = await fetch(fetchPath, {signal: this.abortSignal})
 
@@ -51,6 +52,7 @@ export class DownloadService {
       this.totalSize =  Number(response.headers.get('X-zowe-filesize'));
       this.donwloadedSize = 0;
 
+      //time tracker.
       this.startTime = new Date().getTime();
 
       const readbleStream = response.body != null ? response.body : Promise.reject("Cannot recieve data from the host machine");
@@ -60,8 +62,12 @@ export class DownloadService {
         writableStrategy:queuingStrategy,
         readableStrategy: queuingStrategy
       });
+
+      //get writer and lock the file
       const writer = fileStream.getWriter();
       this.currentWriter = writer;
+
+      //get context
       const context = this;
       await new Promise(async resolve => {
         new ReadableStream({
@@ -91,5 +97,13 @@ export class DownloadService {
           }
         },queuingStrategy);
       });
+  }
+
+
+  updateInProgressObject(status){
+    if(this.downloadInprogressList.length > 0){
+      this.finalObj = this.downloadInprogressList.shift();
+      this.finalObj.status = status;
     }
+  }
 }
