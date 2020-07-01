@@ -56,6 +56,7 @@
     "style-loader": "~0.22.1",
     "uuid": "^8.1.0",
     "streamsaver": "^2.0.3",
-    "web-streams-polyfill": "^2.0.5"
+    "web-streams-polyfill": "^2.0.5",
+    "@zlux/widgets": "git+https://github.com:zowe/zlux-widgets.git"
   }
 }
