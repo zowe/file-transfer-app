@@ -21,7 +21,7 @@ import { ModalModule} from 'carbon-components-angular/modal/modal.module';
 import { DropdownModule} from 'carbon-components-angular/dropdown/dropdown.module';
 import { LoadingModule} from 'carbon-components-angular/loading/loading.module';
 
-import { DownloadModule, UploadModule } from '@carbon/icons-angular';
+import { DownloadModule, UploadModule, SettingsModule, DeleteModule, SaveModule, AddModule } from '@carbon/icons-angular';
 
 import { HttpClientModule } from '@angular/common/http';
 import { UploaderService } from './services/Uploader.service'
