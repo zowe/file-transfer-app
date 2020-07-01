@@ -44,8 +44,8 @@ export class DownloadService {
       this.abortController =  new AbortController();
       this.abortSignal = this.abortController.signal;
       this.fileName = fileName;
-
       // this.totalSize = downnloadObject.size;
+      this.initilizeDownloadObject(downnloadObject);
       const response = await fetch(fetchPath, {signal: this.abortSignal})
 
       //mock size for now
@@ -66,7 +66,6 @@ export class DownloadService {
       //get writer and lock the file
       const writer = fileStream.getWriter();
       this.currentWriter = writer;
-
       //get context
       const context = this;
       await new Promise(async resolve => {
@@ -79,12 +78,14 @@ export class DownloadService {
                 if (done) {
                   writer.close();
                   controller.close();
+                  context.updateInProgressObject(context.config.statusList[1]);
                   context.log.debug("finished writing the contetn to the target file in host machine "+ fileName);
                   resolve();
                 }
                 if(value != undefined){
                   writer.write(value);
                   context.donwloadedSize++;
+                  context.writeProgress(context.donwloadedSize);
                   read();
                 }
               }).catch(error => {
@@ -97,13 +98,29 @@ export class DownloadService {
           }
         },queuingStrategy);
       });
-  }
+    }
 
 
   updateInProgressObject(status){
     if(this.downloadInprogressList.length > 0){
       this.finalObj = this.downloadInprogressList.shift();
       this.finalObj.status = status;
+    }
+  }
+
+  writeProgress(size){
+    this.donwloadedSize = size;
+  }
+
+  cancelDownload(): void {
+    if(this.currentWriter){
+      this.currentWriter.abort();
+      this.currentWriter.releaseLock();
+      this.abortController.abort();
+      this.totalSize = 1;
+      this.donwloadedSize = 0; 
+      this.updateInProgressObject(this.config.statusList[0]);
+      this.log.debug("cancelled current download");
     }
   }
 }
