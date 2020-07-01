@@ -62,7 +62,7 @@ export class DownloadService {
         writableStrategy:queuingStrategy,
         readableStrategy: queuingStrategy
       });
-
+      
       //get writer and lock the file
       const writer = fileStream.getWriter();
       this.currentWriter = writer;
@@ -100,27 +100,34 @@ export class DownloadService {
       });
     }
 
-
-  updateInProgressObject(status){
-    if(this.downloadInprogressList.length > 0){
-      this.finalObj = this.downloadInprogressList.shift();
-      this.finalObj.status = status;
+    initilizeDownloadObject(downloadObject: any){
+      this.downloadInprogressList.push(downloadObject);
     }
-  }
 
-  writeProgress(size){
-    this.donwloadedSize = size;
-  }
-
-  cancelDownload(): void {
-    if(this.currentWriter){
-      this.currentWriter.abort();
-      this.currentWriter.releaseLock();
-      this.abortController.abort();
-      this.totalSize = 1;
-      this.donwloadedSize = 0; 
-      this.updateInProgressObject(this.config.statusList[0]);
-      this.log.debug("cancelled current download");
+    writeProgress(size){
+      this.donwloadedSize = size;
     }
-  }
+  
+    getProgress(){
+      return this.donwloadedSize;
+    }
+
+    updateInProgressObject(status){
+      if(this.downloadInprogressList.length > 0){
+        this.finalObj = this.downloadInprogressList.shift();
+        this.finalObj.status = status;
+      }
+    }
+
+    cancelDownload(): void {
+      if(this.currentWriter){
+        this.currentWriter.abort();
+        this.currentWriter.releaseLock();
+        this.abortController.abort();
+        this.totalSize = 1;
+        this.donwloadedSize = 0; 
+        this.updateInProgressObject(this.config.statusList[0]);
+        this.log.debug("cancelled current download");
+      }
+    }
 }
