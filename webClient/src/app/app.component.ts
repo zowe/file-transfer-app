@@ -70,6 +70,8 @@ export class AppComponent {
   credentialsSubmitted: boolean;
   showConnectionPanel: boolean;
   toggleMenuType: string;
+  cancelDownload: any;
+  priorityDownload: any;
 
   response: any;
 
@@ -127,6 +129,19 @@ export class AppComponent {
 
   updateDownloadObject(downloadObj){
     this.updateObject = downloadObj;
+  }
+
+  captureCancelEvent(data){
+    if(data != null){
+      this.cancelDownload = data;
+    }
+  }
+
+  capturePriorityEvent(data){
+    if(data != null){
+      this.priorityDownload = data;
+      this.priorityDownload = Object.assign({}, this.priorityDownload);
+    }
   }
 }
 

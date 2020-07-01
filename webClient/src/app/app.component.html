@@ -14,7 +14,14 @@
 <div class="file-transfer-app-container">
     <div class="file-transfer-app-row">
         <div *ngIf="localConnection && connections.length === 0" class="col-sm-6 mt-6">
-          <app-browser-panel (downloadTrigger) ="getCurrentDownload($event)" (downloadEndTrigger) ="updateDownloadObject($event)"  [connection]="localConnection" [ftaSide]="sideLocal"></app-browser-panel>
+          <app-browser-panel 
+          [priorityDownloadEvent]="priorityDownload"
+          [cancelEvent]="cancelDownload"
+          (downloadTrigger) ="getCurrentDownload($event)" 
+          (downloadEndTrigger) ="updateDownloadObject($event)"  
+          [connection]="localConnection" 
+          [ftaSide]="sideLocal">
+          </app-browser-panel>
         </div>
         <div *ngIf="!credentialsSubmitted && showConnectionPanel" class="col-sm-6 mt-3" id="connection-panel" style="display: block;">
           <app-connection-panel (submitted)="onCredentialsSubmitted($event)"></app-connection-panel>
@@ -25,7 +32,12 @@
     </div>   
     <div class="file-transfer-app-row">
       <div class="col-sm-12 mt-3">
-          <activity-panel [objectInProgress]="downloadObject" [objectUpdate]="updateObject"></activity-panel>
+          <activity-panel  
+          (cancelEventTriggerParent)="captureCancelEvent($event)"
+          (priorityEventTriggerParent)="capturePriorityEvent($event)"
+          [objectInProgress]="downloadObject" 
+          [objectUpdate]="updateObject">
+        </activity-panel>
       </div>
     </div>
 </div>

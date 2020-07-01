@@ -31,21 +31,24 @@ import { DialogModule } from 'carbon-components-angular/dialog/dialog.module';
 import { SearchModule } from 'carbon-components-angular/search/search.module';
 import { NotificationModule } from 'carbon-components-angular/notification/notification.module';
 import { PaginationModule } from "carbon-components-angular/pagination/pagination.module";
-
 import { DownloadModule, UploadModule, SettingsModule, DeleteModule, SaveModule, AddModule } from '@carbon/icons-angular';
 
-import { HttpClientModule } from '@angular/common/http';
-import { HttpModule } from '@angular/http';
 import { UploaderService } from './services/Uploader.service'
+import { FTAWebsocketService } from './services/FTAWebsocket.service';
+import { FTAActivityService } from './services/FTAActivity.service';
 import { DownloadService } from './services/Download.service';
-import { FTAWebsocketService } from './services/FTAWebsocket.service';\
+import { HttpModule } from '@angular/http';
+import { HttpClientModule } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
 import { BrowserPanelComponent } from './browser-panel/browser-panel.component';
 import { ConnectionPanelComponent } from './connection-panel/connection-panel.component';
 import { ActivityPanelComponent } from './activity-panel/activity-panel.component';
 import { UploaderPanelComponent } from './uploader-panel/uploader-panel.component';
-import { FileTreeModule } from '@zowe/zlux-angular-file-tree';
+import { ActivityInprogressTableComponent } from './activity-inprogress-table/activity-inprogress-tablel.component';
+import { ProgressBarComponent } from './progress-bar/progress-bar.component';
+import { ActivityTableComponent } from './activity-table/activity-tablel.component';
+import { FileTreeModule } from '@zlux/file-explorer/src/plugin';
 import { MatSnackBarModule } from '@angular/material'
 
 @NgModule({
@@ -54,7 +57,10 @@ import { MatSnackBarModule } from '@angular/material'
     BrowserPanelComponent,
     ConnectionPanelComponent,
     UploaderPanelComponent,
-    ActivityPanelComponent
+    ActivityPanelComponent,
+    ActivityTableComponent,
+    ActivityInprogressTableComponent,
+    ProgressBarComponent
   ],
   imports: [
     RouterModule,
@@ -85,7 +91,7 @@ import { MatSnackBarModule } from '@angular/material'
     DialogModule,
     SearchModule
   ],
-  providers: [FTAWebsocketService, UploaderService,DownloadService],
+  providers: [FTAWebsocketService, UploaderService,FTAActivityService,DownloadService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
