@@ -37,11 +37,13 @@ import { DownloadModule, UploadModule, SettingsModule, DeleteModule, SaveModule,
 import { HttpClientModule } from '@angular/common/http';
 import { HttpModule } from '@angular/http';
 import { UploaderService } from './services/Uploader.service'
-import { FTAWebsocketService } from './services/FTAWebsocket.service';
+import { DownloadService } from './services/Download.service';
+import { FTAWebsocketService } from './services/FTAWebsocket.service';\
 
 import { AppComponent } from './app.component';
 import { BrowserPanelComponent } from './browser-panel/browser-panel.component';
 import { ConnectionPanelComponent } from './connection-panel/connection-panel.component';
+import { ActivityPanelComponent } from './activity-panel/activity-panel.component';
 import { UploaderPanelComponent } from './uploader-panel/uploader-panel.component';
 import { FileTreeModule } from '@zowe/zlux-angular-file-tree';
 import { MatSnackBarModule } from '@angular/material'
@@ -51,7 +53,8 @@ import { MatSnackBarModule } from '@angular/material'
     AppComponent,
     BrowserPanelComponent,
     ConnectionPanelComponent,
-    UploaderPanelComponent
+    UploaderPanelComponent,
+    ActivityPanelComponent
   ],
   imports: [
     RouterModule,
@@ -82,7 +85,7 @@ import { MatSnackBarModule } from '@angular/material'
     DialogModule,
     SearchModule
   ],
-  providers: [FTAWebsocketService, UploaderService],
+  providers: [FTAWebsocketService, UploaderService,DownloadService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

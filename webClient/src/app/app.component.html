@@ -9,28 +9,33 @@
   
   Copyright Contributors to the Zowe Project.
 -->
-<button class="{{toggleMenuType}}" id = "expand" type="submit" (click)="toggleMenu()"></button>
+<button class="{{toggleMenuType}}" id="expand" type="submit" (click)="toggleMenu()"></button>
 
-  <div class="file-transfer-app-container">
-      <div class="file-transfer-app-row">
-          <div *ngIf="localConnection && connections.length === 0" class="col-sm-6 mt-3">
-            <app-browser-panel [connection]="localConnection" [ftaSide]="sideLocal"></app-browser-panel>
-          </div>
-          <div *ngIf="!credentialsSubmitted && showConnectionPanel" class="col-sm-6 mt-3" id = "connection-panel" style="display: block; padding-right: 20px">
-            <app-connection-panel (submitted)="onCredentialsSubmitted($event)"></app-connection-panel>
-          </div>
-          <div *ngIf="credentialsSubmitted" class="col-sm-6 mt-3">
-            <app-browser-panel [connection]="remoteConnection" [ftaSide]="sideRemote"></app-browser-panel>
-          </div>
-      </div>    
-  </div>
+<div class="file-transfer-app-container">
+    <div class="file-transfer-app-row">
+        <div *ngIf="localConnection && connections.length === 0" class="col-sm-6 mt-6">
+          <app-browser-panel (downloadTrigger) ="getCurrentDownload($event)" (downloadEndTrigger) ="updateDownloadObject($event)"  [connection]="localConnection" [ftaSide]="sideLocal"></app-browser-panel>
+        </div>
+        <div *ngIf="!credentialsSubmitted && showConnectionPanel" class="col-sm-6 mt-3" id="connection-panel" style="display: block;">
+          <app-connection-panel (submitted)="onCredentialsSubmitted($event)"></app-connection-panel>
+        </div>
+        <div *ngIf="credentialsSubmitted" class="col-sm-6 mt-3" >
+          <app-browser-panel [connection]="remoteConnection" [ftaSide]="sideRemote"></app-browser-panel>
+        </div>
+    </div>   
+    <div class="file-transfer-app-row">
+      <div class="col-sm-12 mt-3">
+          <activity-panel [objectInProgress]="downloadObject" [objectUpdate]="updateObject"></activity-panel>
+      </div>
+    </div>
+</div>
 <!-- 
-  This program and the accompanying materials are
-  made available under the terms of the Eclipse Public License v2.0 which accompanies
-  this distribution, and is available at https://www.eclipse.org/legal/epl-v20.html
-  
-  SPDX-License-Identifier: EPL-2.0
-  
-  Copyright Contributors to the Zowe Project.
+This program and the accompanying materials are
+made available under the terms of the Eclipse Public License v2.0 which accompanies
+this distribution, and is available at https://www.eclipse.org/legal/epl-v20.html
+
+SPDX-License-Identifier: EPL-2.0
+
+Copyright Contributors to the Zowe Project.
 -->
 

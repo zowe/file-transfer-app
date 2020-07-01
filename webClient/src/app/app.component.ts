@@ -12,9 +12,10 @@
 
 import { Component, Inject } from '@angular/core';
 import { DOCUMENT } from '@angular/platform-browser'; // DEPRECATED
-import { Angular2InjectionTokens } from 'pluginlib/inject-resources';
+import { Angular2InjectionTokens,Angular2PluginViewportEvents } from 'pluginlib/inject-resources';
 import { Connection } from './Connection';
 import { FTAWebsocketService } from './services/FTAWebsocket.service';
+import { FTAActivityService } from './services/FTAActivity.service';
 import { FTASide } from '../../../common/FTATypes';
 
 import { SelectItem } from 'primeng/api';
@@ -38,6 +39,8 @@ import { ModalService } from 'carbon-components-angular/modal/modal.service';
 
 export class AppComponent {
   title = 'app';
+  downloadObject = null;
+  updateObject = null;
 
   get sideLocal(): FTASide {
     return FTASide.LOCAL;
@@ -75,7 +78,9 @@ export class AppComponent {
     private document: any,
     @Inject(Angular2InjectionTokens.PLUGIN_DEFINITION)
     private pluginDefinition: ZLUX.ContainerPluginDefinition,
-    public modalService: ModalService
+    @Inject(Angular2InjectionTokens.VIEWPORT_EVENTS) private viewportEvents: Angular2PluginViewportEvents,
+    public modalService: ModalService,
+    private ftaActivityService:FTAActivityService
     ) {
 
     const host = this.document.location.hostname;
@@ -95,6 +100,12 @@ export class AppComponent {
     ftaWs.connect(this.ftaServiceUrl);
   }
 
+  ngOnInit(): void {
+   
+  }
+
+
+
   onCredentialsSubmitted(connection: Connection): void {
     console.log('Credentials Submitted');
     this.credentialsSubmitted = true;
@@ -108,6 +119,14 @@ export class AppComponent {
     } else { //Otherwise show option to show it
       this.toggleMenuType = "toggle-menu expand-menu";
     }
+  }
+
+  getCurrentDownload(downloadObj){
+    this.downloadObject = downloadObj;
+  }
+
+  updateDownloadObject(downloadObj){
+    this.updateObject = downloadObj;
   }
 }
 
