@@ -10,206 +10,23 @@
 
 <ibm-tabs [isNavigation]="false" type="container">
   <ibm-tab heading="In Progress">
-    <div *ngIf="inProgressDownload != null">
-      <ibm-table-container>
-        <ibm-table-toolbar [model]="inProgressDownload" >
-          <ibm-table-toolbar-actions>
-            <button ibmButton="primary" (click)="cancelDownloadEvent($event)">
-              Cancel Download
-              <ibm-icon-download size="16" class="bx--btn__icon"></ibm-icon-download>
-            </button>
-            <button ibmButton="primary">
-              Download
-              <ibm-icon-download size="16" class="bx--btn__icon"></ibm-icon-download>
-            </button>
-          </ibm-table-toolbar-actions>
-          <ibm-table-toolbar-content>
-            <ibm-table-toolbar-search [expandable]="true" 
-              placeholder=" Search for In Progress Events "
-              (change)="searchValueChange($event.value,'inprogress')">
-            </ibm-table-toolbar-search>
-         </ibm-table-toolbar-content>
-      </ibm-table-toolbar>
-        <ibm-table
-            [model]="inProgressDownload"
-            [stickyHeader]="true"
-            [size]="sm"
-            [skeleton]="false"
-            [striped]="false"
-            [sortable]="false"
-            [isDataGrid]="true">
-        </ibm-table>
-        <ibm-pagination [itemsPerPageOptions] = "[10]" [model]="inProgressDownload" (selectPage)="selectPage($event)"></ibm-pagination>
-      </ibm-table-container>
+    <div *ngIf="fatDownloadActivityInprogress.length > 0">
+      <activity-progress-table  
+      (cancelEventTrigger) ="captureCancelEvent($event)" 
+      (priorityEventTrigger) = "capturePriorityEvent($event)"
+      [activityList] = "fatDownloadActivityInprogress">
+      </activity-progress-table>
     </div>
-    <!-- <activity-panel [objectInProgress]="downloadObject" [objectUpdate]="updateObject"></activity-panel> -->
   </ibm-tab>
-  <ibm-tab heading="Completed">
-    <div *ngIf="completeDownload != null">
-      <ibm-table-container>
-        <ibm-table-toolbar [model]="completeDownload" >
-          <ibm-table-toolbar-content>
-            <ibm-table-toolbar-search [expandable]="true" 
-              placeholder=" Search for Completed Events "
-              (change)="searchValueChange($event.value,'complete')">
-            </ibm-table-toolbar-search>
-         </ibm-table-toolbar-content>
-      </ibm-table-toolbar>
-        <ibm-table
-            [model]="completeDownload"
-            [stickyHeader]="true"
-            [showSelectionColumn]="false"
-            [size]="sm"
-            [skeleton]="false"
-            [striped]="false"
-            [sortable]="true"
-            [isDataGrid]="true"
-            (sort)="simpleSort($event,'complete')">
-        </ibm-table>
-        <ibm-pagination [itemsPerPageOptions] = "[10]" [model]="completeDownload" (selectPage)="selectPage($event)"></ibm-pagination>
-      </ibm-table-container>
+  <ibm-tab heading="Completed"> 
+    <div *ngIf="fatDownloadCompleted.length > 0">
+      <activity-table [activityList] = "fatDownloadCompleted"></activity-table>
     </div>
   </ibm-tab>
   <ibm-tab heading="Errored/ Cancelled">
-    <div *ngIf="cancelDownloadEvent != null">
-      <ibm-table-container>
-        <ibm-table-toolbar [model]="cancelDownload" >
-            <ibm-table-toolbar-content>
-              <ibm-table-toolbar-search [expandable]="true" 
-                placeholder=" Search for Cancelled Events "
-                (change)="searchValueChange($event.value,'cancel')">
-              </ibm-table-toolbar-search>
-           </ibm-table-toolbar-content>
-        </ibm-table-toolbar>
-        <ibm-table
-            [model]="cancelDownload"
-            [showSelectionColumn]="false"
-            [stickyHeader]="true"
-            [size]="sm"
-            [skeleton]="false"
-            [striped]="false"
-            [sortable]="true"
-            [isDataGrid]="true"
-            (sort)="simpleSort($event,'cancel')">
-        </ibm-table>
-        <ibm-pagination [itemsPerPageOptions] = "[10]" [model]="cancelDownload" (selectPage)="selectPage($event)"></ibm-pagination>
-      </ibm-table-container>
+    <div *ngIf="fatDownloadCancel.length > 0">
+      <activity-table [activityList] = "fatDownloadCancel"></activity-table>
     </div>
   </ibm-tab>
 </ibm-tabs>
 
-
-<!-- 
-<ibm-accordion>
-  <ibm-accordion-item [title]="config.actions[0]" (selected)="selected($event)">
-    <br/>
-    Transfer Log
-    <br/>
-    <textarea
-      ibmTextArea
-      [placeholder]="placeholder"
-      [invalid]="invalid"
-      [disabled]="disabled"
-      [theme]="theme"
-      [rows]="10"
-      [cols]="30"
-      aria-label="textarea">
-    </textarea>
-  </ibm-accordion-item>
-  <ibm-accordion-item [title]="config.actions[1]" [context]="{ index: 2 }" (selected)="selected($event)">
-      <textarea
-      ibmTextArea
-      [placeholder]="placeholder"
-      [invalid]="invalid"
-      [disabled]="disabled"
-      [theme]="theme"
-      [rows]="rows"
-      [cols]="cols"
-      aria-label="textarea">
-    </textarea>
-  </ibm-accordion-item>
-  <ibm-accordion-item [title]="config.actions[2]" [context]="{ index: 3 }" (selected)="selected($event)">
-      <br/>
-      Transfer Log
-      <br/>
-      <textarea
-      ibmTextArea
-      [placeholder]="placeholder"
-      [invalid]="invalid"
-      [disabled]="disabled"
-      [theme]="theme"
-      [value]="donwloadActivities.toString()"
-      [rows]="10"
-      [cols]="30"
-      aria-label="textarea">
-      </textarea>
-  </ibm-accordion-item>
-</ibm-accordion> -->
-
-
-<!-- <ibm-table-container>
-  <ibm-table-header>
-    <h4 ibmTableHeaderTitle>huu</h4>
-    <p ibmTableHeaderDescription>haaa</p>
-  </ibm-table-header>
-  <app-pagination-table
-    [skeleton]="skeleton"
-    [sortable]="sortable"
-    [totalDataLength]="105"
-    [showSelectionColumn]="showSelectionColumn"
-    [stickyHeader]="stickyHeader"
-    [skeleton]="skeleton"
-    [model]="model">
-  </app-pagination-table>
-</ibm-table-container> -->
-
-<ng-template #actionsMenuTemplate let-data="data">
-  <ibm-overflow-menu flip="true">
-    <ibm-overflow-menu-option> edit</ibm-overflow-menu-option>
-    <ibm-overflow-menu-option> delete </ibm-overflow-menu-option>
-  </ibm-overflow-menu>
-</ng-template>
-
-<ng-template #customItemTemplate let-data="data">
-  <div class="container">
-    <div class="row">
-      <div class="col-md-10">
-        <div class="row" *ngIf="data.status == config.statusList[0]">
-          <div class="col-md-2">
-            00:00:00 elpased
-          </div>
-          <div class="col-md-2">
-           {{timeInSecnds}} left
-          </div>
-          <div class="col-md-4">
-            <div class="progress">
-              <div class="progress-bar" role="progressbar" [style.width]="getDownloadProgress() + '%'" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">{{progress}}%</div>
-            </div>
-          </div>
-          <div class="col-md-2">
-            262,144 bytes (? B/s)
-          </div>
-        </div>
-        <div class="row" *ngIf="data.status == config.statusList[3]">
-          <div class="col-md-2">
-            00:00:00 elpased
-          </div>
-          <div class="col-md-2">
-            --:--:-- left
-          </div>
-          <div class="col-md-4">
-            <div class="progress">
-              <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
-            </div>
-          </div>
-          <div class="col-md-2">
-            262,144 bytes (? B/s)
-          </div>
-        </div>
-      </div>
-   
-    </div>
-  </div>
-
-    <!-- <i><a [routerLink]="data.link">{{data.name}}</a></i> -->
-</ng-template>
