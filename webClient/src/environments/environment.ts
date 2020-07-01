@@ -19,7 +19,20 @@ export const environment = {
   production: false
 };
 
-
+export const prod_config = {
+  limitofActivityHistory : 10,
+  downloadQueueLength : 5,
+  actions : ["Upload","Transfer", "Download"],
+  statusList: ["In progress", "Complete", "Cancel", "Queued"],
+  activityIcons: {
+    "upload" : "<<--",
+    "download" : "-->>",
+    "transfer" : "<-->"
+  },
+  priority: ["Normal", "High"],
+  tableHeaders : ["Server Local file","Direction","Remote file","Size","Priority","Status","Actions"],
+  tabTypes : ["InProgress", "Cancel", "Completed"]
+}
 /*
   This program and the accompanying materials are
   made available under the terms of the Eclipse Public License v2.0 which accompanies
