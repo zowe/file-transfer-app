@@ -34,9 +34,9 @@ export const prod_config = {
   tabTypes : ["InProgress", "Cancel", "Completed"],
   helperText: ["Donwload Queue size to maintain", "History of the donwload objects to keep in memory"],
   encodings: {
-    "ASCII" : "iso8859-1", 
-    "EBCDIC": "ebcdic-1047",
-    "UTF8" : "utf8"
+    "ASCII" : "819", 
+    "EBCDIC": "1047",
+    "UTF8" : "1208"
   }
 }
 /*
