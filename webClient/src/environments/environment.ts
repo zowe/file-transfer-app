@@ -31,7 +31,13 @@ export const prod_config = {
   },
   priority: ["Normal", "High"],
   tableHeaders : ["Server Local file","Direction","Remote file","Size","Priority","Status","Actions"],
-  tabTypes : ["InProgress", "Cancel", "Completed"]
+  tabTypes : ["InProgress", "Cancel", "Completed"],
+  helperText: ["Donwload Queue size to maintain", "History of the donwload objects to keep in memory"],
+  encodings: {
+    "ASCII" : "iso8859-1", 
+    "EBCDIC": "ebcdic-1047",
+    "UTF8" : "utf8"
+  }
 }
 /*
   This program and the accompanying materials are
