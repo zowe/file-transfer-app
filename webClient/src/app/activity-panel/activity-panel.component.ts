@@ -12,6 +12,7 @@ import { Component, EventEmitter, Output, Inject, Input,ViewChild,TemplateRef } 
 import { Connection } from '../Connection';
 import { FTAActivityService } from '../services/FTAActivity.service';
 import { FTAActivity } from '../services/FTAActivity.service';
+import { FTAConfigService } from '../services/FTAConfig.service';
 import { DownloadService } from '../services/Download.service';
 import { TableItem, TableHeaderItem, TableModel,TableExpandedRow} from 'carbon-components-angular/table/table.module';
 
@@ -53,6 +54,7 @@ export class ActivityPanelComponent {
   constructor(@Inject(Angular2InjectionTokens.PLUGIN_DEFINITION) private pluginDefinition: ZLUX.ContainerPluginDefinition, 
     private ftaactivityService:FTAActivityService,
     private downloadService:DownloadService,
+    private ftaConfig:FTAConfigService,
     @Inject(Angular2InjectionTokens.LOGGER) private log: ZLUX.ComponentLogger,
     @Inject(Angular2InjectionTokens.VIEWPORT_EVENTS) private viewportEvents: Angular2PluginViewportEvents) {
     this.ftaactivityService.onInit();
@@ -163,18 +165,19 @@ export class ActivityPanelComponent {
   }
 
   refresh(type) : void {
+    const limitofActivityHistory = this.ftaConfig.getActivityHistoryLimit();
     if(type == this.config.tabTypes[0]){
-      if(this.fatDownloadActivityInprogress.length > this.config.limitofActivityHistory){
+      if(this.fatDownloadActivityInprogress.length > limitofActivityHistory){
         this.fatDownloadActivityInprogress.shift();
       }
       this.fatDownloadActivityInprogress = this.fatDownloadActivityInprogress.slice();
     }else if(type == this.config.tabTypes[1]){
-      if(this.fatDownloadCancel.length > this.config.limitofActivityHistory){
+      if(this.fatDownloadCancel.length > limitofActivityHistory){
         this.fatDownloadCancel.shift();
       }
       this.fatDownloadCancel = this.fatDownloadCancel.slice();
     }else{
-      if(this.fatDownloadCompleted.length > this.config.limitofActivityHistory){
+      if(this.fatDownloadCompleted.length > limitofActivityHistory){
         this.fatDownloadCompleted.shift();
       }
       this.fatDownloadCompleted = this.fatDownloadCompleted.slice();
@@ -198,4 +201,3 @@ export class ActivityPanelComponent {
     }
   }
 }
-
