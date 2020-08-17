@@ -31,12 +31,14 @@ import { DialogModule } from 'carbon-components-angular/dialog/dialog.module';
 import { SearchModule } from 'carbon-components-angular/search/search.module';
 import { NotificationModule } from 'carbon-components-angular/notification/notification.module';
 import { PaginationModule } from "carbon-components-angular/pagination/pagination.module";
+import { CheckboxModule } from "carbon-components-angular/checkbox/checkbox.module";
 import { DownloadModule, UploadModule, SettingsModule, DeleteModule, SaveModule, AddModule } from '@carbon/icons-angular';
 
 import { UploaderService } from './services/Uploader.service'
 import { FTAWebsocketService } from './services/FTAWebsocket.service';
 import { FTAActivityService } from './services/FTAActivity.service';
 import { DownloadService } from './services/Download.service';
+import { FTAConfigService } from './services/FTAConfig.service';
 import { HttpModule } from '@angular/http';
 import { HttpClientModule } from '@angular/common/http';
 
@@ -48,6 +50,7 @@ import { UploaderPanelComponent } from './uploader-panel/uploader-panel.componen
 import { ActivityInprogressTableComponent } from './activity-inprogress-table/activity-inprogress-tablel.component';
 import { ProgressBarComponent } from './progress-bar/progress-bar.component';
 import { ActivityTableComponent } from './activity-table/activity-tablel.component';
+import { ConfigPanelComponent } from './config-panel/config-panel.component';
 import { FileTreeModule } from '@zlux/file-explorer/src/plugin';
 import { MatSnackBarModule } from '@angular/material'
 
@@ -60,7 +63,8 @@ import { MatSnackBarModule } from '@angular/material'
     ActivityPanelComponent,
     ActivityTableComponent,
     ActivityInprogressTableComponent,
-    ProgressBarComponent
+    ProgressBarComponent,
+    ConfigPanelComponent
   ],
   imports: [
     RouterModule,
@@ -87,11 +91,12 @@ import { MatSnackBarModule } from '@angular/material'
     MatSnackBarModule,
     NotificationModule,
     TableModule,
+    CheckboxModule,
     NFormsModule,
     DialogModule,
     SearchModule
   ],
-  providers: [FTAWebsocketService, UploaderService,FTAActivityService,DownloadService],
+  providers: [FTAWebsocketService, UploaderService,FTAActivityService,DownloadService,FTAConfigService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

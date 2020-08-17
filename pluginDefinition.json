@@ -28,6 +28,9 @@
           },
           "ftaactivity": {
             "aggregationPolicy": "override"
+          },
+          "ftaConfig": {
+            "aggregationPolicy": "override"
           }
         }
       }

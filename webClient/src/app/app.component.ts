@@ -1,5 +1,3 @@
-
-
 /*
   This program and the accompanying materials are
   made available under the terms of the Eclipse Public License v2.0 which accompanies
@@ -9,13 +7,13 @@
 
   Copyright Contributors to the Zowe Project.
 */
-
 import { Component, Inject } from '@angular/core';
 import { DOCUMENT } from '@angular/platform-browser'; // DEPRECATED
 import { Angular2InjectionTokens,Angular2PluginViewportEvents } from 'pluginlib/inject-resources';
 import { Connection } from './Connection';
 import { FTAWebsocketService } from './services/FTAWebsocket.service';
 import { FTAActivityService } from './services/FTAActivity.service';
+import { FTAConfigService } from './services/FTAConfig.service';
 import { FTASide } from '../../../common/FTATypes';
 
 import { SelectItem } from 'primeng/api';
@@ -82,8 +80,10 @@ export class AppComponent {
     private pluginDefinition: ZLUX.ContainerPluginDefinition,
     @Inject(Angular2InjectionTokens.VIEWPORT_EVENTS) private viewportEvents: Angular2PluginViewportEvents,
     public modalService: ModalService,
-    private ftaActivityService:FTAActivityService
+    private ftaActivityService:FTAActivityService,
+    private ftaConfigService:FTAConfigService
     ) {
+    this.ftaConfigService.onInit();
 
     const host = this.document.location.hostname;
     this.ftaServiceUrl = (window as any).ZoweZLUX.uriBroker.pluginWSUri(this.pluginDefinition.getBasePlugin(), 'fs', '');
@@ -103,10 +103,8 @@ export class AppComponent {
   }
 
   ngOnInit(): void {
-   
+    this.ftaConfigService.getData();
   }
-
-
 
   onCredentialsSubmitted(connection: Connection): void {
     console.log('Credentials Submitted');
@@ -124,7 +122,10 @@ export class AppComponent {
   }
 
   getCurrentDownload(downloadObj){
-    this.downloadObject = downloadObj;
+    if(downloadObj != null){
+      this.downloadObject = downloadObj;
+      this.downloadObject = Object.assign({}, this.downloadObject);
+    }
   }
 
   updateDownloadObject(downloadObj){
