@@ -8,7 +8,7 @@
   Copyright Contributors to the Zowe Project.
 -->
 
-<div class="d-flex flex-column" style = "min-width: 500px">
+<div class="d-flex flex-column" style = "min-width: 500px;border-right: 1px solid #00748052;">
     <!-- Domain Address -->
     <div class="row">
         <div class="col-sm-12">
@@ -48,7 +48,39 @@
             </div>
         </div>
     </form> -->
-   
+    <div class="row">
+        <div class="col-sm-3">
+            <button ibmButton="tertiary" size="field" (click)="showUploadModal()" style="width:100%">
+                Upload
+                <ibm-icon-upload size="16" class="bx--btn__icon"></ibm-icon-upload>
+                <!-- <svg  class="bx--btn__icon" style="transform: rotate(180deg);" width="16" height="16" viewBox="0 0 16 16"><path d="M8 11.953l3.905-4.09 1.453 1.374L7 16 .635 9.238l1.452-1.376L6 11.954V0h2v11.953z"></path></svg> -->
+            </button>
+        </div>
+        <div class="col-sm-3">
+            <button ibmButton="tertiary" size="field" (click)="cancelDown()" style="width:100%" [disabled]="!enableDownload">
+                Cancel
+                <ibm-icon-upload size="16" class="bx--btn__icon"></ibm-icon-upload>
+                <!-- <svg  class="bx--btn__icon" style="transform: rotate(180deg);" width="16" height="16" viewBox="0 0 16 16"><path d="M8 11.953l3.905-4.09 1.453 1.374L7 16 .635 9.238l1.452-1.376L6 11.954V0h2v11.953z"></path></svg> -->
+            </button>
+        </div>
+        <div class="col-sm-3">
+            <button ibmButton="tertiary" size="field" (click)="showConfigModal()" style="width:100%">
+                Config
+                <ibm-icon-upload size="16" class="bx--btn__icon"></ibm-icon-upload>
+                <!-- <svg  class="bx--btn__icon" style="transform: rotate(180deg);" width="16" height="16" viewBox="0 0 16 16"><path d="M8 11.953l3.905-4.09 1.453 1.374L7 16 .635 9.238l1.452-1.376L6 11.954V0h2v11.953z"></path></svg> -->
+            </button>
+        </div>
+
+        <div id="copy-button" class="col-sm-3">
+            <!-- Copy Button -->
+            <button  ibmButton="tertiary" size="field" style="width:99%" (click)="sendTo()">
+                Transfer
+                <svg  class="bx--btn__icon" width="16" height="16" viewBox="0 0 16 16"><path d="M1 10H0V2C0 .9.9 0 2 0h8v1H2c-.6 0-1 .5-1 1v8z"></path><path d="M11 4.2V8h3.8L11 4.2zM15 9h-4c-.6 0-1-.4-1-1V4H4.5c-.3 0-.5.2-.5.5v10c0 .3.2.5.5.5h10c.3 0 .5-.2.5-.5V9zm-4-6c.1 0 .3.1.4.1l4.5 4.5c0 .1.1.3.1.4v6.5c0 .8-.7 1.5-1.5 1.5h-10c-.8 0-1.5-.7-1.5-1.5v-10C3 3.7 3.7 3 4.5 3H11z"></path></svg>
+            </button>
+        </div>
+    </div>
+    <br/>
+    <br/>
     <!-- Tree Browser -->
     <div *ngIf="fileView === 'tree'" class="row">
         <div class="col-sm-12">
@@ -64,65 +96,68 @@
             </div>
         </div>
     </div>
-
-    <!-- List Browser -->
-    <!-- <div *ngIf="fileView ==='list'" class="row flex-grow-1 mt-3">
-        <div class="col">
-            <div class="box box box-stretched">
-                <p-dataTable
-                [value]="list"
-                selectionMode="single" [(selection)]="listSelection" (onRowSelect)="listSelect($event)"
-                (onRowDblclick)="listRowDblclick($event)"
-                scrollable="true" scrollHeight="350px"
-                [contextMenu]="listCm">
-                    <p-column field="name" header="Name" >
-                        <ng-template let-rowdata="rowData" pTemplate="body">
-                            <div style="display:flex">
-                                <i *ngIf="rowdata?.isDir" class="fa fa-folder" aria-hidden="true"></i>
-                                <i *ngIf="!rowdata?.isDir" class="fa fa-file" aria-hidden="true"></i>
-                                <div *ngIf="!rowdata.isEditable"> {{rowdata.name}}</div>
-                                <div *ngIf="rowdata.isEditable">
-                                    <input type="text" [(ngModel)]="rowdata.name" (keyup.enter)="rowDataInputEnter(rowdata)" (keyup.escape)="rowDataInputEscape(rowdata)">
-                                </div>
+<!-- List Browser -->
+<!-- <div *ngIf="fileView ==='list'" class="row flex-grow-1 mt-3">
+    <div class="col">
+        <div class="box box box-stretched">
+            <p-dataTable
+            [value]="list"
+            selectionMode="single" [(selection)]="listSelection" (onRowSelect)="listSelect($event)"
+            (onRowDblclick)="listRowDblclick($event)"
+            scrollable="true" scrollHeight="350px"
+            [contextMenu]="listCm">
+                <p-column field="name" header="Name" >
+                    <ng-template let-rowdata="rowData" pTemplate="body">
+                        <div style="display:flex">
+                            <i *ngIf="rowdata?.isDir" class="fa fa-folder" aria-hidden="true"></i>
+                            <i *ngIf="!rowdata?.isDir" class="fa fa-file" aria-hidden="true"></i>
+                            <div *ngIf="!rowdata.isEditable"> {{rowdata.name}}</div>
+                            <div *ngIf="rowdata.isEditable">
+                                <input type="text" [(ngModel)]="rowdata.name" (keyup.enter)="rowDataInputEnter(rowdata)" (keyup.escape)="rowDataInputEscape(rowdata)">
                             </div>
-                        </ng-template>
-                    </p-column>
-                    <p-column field="size" header="Size"></p-column>
-                    <p-column field="attributes" header="Attributes"></p-column>
-                </p-dataTable>
-            </div>
+                        </div>
+                    </ng-template>
+                </p-column>
+                <p-column field="size" header="Size"></p-column>
+                <p-column field="attributes" header="Attributes"></p-column>
+            </p-dataTable>
         </div>
-    </div> -->
-    <!-- Download, Copy Panel -->
+    </div>
+</div> -->
+<!-- Download, Copy Panel -->
     <br/>
     <br/>
     <div class="row">
-        <div id="download-button" class="col-sm-3">
-            <!-- Download Button -->
-            <button ibmButton="tertiary" size="field" style="width:95%" (click)="saveAs()">
-                Download
-                <ibm-icon-download size="16" class="bx--btn__icon"> </ibm-icon-download>
-                <!-- <svg ibmIconDownload16 class="bx--btn__icon" width="16" height="16" viewBox="0 0 16 16"></svg> -->
-            </button>
-        </div>
         <div class="col-sm-3">
-            <button ibmButton="tertiary" size="field" (click)="showUploadModal()" style="width:95%">
-                Upload
-                <ibm-icon-upload size="16" class="bx--btn__icon"></ibm-icon-upload>
-                <!-- <svg  class="bx--btn__icon" style="transform: rotate(180deg);" width="16" height="16" viewBox="0 0 16 16"><path d="M8 11.953l3.905-4.09 1.453 1.374L7 16 .635 9.238l1.452-1.376L6 11.954V0h2v11.953z"></path></svg> -->
-            </button>
+            <!-- Download Button -->
+            <ibm-toggle [onText]="toggleText[1]" [offText]="toggleText[0]" (change)="onChange($event)" [(ngModel)]="toggleState">Toggle</ibm-toggle>
         </div>
-
-        <div id="copy-button" class="col-sm-3">
-            <!-- Copy Button -->
-            <button  ibmButton="tertiary" size="field" style="width:95%" (click)="sendTo()">
-                Transfer
-                <svg  class="bx--btn__icon" width="16" height="16" viewBox="0 0 16 16"><path d="M1 10H0V2C0 .9.9 0 2 0h8v1H2c-.6 0-1 .5-1 1v8z"></path><path d="M11 4.2V8h3.8L11 4.2zM15 9h-4c-.6 0-1-.4-1-1V4H4.5c-.3 0-.5.2-.5.5v10c0 .3.2.5.5.5h10c.3 0 .5-.2.5-.5V9zm-4-6c.1 0 .3.1.4.1l4.5 4.5c0 .1.1.3.1.4v6.5c0 .8-.7 1.5-1.5 1.5h-10c-.8 0-1.5-.7-1.5-1.5v-10C3 3.7 3.7 3 4.5 3H11z"></path></svg>
-            </button>
+        <div id="download-button" class="col-sm-3">
+            <div *ngIf="!activateAutomaticConvertion">
+                <button  type="button" ibmButton="tertiary" size="field" data-toggle="dropdown" style="width:110%" (click)="saveAs()" [disabled]="!enableDownload">
+                    Download
+                    <ibm-icon-download size="16" class="bx--btn__icon"> </ibm-icon-download>
+                </button>
+            </div>
+            <div *ngIf="activateAutomaticConvertion">
+                <button  type="button" class="btn dropdown-toggle" ibmButton="tertiary" size="field" data-toggle="dropdown" style="width:110%" [disabled]="!enableDownload">
+                    Download
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" (click)="saveAs(encodings[1],encodings[2])">Target UTF8 -> Source EBCDIC</a>
+                        <a class="dropdown-item" (click)="saveAs(encodings[0],encodings[2])">Target UTF8 -> Source ASCII</a>
+                    </div>
+                    <!-- <svg ibmIconDownload16 class="bx--btn__icon" width="16" height="16" viewBox="0 0 16 16"></svg> -->
+                </button>
+            </div>
         </div>
     </div>
+
+    <div class="notification-container"></div>
     <div *ngIf="uploadModalVisible">
         <app-uploader-panel [uploadPath]="getSelectedDirectory()" (onClose)="closeUploadModal()"></app-uploader-panel>
+    </div>
+    <div *ngIf="uploadConfigModalVisible">
+        <config-panel (onClose)="closeConfigModal()"></config-panel>
     </div>
     <!-- <button class="bx--btn bx--btn--secondary mt-3" style="width:100%;" (click)="uploadBtn(rightUpload, sideRemote)">Upload files to z/OS...</button> -->
 </div>

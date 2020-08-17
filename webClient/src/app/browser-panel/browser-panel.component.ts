@@ -8,14 +8,19 @@
   Copyright Contributors to the Zowe Project.
 */
 
-import { Component, OnInit, Input, ViewChild, Inject, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, Inject, AfterViewInit , EventEmitter, Output } from '@angular/core';
 import { TreeNode } from 'primeng/primeng';
 import { Connection } from '../Connection';
 import { Message } from 'primeng/components/common/api';
 import { FTASide, FTAFileInfo, FTAFileMode } from '../../../../common/FTATypes';
-import { FileTreeComponent as ZluxFileTreeComponent } from '@zowe/zlux-angular-file-tree';
+import { FileTreeComponent as ZluxFileTreeComponent } from '@zlux/file-explorer/src/plugin';
 import { UploaderPanelComponent } from '../uploader-panel/uploader-panel.component';
-import { Angular2InjectionTokens } from 'pluginlib/inject-resources';
+import { ConfigPanelComponent } from '../config-panel/config-panel.component';
+import { Angular2InjectionTokens,Angular2PluginViewportEvents } from 'pluginlib/inject-resources';
+import { DownloadService } from '../services/Download.service';
+import * as globals from '../../environments/environment';
+import * as uuid from 'uuid';
+import { FTAConfigService } from '../services/FTAConfig.service';
 
 class TreeNodeData {
     attributes: any;
@@ -57,13 +62,28 @@ class FileRow {
     './browser-panel.component.scss',
     '../../styles.scss'
     ]
-    
+
 })
+
 export class BrowserPanelComponent implements AfterViewInit, OnInit {
+
+
     @Input() connection;
     @Input() ftaSide;
+    @Input() cancelEvent;
+    @Input() priorityDownloadEvent;
+    @Output() downloadTrigger = new EventEmitter();
+    @Output() downloadEndTrigger = new EventEmitter();
+
     @ViewChild(ZluxFileTreeComponent)
     fileExplorer: ZluxFileTreeComponent;
+    downloadInProgress: boolean;
+    downloadQueue: string [];
+    downloadObjectQueue: string [];
+    downloadRemoteFileQueue: string [];
+    downloadInProgressList: string [];
+    objectToDownload = null;
+    public config = globals.prod_config;
 
     fileView: string;
     tree: TreeNode[] = [];
@@ -71,6 +91,9 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
     listSelection: FileRow;
     list: FileRow[];
     selectedPath: string;
+    selectedFileSize: string;
+    enableDownload:boolean = true;
+    selectedFileType:string;
     errorMessages: Message[] = [];
 
     contextSide: FTASide;
@@ -78,8 +101,16 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
     contextRow: FileRow;
 
     uploadModalVisible: boolean;
+    uploadConfigModalVisible: boolean;
 
-    constructor(@Inject(Angular2InjectionTokens.LOGGER) private log: ZLUX.ComponentLogger) { }
+    toggleText = ["Binary", "Autoconvert"];
+    activateAutomaticConvertion = false;
+    encodings = ["ASCII", "EBCDIC", "UTF8"];
+
+    constructor(@Inject(Angular2InjectionTokens.LOGGER) private log: ZLUX.ComponentLogger, 
+    private downloadService:DownloadService,
+    private ftaConfig:FTAConfigService,
+    @Inject(Angular2InjectionTokens.VIEWPORT_EVENTS) private viewportEvents: Angular2PluginViewportEvents) { }
 
     get sideLocal(): FTASide {
         return FTASide.LOCAL;
@@ -89,10 +120,16 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
     }
 
     ngOnInit(): void {
+     
+        this.downloadQueue = [];
+        this.downloadRemoteFileQueue = [];
+        this.downloadInProgressList = [];
+        this.downloadObjectQueue = [];
         this.log.debug('ngOnInit this.connection.name=' + this.connection.name);
 
         this.fileView = 'tree';
         this.uploadModalVisible = false;
+        this.uploadConfigModalVisible = false;
 
         this.connection.ftaWs.onError((err) => {
             this.showError(err);
@@ -129,6 +166,29 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
         });
 
         this.connection.ftaWs.getHomePath(this.ftaSide);
+
+        this.viewportEvents.registerCloseHandler(():Promise<void>=> {
+            return new Promise((resolve,reject)=> {
+              this.ngOnDestroy();
+              resolve();
+            });
+        });
+    }
+
+    onChange(event){
+        if(event.checked){
+            this.activateAutomaticConvertion = true;
+        }else{
+            this.activateAutomaticConvertion = false;
+        }
+    }
+
+    ngOnDestroy(): void {
+        this.log.debug('cancel inprogress/queued downloads.');
+        this.downloadQueue = [];
+        this.downloadRemoteFileQueue =[];
+        this.downloadObjectQueue = [];
+        this.downloadService.cancelDownload();
     }
 
     ngAfterViewInit(){
@@ -164,9 +224,17 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
         this.uploadModalVisible = true;
     }
 
+    showConfigModal(): void{
+        this.uploadConfigModalVisible = true;
+    }
+
     closeUploadModal(): void {
         this.uploadModalVisible = false;
         this.fileExplorer.updateDirectory(this.getSelectedDirectory());
+    }
+
+    closeConfigModal(): void {
+        this.uploadConfigModalVisible = false;
     }
 
     getSelectedDirectory(): string {
@@ -175,10 +243,14 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
     onNodeClick($event:any){
         if ($event.directory == false) { 
             this.selectedPath = $event.path;
+            this.selectedFileSize = $event.size;
+            this.enableDownload = true;
+            this.selectedFileType = $event.data;
         } else {
             let folderPath = $event.path.substring($event.path.lastIndexOf("\\") + 1, $event.path.length);
             this.log.debug(folderPath);
             this.selectedPath = folderPath;
+            this.enableDownload = false;
         }
         this.log.debug(this.selectedPath);
     }
@@ -187,7 +259,7 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
         this.selectedPath = $event;
     }
 
-    saveAs(): void {
+    saveAs(sourceEncording?:any, targetEncoding?:any): void {
         const uri = ZoweZLUX.uriBroker.unixFileUri('contents', this.selectedPath.slice(1), undefined, undefined, undefined, true);
         this.log.debug(uri);
         const tokens = this.selectedPath.split('/');
@@ -196,9 +268,129 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
         const a = document.createElement('a');
         this.log.debug('downloading from uri', uri, 'with path ',this.selectedPath);
         a.href = uri;
-        a.download = filename;
-        a.click();
+        this.startDownload(filename, this.selectedPath, null, sourceEncording,targetEncoding).then(res => {
+            this.log.debug('completed download');
+        }).catch((err) => {
+            this.log.debug('error downloading '+ err);
+        });
+        // a.download = filename;
+        // a.click();
         this.log.debug('clicked link');
+    }
+
+    cancelDown(){
+        this.downloadService.cancelDownload();
+        var cancelObj = null;
+        cancelObj  = this.downloadInProgressList.shift() ;
+        cancelObj.status = this.config.statusList[2];
+        this.downloadEndTrigger.emit(cancelObj);
+    }
+
+    startDownload(filename:string, remotePath:string, downloadObject?:any, sourceEncording?:any, targetEncoding?:any): Promise<any>{
+        if(!this.downloadInProgress){
+            this.initilizeDownloadObject(this.config.statusList[0], remotePath, filename, downloadObject, sourceEncording, targetEncoding).then((downloadObject)=> {
+                this.downloadInProgress = true;
+                downloadObject.status = this.config.statusList[0];
+                this.downloadService.fetchFileHanlder("https://localhost:8544/unixfile/contents"+ remotePath,filename,remotePath, downloadObject).then((res) => {
+                    this.downloadEndTrigger.emit(this.downloadService.finalObj);
+                    if(this.downloadQueue.length > 0){
+                        this.downloadInProgress = false;
+                        this.startDownload(this.downloadQueue.shift(),this.downloadRemoteFileQueue.shift(),this.downloadObjectQueue.shift());
+                    }else{
+                        this.downloadInProgress = false;
+                        return Promise.resolve("Completed All downloads");
+                    }
+                }).catch((err) => {
+                    return Promise.reject(err);
+                });
+                this.downloadInProgressList.push(downloadObject);
+                this.downloadTrigger.emit(downloadObject);
+            })
+        }else{
+            if(this.downloadQueue.length < this.ftaConfig.getDownloadQueueSize()){
+                this.initilizeDownloadObject(this.config.statusList[3], remotePath, filename, null, sourceEncording, targetEncoding).then((downloadObject)=> {
+                    this.downloadQueue.push(filename);
+                    this.downloadRemoteFileQueue.push(remotePath);
+                    this.downloadObjectQueue.push(downloadObject);
+                    this.downloadTrigger.emit(downloadObject);
+                    return Promise.resolve("Added to the queue");
+                });
+            }else{
+                return Promise.resolve("Already exceeds the queuing limit please try after one or more download finishes");
+            }
+        }
+    }
+
+    initilizeDownloadObject(status:string, remoteFile:string, fileName:string , downloadObj? : any, sourceEncording?:any, targetEncoding?:any):Promise<any>{
+
+        if(downloadObj != null){
+            downloadObj.status = this.config.statusList[0];
+            return Promise.resolve(downloadObj);
+        }else{
+            return Promise.resolve(this.objectToDownload = {
+                uuid : uuid.v4(),
+                fileName: fileName,
+                type: this.selectedFileType,
+                size: this.selectedFileSize,
+                transfertime: "00.012.21.0",
+                status: status,
+                progress: "0",
+                activitytype: "download",
+                remoteFile: remoteFile,
+                priority: this.config.priority[0],
+                sourceEncording: sourceEncording,
+                targetEncoding: targetEncoding
+            });
+        }
+       
+    }
+
+    ngOnChanges(changes) {
+        console.log(changes);
+        if(changes.cancelEvent != null){
+          if(changes.cancelEvent.currentValue != null){
+            if(changes.cancelEvent.currentValue.status == this.config.statusList[0]){
+                this.cancelDown();
+            }else if(changes.cancelEvent.currentValue.status == this.config.statusList[3]){
+                this.findExisitingObject(changes.cancelEvent.currentValue.fileName,this.downloadQueue).then((index)=> {
+                    this.downloadQueue.splice(index,1);
+                    this.downloadRemoteFileQueue.splice(index,1);
+                    var cancelObj = [];
+                    cancelObj = this.downloadObjectQueue.splice(index,1);
+                    this.downloadEndTrigger.emit(cancelObj[0]);
+                });
+            }
+          }
+        }
+
+        if(changes.priorityDownloadEvent != null){
+            if(changes.priorityDownloadEvent.currentValue != null){
+                this.findExisitingObject(changes.priorityDownloadEvent.currentValue.fileName, this.downloadQueue).then((index)=> {
+                    if(index >= 0){
+                        //splice object and take out the priority object
+                        const highPriorityDownQueue = this.downloadQueue.splice(index,1);
+                        const highPriorityRemoteFileQueue = this.downloadRemoteFileQueue.splice(index,1);
+                        var priorityObj = [];
+                        priorityObj = this.downloadObjectQueue.splice(index,1);
+
+                      if(changes.priorityDownloadEvent.currentValue.priority == this.config.priority[1]){
+                          this.downloadQueue.unshift(highPriorityDownQueue[0]);
+                          this.downloadRemoteFileQueue.unshift(highPriorityRemoteFileQueue[0]);
+                          this.downloadObjectQueue.unshift(priorityObj[0]);
+                      }else{
+                        this.downloadQueue.push(highPriorityDownQueue[0]);
+                        this.downloadRemoteFileQueue.push(highPriorityRemoteFileQueue[0]);
+                        this.downloadObjectQueue.push(priorityObj[0]);
+                      }
+                    }
+                  });
+            }
+          }
+    }
+
+    findExisitingObject(objectToFind, objectArray){
+        const existingObject = objectArray.findIndex(obj => obj == objectToFind)
+        return Promise.resolve(existingObject);
     }
 
     getSelectedPath(){
