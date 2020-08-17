@@ -44,15 +44,24 @@ export class DownloadService {
       this.abortController =  new AbortController();
       this.abortSignal = this.abortController.signal;
       this.fileName = fileName;
-      // this.totalSize = downnloadObject.size;
+      this.totalSize = downnloadObject.size;
       this.initilizeDownloadObject(downnloadObject);
+
+      if(downnloadObject.sourceEncording != undefined && downnloadObject.targetEncoding != undefined){
+        let queriesObject =
+          {
+           "source": downnloadObject.sourceEncording,
+           "target": downnloadObject.targetEncoding
+          };
+        
+        fetchPath = fetchPath+"?"+await this.getQueryString(queriesObject);
+      }
       const response = await fetch(fetchPath, {signal: this.abortSignal})
 
       //mock size for now
-      this.totalSize =  Number(response.headers.get('X-zowe-filesize'));
+      // this.totalSize =  Number(response.headers.get('X-zowe-filesize'));
       this.donwloadedSize = 0;
 
-      //time tracker.
       this.startTime = new Date().getTime();
 
       const readbleStream = response.body != null ? response.body : Promise.reject("Cannot recieve data from the host machine");
@@ -62,11 +71,8 @@ export class DownloadService {
         writableStrategy:queuingStrategy,
         readableStrategy: queuingStrategy
       });
-      
-      //get writer and lock the file
       const writer = fileStream.getWriter();
       this.currentWriter = writer;
-      //get context
       const context = this;
       await new Promise(async resolve => {
         new ReadableStream({
@@ -99,6 +105,14 @@ export class DownloadService {
         },queuingStrategy);
       });
     }
+
+    getQueryString(queries){
+      return Object.keys(queries).reduce((result, key) => {
+          console.log(key);
+          console.log(this.config.encodings[queries[key]]);
+          return [...result, `${encodeURIComponent(key)}=${encodeURIComponent(this.config.encodings[queries[key]])}`]
+      }, []).join('&');
+    };
 
     initilizeDownloadObject(downloadObject: any){
       this.downloadInprogressList.push(downloadObject);
