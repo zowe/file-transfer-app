@@ -214,7 +214,7 @@ export class FTABinaryData {
         reader.onload = function(event) {
             let result: ArrayBuffer;
             result = reader.result as ArrayBuffer;
-            var dv: DataView = new DataView(reader.result);
+            var dv: DataView = new DataView(result);
             var header: number = dv.getUint32(0);
             var length: number = dv.byteLength;
             var buf: ArrayBuffer = dv.buffer;

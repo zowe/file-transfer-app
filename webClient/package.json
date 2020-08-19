@@ -16,13 +16,14 @@
     "@angular/cdk": "~6.3.3",
     "@angular/compiler": "~6.0.9",
     "@angular/core": "~6.0.9",
+    "@angular/http": "~6.0.9",
     "@angular/forms": "~6.0.9",
     "@angular/platform-browser": "~6.0.9",
     "@angular/platform-browser-dynamic": "~6.0.9",
     "@angular/router": "~6.0.9",
     "@ngx-translate/core": "~11.0.0",
     "@types/node": "~6.14.6",
-    "@zowe/zlux-angular-file-tree": "0.0.3-staging-6-20200521223819",
+    "@zlux/file-explorer": "git+ssh://git@github.com:zowe/zlux-file-explorer.git#staging",
     "angular2-template-loader": "~0.6.2",
     "bootstrap": "~4.3.1",
     "carbon-components": "^10.6.2",
@@ -52,11 +53,11 @@
     "webpack-cli": "~3.0.0",
     "webpack-config": "~7.5.0",
     "zone.js": "~0.8.26",
-    "source-map-loader": "~0.2.4",
-    "style-loader": "~0.22.1",
-    "uuid": "^8.1.0",
     "streamsaver": "^2.0.3",
     "web-streams-polyfill": "^2.0.5",
-    "@zlux/widgets": "git+https://github.com:zowe/zlux-widgets.git"
+    "source-map-loader": "~0.2.4",
+    "@zlux/widgets": "git+https://github.com:zowe/zlux-widgets.git",
+    "style-loader": "~0.22.1",
+    "uuid": "^8.1.0"
   }
 }

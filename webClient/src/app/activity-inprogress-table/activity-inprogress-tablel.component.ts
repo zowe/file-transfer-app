@@ -28,7 +28,6 @@ import * as globals from '../../environments/environment';
   './activity-inprogress-table.component.scss',
   '../../styles.scss'
   ],
-
 })
 export class ActivityInprogressTableComponent {
   tableModel: TableModel;
@@ -39,19 +38,26 @@ export class ActivityInprogressTableComponent {
   downLoadProgress = 0;
   cancelTrue = false;
 
+
+  //set of elements which holds download speed, progress bar, etc-.
   @ViewChild("customItemTemplate")
   protected customItemTemplate: TemplateRef<any>;
 
+  //actiion items ex:- cancel download template.
   @ViewChild("actionsMenuTemplate")
   public actionsMenuTemplate: TemplateRef<any>;
 
+  //template ref to hold priority change buttons.
   @ViewChild("priorityMenuTemplate")
   public priorityMenuTemplate: TemplateRef<any>;
   
-  
+  // current active list of downloads.
   @Input() activityList;
+
+  //event trigger which fires download cancel event.
   @Output() cancelEventTrigger = new EventEmitter();
 
+  //event trigger which will push priority event change.
   @Output() priorityEventTrigger = new EventEmitter();
 
 
@@ -68,11 +74,14 @@ export class ActivityInprogressTableComponent {
     this.finalizeDisplayInfo();
   }
   
+  //finalize the display of the table.
   finalizeDisplayInfo() {
     var index: any;
     var formattedActivityList = [];
 
     const inProgressArray = [];
+
+    //populating the inprogress activity list.
     for(index in this.fatActivityList){
       inProgressArray.push(
         [new TableItem({data:this.fatActivityList[index].fileName,expandedTemplate: this.customItemTemplate, expandedData:this.fatActivityList[index]}), 
@@ -101,6 +110,8 @@ export class ActivityInprogressTableComponent {
     this.tableModel.header = tableHeader;
   }
 
+  //listenting for changes in activity list
+  //for an example new donwload addition download cancellation.
   ngOnChanges(changes) {
     if(changes.activityList != null){
       if(changes.activityList.currentValue != null){
@@ -111,6 +122,7 @@ export class ActivityInprogressTableComponent {
     }
   }
 
+  //sort function for the data table.
   simpleSort(index: number, type:string) {
     this.sort(this.tableModel, index);
   }
@@ -123,6 +135,7 @@ export class ActivityInprogressTableComponent {
     model.sort(index);
   }
 
+  //search the data table.
   searchValueChange(value: string) {
     if(value){
       this.tableModel.data = this.tableModel.data.filter( 
@@ -133,6 +146,9 @@ export class ActivityInprogressTableComponent {
     } 
   }
 
+  //calculate time left to download.
+  //todo :- coming up with a zss endpoint to grab the
+  //left size to be donwloaded and calculate the time based on it.
   calculateTimeToDownload(){
     let startTime = this.downloadService.startTime;
     let downloadedSize = this.downloadService.donwloadedSize;
@@ -148,37 +164,54 @@ export class ActivityInprogressTableComponent {
     return this.timeInSecnds;
   }
 
+  //fire the event to cancel a download.
   cancelDownload(event,data){
     event.stopPropagation();
     this.cancelEventTrigger.emit(data);
   }
 
+  //function to handle priority event changes.
   priorityChange(data){
     this.findExisitingObject(data, this.fatActivityList).then((index)=> {
       if(index >= 0 && data.status != this.config.statusList[0]){
         if(data.priority == this.config.priority[0]){
+            //set the priority high.
             this.fatActivityList[index].priority = this.config.priority[1];
+            //splice the object and take it out from the current activity list array.
             let highPriorityObject = this.fatActivityList.splice(index,1);
+            //splice out the current inprogress array.
             const inProgressObject = this.fatActivityList.splice(0,1);
+            //add the high priority object back first.
             this.fatActivityList.unshift(highPriorityObject[0]);
+            //add the inproress object next. Since it is already inprogress it should be the first in the list.
             this.fatActivityList.unshift(inProgressObject[0]);
+            //does nothing special but will help to fire the ngOnChanges event on components.
             highPriorityObject = highPriorityObject.slice();
+            //emit the priority object.This will make sure to fire the ngOnChanges 
+            //event in browser panel component which handles the download directly.
             this.priorityEventTrigger.emit(highPriorityObject[0]);
         }else{
+          //set the priority low.
           this.fatActivityList[index].priority = this.config.priority[0];
+          //splice the object and take it out from the current activity list array.
           let lowPriorityObject = this.fatActivityList.splice(index,1);
+          //push the object in to the last of the list.
           this.fatActivityList.push(lowPriorityObject[0]);
+          //does nothing special but will help to fire the ngOnChanges event on components.
           lowPriorityObject = lowPriorityObject.slice();
+          //emit the priority object.This will make sure to fire the ngOnChanges 
+          //event in browser panel component which handles the download directly.
           this.priorityEventTrigger.emit(lowPriorityObject[0]);
         }
+        //refresh the data table.
         this.finalizeDisplayInfo();
       }
     });
   }
 
+  //when the priority change event fires get the object which priority has changed.
   findExisitingObject(objectToFind, objectArray){
     const existingObject = objectArray.findIndex(obj => obj.uuid == objectToFind.uuid)
     return Promise.resolve(existingObject);
   }
 }
-
