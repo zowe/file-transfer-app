@@ -31,7 +31,6 @@ import * as globals from '../../environments/environment';
 
 })
 export class ProgressBarComponent {
-  timeInSecnds = "";
   downLoadProgress = 0;
 
   @ViewChild("customItemTemplate")
@@ -50,7 +49,7 @@ export class ProgressBarComponent {
   
   getDownloadProgress(){
     let startTime = this.downloadService.startTime;
-    let downloadedSize = this.downloadService.donwloadedSize;
+    let downloadedSize = this.downloadService.downloadedSize;
     let totalSize = (this.downloadService.totalSize)/(1024 * 512);
     this.downLoadProgress = Math.min(Math.round((downloadedSize / totalSize) * 100), 100);
     return Math.min(Math.round((downloadedSize / (totalSize)) * 100), 100);

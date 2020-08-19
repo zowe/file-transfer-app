@@ -22,7 +22,7 @@ import * as globals from '../../environments/environment';
 
 @Component({
   selector: 'activity-table',
-  templateUrl: './activity-tablel.component.html',
+  templateUrl: './activity-table.component.html',
   styleUrls: [
   // '../../../node_modules/carbon-components/css/carbon-components.min.css',
   './activity-table.component.scss',

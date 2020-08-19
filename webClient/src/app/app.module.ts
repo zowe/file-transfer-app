@@ -47,9 +47,9 @@ import { BrowserPanelComponent } from './browser-panel/browser-panel.component';
 import { ConnectionPanelComponent } from './connection-panel/connection-panel.component';
 import { ActivityPanelComponent } from './activity-panel/activity-panel.component';
 import { UploaderPanelComponent } from './uploader-panel/uploader-panel.component';
-import { ActivityInprogressTableComponent } from './activity-inprogress-table/activity-inprogress-tablel.component';
+import { ActivityInprogressTableComponent } from './activity-inprogress-table/activity-inprogress-table.component';
 import { ProgressBarComponent } from './progress-bar/progress-bar.component';
-import { ActivityTableComponent } from './activity-table/activity-tablel.component';
+import { ActivityTableComponent } from './activity-table/activity-table.component';
 import { ConfigPanelComponent } from './config-panel/config-panel.component';
 import { FileTreeModule } from '@zlux/file-explorer/src/plugin';
 import { MatSnackBarModule } from '@angular/material'

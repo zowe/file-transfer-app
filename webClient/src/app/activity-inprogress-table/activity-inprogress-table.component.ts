@@ -22,7 +22,7 @@ import * as globals from '../../environments/environment';
 
 @Component({
   selector: 'activity-progress-table',
-  templateUrl: './activity-inprogress-tablel.component.html',
+  templateUrl: './activity-inprogress-table.component.html',
   styleUrls: [
   // '../../../node_modules/carbon-components/css/carbon-components.min.css',
   './activity-inprogress-table.component.scss',
@@ -151,7 +151,7 @@ export class ActivityInprogressTableComponent {
   //left size to be donwloaded and calculate the time based on it.
   calculateTimeToDownload(){
     let startTime = this.downloadService.startTime;
-    let downloadedSize = this.downloadService.donwloadedSize;
+    let downloadedSize = this.downloadService.downloadedSize;
     let totalSize = (this.downloadService.totalSize)/(1024 * 512);
     let elapsedTime = (new Date().getTime()) - startTime;
     let chunksPerTime = downloadedSize / elapsedTime;

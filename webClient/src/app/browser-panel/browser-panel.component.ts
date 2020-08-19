@@ -261,7 +261,7 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
         this.selectedPath = $event;
     }
 
-    saveAs(sourceEncording?:any, targetEncoding?:any): void {
+    saveAs(sourceEncoding?:any, targetEncoding?:any): void {
         const uri = ZoweZLUX.uriBroker.unixFileUri('contents', this.selectedPath.slice(1), undefined, undefined, undefined, true);
         this.log.debug(uri);
         const tokens = this.selectedPath.split('/');
@@ -271,7 +271,7 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
         this.log.debug('downloading from uri', uri, 'with path ',this.selectedPath);
         a.href = uri;
         //staart the donwload.
-        this.startDownload(filename, this.selectedPath, null, sourceEncording,targetEncoding).then(res => {
+        this.startDownload(filename, this.selectedPath, null, sourceEncoding,targetEncoding).then(res => {
             this.log.debug('completed download');
         }).catch((err) => {
             this.log.debug('error downloading '+ err);
@@ -290,14 +290,14 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
         this.downloadEndTrigger.emit(cancelObj);
     }
 
-    startDownload(filename:string, remotePath:string, downloadObject?:any, sourceEncording?:any, targetEncoding?:any): Promise<any>{
+    startDownload(filename:string, remotePath:string, downloadObject?:any, sourceEncoding?:any, targetEncoding?:any): Promise<any>{
         //check if download in progress.
         if(!this.downloadInProgress){
-            this.initilizeDownloadObject(this.config.statusList[0], remotePath, filename, downloadObject, sourceEncording, targetEncoding).then((downloadObject)=> {
+            this.initializeDownloadObject(this.config.statusList[0], remotePath, filename, downloadObject, sourceEncoding, targetEncoding).then((downloadObject)=> {
                 this.downloadInProgress = true;
                 downloadObject.status = this.config.statusList[0];
                 //todo after test change to the uri.
-                this.downloadService.fetchFileHanlder("https://localhost:8544/unixfile/contents"+ remotePath,filename,remotePath, downloadObject).then((res) => {
+                this.downloadService.fetchFileHandler("https://localhost:8544/unixfile/contents"+ remotePath,filename,remotePath, downloadObject).then((res) => {
                     this.downloadEndTrigger.emit(this.downloadService.finalObj);
                     if(this.downloadQueue.length > 0){
                         this.downloadInProgress = false;
@@ -320,7 +320,7 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
             //if already download inprogress check the download queue size 
             //from the user config and add to the queue.
             if(this.downloadQueue.length < this.ftaConfig.getDownloadQueueSize()){
-                this.initilizeDownloadObject(this.config.statusList[3], remotePath, filename, null, sourceEncording, targetEncoding).then((downloadObject)=> {
+                this.initializeDownloadObject(this.config.statusList[3], remotePath, filename, null, sourceEncoding, targetEncoding).then((downloadObject)=> {
                     this.downloadQueue.push(filename);
                     this.downloadRemoteFileQueue.push(remotePath);
                     this.downloadObjectQueue.push(downloadObject);
@@ -333,9 +333,9 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
         }
     }
 
-    //initilize the download object.
+    //initialize the download object.
     //values which hare hard coded are to be replaced after the download time api is ready from zss.
-    initilizeDownloadObject(status:string, remoteFile:string, fileName:string , downloadObj? : any, sourceEncording?:any, targetEncoding?:any):Promise<any>{
+    initializeDownloadObject(status:string, remoteFile:string, fileName:string , downloadObj? : any, sourceEncoding?:any, targetEncoding?:any):Promise<any>{
         if(downloadObj != null){
             downloadObj.status = this.config.statusList[0];
             return Promise.resolve(downloadObj);
@@ -351,7 +351,7 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
                 activitytype: "download",
                 remoteFile: remoteFile,
                 priority: this.config.priority[0],
-                sourceEncording: sourceEncording,
+                sourceEncoding: sourceEncoding,
                 targetEncoding: targetEncoding
             });
         }

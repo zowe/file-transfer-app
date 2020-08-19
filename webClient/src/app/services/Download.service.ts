@@ -29,31 +29,31 @@ export class DownloadService {
     currentWriter ;
     downObj = null;
     finalObj = null;
-    donwloadedSize = 0;
+    downloadedSize = 0;
     totalSize = 1;
     downloadInprogressList: string[] = [];
     config = globals.prod_config;
     startTime = 0;
 
     constructor(private http: HttpClient, @Inject(Angular2InjectionTokens.LOGGER) private log: ZLUX.ComponentLogger) {
-      this.donwloadedSize = 0;
+      this.downloadedSize = 0;
     }
 
     //main function to handle the large downloads.
-    async fetchFileHanlder(fetchPath: string, fileName: string, remoteFile:string, downnloadObject:any): Promise<any> {
+    async fetchFileHandler(fetchPath: string, fileName: string, remoteFile:string, downloadObject:any): Promise<any> {
       this.log.debug("started downloading file "+ fileName);
       this.abortController =  new AbortController();
       this.abortSignal = this.abortController.signal;
       this.fileName = fileName;
-      this.totalSize = downnloadObject.size;
-      this.initilizeDownloadObject(downnloadObject);
+      this.totalSize = downloadObject.size;
+      this.initializeDownloadObject(downloadObject);
 
       //define the endcoding type.
-      if(downnloadObject.sourceEncording != undefined && downnloadObject.targetEncoding != undefined){
+      if(downloadObject.sourceEncoding != undefined && downloadObject.targetEncoding != undefined){
         let queriesObject =
           {
-           "source": downnloadObject.sourceEncording,
-           "target": downnloadObject.targetEncoding
+           "source": downloadObject.sourceEncoding,
+           "target": downloadObject.targetEncoding
           };
         
         fetchPath = fetchPath+"?"+await this.getQueryString(queriesObject);
@@ -63,7 +63,7 @@ export class DownloadService {
 
       //mock size for now
       // this.totalSize =  Number(response.headers.get('X-zowe-filesize'));
-      this.donwloadedSize = 0;
+      this.downloadedSize = 0;
 
       this.startTime = new Date().getTime();
 
@@ -94,13 +94,13 @@ export class DownloadService {
                   writer.close();
                   controller.close();
                   context.updateInProgressObject(context.config.statusList[1]);
-                  context.log.debug("finished writing the contetn to the target file in host machine "+ fileName);
+                  context.log.debug("finished writing the content to the target file in host machine "+ fileName);
                   resolve();
                 }
                 if(value != undefined){
                   writer.write(value);
-                  context.donwloadedSize++;
-                  context.writeProgress(context.donwloadedSize);
+                  context.downloadedSize++;
+                  context.writeProgress(context.downloadedSize);
                   read();
                 }
               }).catch(error => {
@@ -125,17 +125,17 @@ export class DownloadService {
     };
 
     //push the object to inprogress list.
-    initilizeDownloadObject(downloadObject: any){
+    initializeDownloadObject(downloadObject: any){
       this.downloadInprogressList.push(downloadObject);
     }
 
     writeProgress(size){
-      this.donwloadedSize = size;
+      this.downloadedSize = size;
     }
   
     //expose the current progress.
     getProgress(){
-      return this.donwloadedSize;
+      return this.downloadedSize;
     }
 
     //update in progress object.
@@ -153,7 +153,7 @@ export class DownloadService {
         this.currentWriter.releaseLock();
         this.abortController.abort();
         this.totalSize = 1;
-        this.donwloadedSize = 0; 
+        this.downloadedSize = 0; 
         this.updateInProgressObject(this.config.statusList[0]);
         this.log.debug("cancelled current download");
       }
