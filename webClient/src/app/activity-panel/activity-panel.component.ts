@@ -34,21 +34,31 @@ import * as globals from '../../environments/environment';
 export class ActivityPanelComponent {
 
   close = false;
-  no = 0;
+  activityHistoryStatus = 0;
   progress = 0;
+  //input to get activities in progress.
   @Input() objectInProgress;
+  // input to get activity update.
   @Input() objectUpdate;
 
+  //cancel event trigger.
   @Output() cancelEventTriggerParent = new EventEmitter();
+  //priority event trigger.
   @Output() priorityEventTriggerParent = new EventEmitter();
   
-
+  //array to hold all downloads.
   public fatDownloadActivity: FTAActivity[] = [];
+  //array to hold activities in progress.
   public fatDownloadActivityInprogress: FTAActivity[] = [];
+  //array to hold cancel download activites.
   public fatDownloadCancel: FTAActivity[] = [];
+  //array to hold completed list of downloads.
   public fatDownloadCompleted: FTAActivity[] = [];
+  //array to hold upload activity list.
   public fatUploadActivity: FTAActivity[];
+  //array to hold transfer activity list.
   public fatTransferActivity: FTAActivity[];
+  //global config.
   public config = globals.prod_config;
 
   constructor(@Inject(Angular2InjectionTokens.PLUGIN_DEFINITION) private pluginDefinition: ZLUX.ContainerPluginDefinition, 
@@ -61,15 +71,13 @@ export class ActivityPanelComponent {
   }
 
   ngOnInit(): void {
+    //get the list of history activites saved in user scope.
     const sub = this.ftaactivityService.getData().then((data) => {
       if (data && data.contents) {
-        // this.fatDownloadActivity = data.contents.download ? Array.from(new Set(this.fatDownloadActivity.concat(data.contents.download))) : [];
         this.fatDownloadCompleted = data.contents.downloadList.completed ? Array.from(new Set(this.fatDownloadCompleted.concat(data.contents.downloadList.completed))) : [];
         this.fatDownloadCancel = data.contents.downloadList.cancelled ? Array.from(new Set(this.fatDownloadCancel.concat(data.contents.downloadList.cancelled))) : [];
         this.fatDownloadActivity = this.fatDownloadCancel ? this.fatDownloadCancel : [];
         this.fatDownloadActivity = data.contents.downloadList.completed ? Array.from(new Set(this.fatDownloadActivity.concat(data.contents.downloadList.completed))) : [];
-        // this.fatUploadActivity = data.contents.upload ? Array.from(new Set(this.fatUploadActivity.concat(data.contents.upload))) : [];
-        // this.fatTransferActivity = data.contents.transfer ? Array.from(new Set(this.fatTransferActivity.concat(data.contents.transfer))) : [];
       };
     });
 
@@ -82,14 +90,16 @@ export class ActivityPanelComponent {
   }
 
    ngOnDestroy(): void {
+     //if user wan's to close the app during a download
+     //inprogress download -> cancel state
+     //downloadqueue -> cancel state.
      this.finalizeObjectBeforeCloseEvent().then((finalizedList) => {
         this.log.debug("exiting fta saved the activity list");
-        if(this.no == 0){
+        if(this.activityHistoryStatus == 0){
           this.ftaactivityService.deleteData();
-          this.no++;
+          this.activityHistoryStatus++;
           this.ftaactivityService.saveActivtiy(finalizedList).then((res)=> {
             this.log.debug("saved");
-            console.log("saved");
           });
         }
     }).catch((err) => {
@@ -97,12 +107,14 @@ export class ActivityPanelComponent {
     });
   }
 
-  saveActivities(){
-    
-  }
 
   finalizeObjectBeforeCloseEvent(): Promise<any> {
+    //get inprogress object.
     const inProgressList = this.fatDownloadActivity.filter(obj => obj.status === this.config.statusList[0]);
+    //get queued object.
+    const inQueuedList = this.fatDownloadActivity.filter(obj => obj.status === this.config.statusList[3]);
+    //concatenate two arrays.
+    inProgressList.concat(inQueuedList);
     for(var inProgress in inProgressList){
       const indexOfObject = this.fatDownloadActivity.indexOf(inProgressList[inProgress]);
       inProgressList[inProgress].status = this.config.statusList[2];
@@ -110,15 +122,18 @@ export class ActivityPanelComponent {
       this.fatDownloadCancel.push(inProgressList[inProgress]);
       this.fatDownloadActivity[indexOfObject] = inProgressList[inProgress];
     }
+    //return after changing the state to cancel.
     return Promise.resolve(this.fatDownloadActivity);
   }
 
 
   ngOnChanges(changes) {
+    //capture changes in objectinprogress input.
     if(changes.objectInProgress != null){
       if(changes.objectInProgress.currentValue != null){
         if(changes.objectInProgress.currentValue.status == this.config.statusList[3]){
           this.fatDownloadActivityInprogress.push(changes.objectInProgress.currentValue);
+          //remove from the list if exceeds the size of the lsit define in user config.
           this.refresh(this.config.tabTypes[0]);
         }else if(changes.objectInProgress.currentValue.status == this.config.statusList[0]){
           this.findExisitingObject(changes.objectInProgress.currentValue, this.fatDownloadActivityInprogress).then((index)=> {
@@ -127,12 +142,14 @@ export class ActivityPanelComponent {
             }else{
               this.fatDownloadActivityInprogress.push(changes.objectInProgress.currentValue);
             }
+            //remove from the list if exceeds the size of the lsit define in user config.
             this.refresh(this.config.tabTypes[0]);
             this.fatDownloadActivity.push(changes.objectInProgress.currentValue);
           });
         }
       }
     }
+    //capture changes in objectinprogress input.
     if(changes.objectUpdate != null){
       if(changes.objectUpdate.currentValue != null){
         this.findExisitingObject(changes.objectUpdate.currentValue,this.fatDownloadActivity).then((index)=> {
@@ -164,37 +181,45 @@ export class ActivityPanelComponent {
     }
   }
 
+  //method to refresh the array sizes to maintain the size according to the user config.
   refresh(type) : void {
     const limitofActivityHistory = this.ftaConfig.getActivityHistoryLimit();
     if(type == this.config.tabTypes[0]){
+      //if larger than the limit size slice the array.
       if(this.fatDownloadActivityInprogress.length > limitofActivityHistory){
         this.fatDownloadActivityInprogress.shift();
       }
       this.fatDownloadActivityInprogress = this.fatDownloadActivityInprogress.slice();
     }else if(type == this.config.tabTypes[1]){
+      //if larger than the limit size slice the array.
       if(this.fatDownloadCancel.length > limitofActivityHistory){
         this.fatDownloadCancel.shift();
       }
       this.fatDownloadCancel = this.fatDownloadCancel.slice();
     }else{
+      //if larger than the limit size slice the array.
       if(this.fatDownloadCompleted.length > limitofActivityHistory){
         this.fatDownloadCompleted.shift();
       }
+      //does nothing special but will help to fire the ngOnChanges event on components.
       this.fatDownloadCompleted = this.fatDownloadCompleted.slice();
     }
   }
 
+  //get the existing object.
   findExisitingObject(objectToFind, objectArray){
       const existingObject = objectArray.findIndex(obj => obj.uuid == objectToFind.uuid)
       return Promise.resolve(existingObject);
   }
 
+  //get the cancel event.
   captureCancelEvent(data){
     if(data != null){
       this.cancelEventTriggerParent.emit(data);
     }
   }
 
+  //captur the rpriority event change.
   capturePriorityEvent(data){
     if(data != null){
       this.priorityEventTriggerParent.emit(data);

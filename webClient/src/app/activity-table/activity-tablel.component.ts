@@ -36,9 +36,8 @@ export class ActivityTableComponent {
   config = globals.prod_config;
   copyOfList = [];
 
-  
+  // current active list of downloads.
   @Input() activityList;
-
 
   ngOnInit() {
     this.tableModel = new TableModel();
@@ -46,6 +45,7 @@ export class ActivityTableComponent {
     this.finalizeDisplayInfo();
   }
   
+  //finalize the display of the table.
   finalizeDisplayInfo() {
     var index: any;
     var formattedActivityList = [];
@@ -53,6 +53,7 @@ export class ActivityTableComponent {
     const completedArray = [];
     const cancelArray = [];
     const inProgressArray = [];
+    //populating the inprogress activity list.
     for (index in this.fatActivityList){
       completedArray.push(
         [ new TableItem({data:this.fatActivityList[index].fileName}), 
@@ -77,6 +78,8 @@ export class ActivityTableComponent {
     this.tableModel.header = tableHeader;
   }
 
+  //listenting for changes in activity list
+  //for an example new donwload addition download cancellation.
   ngOnChanges(changes) {
     if(changes.activityList != null){
       if(changes.activityList.currentValue != null){
@@ -86,6 +89,7 @@ export class ActivityTableComponent {
     }
   }
 
+  //sorting the data table.
   simpleSort(index: number) {
     this.sort(index);
   }
@@ -98,6 +102,7 @@ export class ActivityTableComponent {
     this.tableModel.sort(index);
   }
 
+  //searching the data table.
   searchValueChange(value: string) {
     if(value){
       this.tableModel.data = this.tableModel.data.filter( 

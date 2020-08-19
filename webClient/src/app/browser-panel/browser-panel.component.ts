@@ -67,12 +67,14 @@ class FileRow {
 
 export class BrowserPanelComponent implements AfterViewInit, OnInit {
 
-
     @Input() connection;
     @Input() ftaSide;
     @Input() cancelEvent;
     @Input() priorityDownloadEvent;
+
+    //download start trigger.
     @Output() downloadTrigger = new EventEmitter();
+    //end download trigger.
     @Output() downloadEndTrigger = new EventEmitter();
 
     @ViewChild(ZluxFileTreeComponent)
@@ -120,7 +122,6 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
     }
 
     ngOnInit(): void {
-     
         this.downloadQueue = [];
         this.downloadRemoteFileQueue = [];
         this.downloadInProgressList = [];
@@ -176,6 +177,7 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
     }
 
     onChange(event){
+        //set the autoatic convertion status.
         if(event.checked){
             this.activateAutomaticConvertion = true;
         }else{
@@ -268,6 +270,7 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
         const a = document.createElement('a');
         this.log.debug('downloading from uri', uri, 'with path ',this.selectedPath);
         a.href = uri;
+        //staart the donwload.
         this.startDownload(filename, this.selectedPath, null, sourceEncording,targetEncoding).then(res => {
             this.log.debug('completed download');
         }).catch((err) => {
@@ -278,6 +281,7 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
         this.log.debug('clicked link');
     }
 
+    //cancel the download.
     cancelDown(){
         this.downloadService.cancelDownload();
         var cancelObj = null;
@@ -287,26 +291,34 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
     }
 
     startDownload(filename:string, remotePath:string, downloadObject?:any, sourceEncording?:any, targetEncoding?:any): Promise<any>{
+        //check if download in progress.
         if(!this.downloadInProgress){
             this.initilizeDownloadObject(this.config.statusList[0], remotePath, filename, downloadObject, sourceEncording, targetEncoding).then((downloadObject)=> {
                 this.downloadInProgress = true;
                 downloadObject.status = this.config.statusList[0];
+                //todo after test change to the uri.
                 this.downloadService.fetchFileHanlder("https://localhost:8544/unixfile/contents"+ remotePath,filename,remotePath, downloadObject).then((res) => {
                     this.downloadEndTrigger.emit(this.downloadService.finalObj);
                     if(this.downloadQueue.length > 0){
                         this.downloadInProgress = false;
+                        //after end of a download shift the queue and start the next download.
                         this.startDownload(this.downloadQueue.shift(),this.downloadRemoteFileQueue.shift(),this.downloadObjectQueue.shift());
                     }else{
+                        // fires when download queue is empty.
                         this.downloadInProgress = false;
                         return Promise.resolve("Completed All downloads");
                     }
                 }).catch((err) => {
                     return Promise.reject(err);
                 });
+                //add to inrprogress list.
                 this.downloadInProgressList.push(downloadObject);
+                //emit the download start event.
                 this.downloadTrigger.emit(downloadObject);
             })
         }else{
+            //if already download inprogress check the download queue size 
+            //from the user config and add to the queue.
             if(this.downloadQueue.length < this.ftaConfig.getDownloadQueueSize()){
                 this.initilizeDownloadObject(this.config.statusList[3], remotePath, filename, null, sourceEncording, targetEncoding).then((downloadObject)=> {
                     this.downloadQueue.push(filename);
@@ -321,8 +333,9 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
         }
     }
 
+    //initilize the download object.
+    //values which hare hard coded are to be replaced after the download time api is ready from zss.
     initilizeDownloadObject(status:string, remoteFile:string, fileName:string , downloadObj? : any, sourceEncording?:any, targetEncoding?:any):Promise<any>{
-
         if(downloadObj != null){
             downloadObj.status = this.config.statusList[0];
             return Promise.resolve(downloadObj);
@@ -346,11 +359,14 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
     }
 
     ngOnChanges(changes) {
-        console.log(changes);
+        //capture the cancel event.
         if(changes.cancelEvent != null){
           if(changes.cancelEvent.currentValue != null){
+            //when the inprogress object got cancel just cnacel the downlod and clean.
             if(changes.cancelEvent.currentValue.status == this.config.statusList[0]){
                 this.cancelDown();
+            // when a queued download is cancelled make sure to remove it from the 
+            // downloadQueue downloadRemoteFileQueue as well so it won't continue to hold these values.
             }else if(changes.cancelEvent.currentValue.status == this.config.statusList[3]){
                 this.findExisitingObject(changes.cancelEvent.currentValue.fileName,this.downloadQueue).then((index)=> {
                     this.downloadQueue.splice(index,1);
@@ -362,7 +378,7 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
             }
           }
         }
-
+        //capture priority download event
         if(changes.priorityDownloadEvent != null){
             if(changes.priorityDownloadEvent.currentValue != null){
                 this.findExisitingObject(changes.priorityDownloadEvent.currentValue.fileName, this.downloadQueue).then((index)=> {
@@ -388,6 +404,7 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
           }
     }
 
+    //find the existing object.
     findExisitingObject(objectToFind, objectArray){
         const existingObject = objectArray.findIndex(obj => obj == objectToFind)
         return Promise.resolve(existingObject);

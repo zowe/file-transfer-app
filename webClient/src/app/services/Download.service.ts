@@ -39,6 +39,7 @@ export class DownloadService {
       this.donwloadedSize = 0;
     }
 
+    //main function to handle the large downloads.
     async fetchFileHanlder(fetchPath: string, fileName: string, remoteFile:string, downnloadObject:any): Promise<any> {
       this.log.debug("started downloading file "+ fileName);
       this.abortController =  new AbortController();
@@ -47,6 +48,7 @@ export class DownloadService {
       this.totalSize = downnloadObject.size;
       this.initilizeDownloadObject(downnloadObject);
 
+      //define the endcoding type.
       if(downnloadObject.sourceEncording != undefined && downnloadObject.targetEncoding != undefined){
         let queriesObject =
           {
@@ -56,6 +58,7 @@ export class DownloadService {
         
         fetchPath = fetchPath+"?"+await this.getQueryString(queriesObject);
       }
+
       const response = await fetch(fetchPath, {signal: this.abortSignal})
 
       //mock size for now
@@ -64,15 +67,20 @@ export class DownloadService {
 
       this.startTime = new Date().getTime();
 
+      //get the stream from the resposnse body.
       const readbleStream = response.body != null ? response.body : Promise.reject("Cannot recieve data from the host machine");
+      //queieng stratergy.
       const queuingStrategy = new CountQueuingStrategy({ highWaterMark: 5 });
+      //for browsers not supporting writablestram make sure to assign the polyfil writablestream.
       streamSaver.WritableStream = WritableStream;
+      //create the write stream.
       const fileStream = streamSaver.createWriteStream(fileName, {
         writableStrategy:queuingStrategy,
         readableStrategy: queuingStrategy
       });
       const writer = fileStream.getWriter();
       this.currentWriter = writer;
+      //assign _.this to context.
       const context = this;
       await new Promise(async resolve => {
         new ReadableStream({
@@ -81,6 +89,7 @@ export class DownloadService {
             read();
             function read() {
               reader.read().then(({done, value}) => {
+                //end of download.
                 if (done) {
                   writer.close();
                   controller.close();
@@ -106,6 +115,7 @@ export class DownloadService {
       });
     }
 
+    //create query strings to append in the request.
     getQueryString(queries){
       return Object.keys(queries).reduce((result, key) => {
           console.log(key);
@@ -114,6 +124,7 @@ export class DownloadService {
       }, []).join('&');
     };
 
+    //push the object to inprogress list.
     initilizeDownloadObject(downloadObject: any){
       this.downloadInprogressList.push(downloadObject);
     }
@@ -122,10 +133,12 @@ export class DownloadService {
       this.donwloadedSize = size;
     }
   
+    //expose the current progress.
     getProgress(){
       return this.donwloadedSize;
     }
 
+    //update in progress object.
     updateInProgressObject(status){
       if(this.downloadInprogressList.length > 0){
         this.finalObj = this.downloadInprogressList.shift();
@@ -133,6 +146,7 @@ export class DownloadService {
       }
     }
 
+    //cancel current download.
     cancelDownload(): void {
       if(this.currentWriter){
         this.currentWriter.abort();
