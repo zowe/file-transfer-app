@@ -15,6 +15,8 @@ import { WritableStream, TransformStream, ReadableStream, CountQueuingStrategy }
 import * as globals from '../../environments/environment';
 import * as uuid from 'uuid';
 import { ReplaySubject } from 'rxjs';
+import {ConfigVariables} from '../../shared/configvariable-enum';
+
 
 @Injectable({
   providedIn: "root",
@@ -34,6 +36,7 @@ export class DownloadService {
     downloadInprogressList: string[] = [];
     config = globals.prod_config;
     startTime = 0;
+    completeStatus = ConfigVariables.statusComplete;
 
     constructor(private http: HttpClient, @Inject(Angular2InjectionTokens.LOGGER) private log: ZLUX.ComponentLogger) {
       this.downloadedSize = 0;
@@ -93,7 +96,7 @@ export class DownloadService {
                 if (done) {
                   writer.close();
                   controller.close();
-                  context.updateInProgressObject(context.config.statusList[1]);
+                  context.updateInProgressObject(context.completeStatus);
                   context.log.debug("finished writing the content to the target file in host machine "+ fileName);
                   resolve();
                 }
@@ -119,8 +122,8 @@ export class DownloadService {
     getQueryString(queries){
       return Object.keys(queries).reduce((result, key) => {
           console.log(key);
-          console.log(this.config.encodings[queries[key]]);
-          return [...result, `${encodeURIComponent(key)}=${encodeURIComponent(this.config.encodings[queries[key]])}`]
+          console.log(ConfigVariables[queries[key]]);
+          return [...result, `${encodeURIComponent(key)}=${encodeURIComponent(ConfigVariables[queries[key]])}`]
       }, []).join('&');
     };
 
@@ -154,7 +157,7 @@ export class DownloadService {
         this.abortController.abort();
         this.totalSize = 1;
         this.downloadedSize = 0; 
-        this.updateInProgressObject(this.config.statusList[0]);
+        this.updateInProgressObject(ConfigVariables.statusInprogress);
         this.log.debug("cancelled current download");
       }
     }

@@ -20,6 +20,7 @@ import { SelectItem } from 'primeng/api';
 import { Message } from 'primeng/components/common/api';
 import { Angular2InjectionTokens,Angular2PluginViewportEvents } from 'pluginlib/inject-resources';
 import * as globals from '../../environments/environment';
+import {ConfigVariables} from '../../shared/configvariable-enum';
 
 @Component({
   selector: 'activity-panel',
@@ -110,14 +111,14 @@ export class ActivityPanelComponent {
 
   finalizeObjectBeforeCloseEvent(): Promise<any> {
     //get inprogress object.
-    const inProgressList = this.fatDownloadActivity.filter(obj => obj.status === this.config.statusList[0]);
+    const inProgressList = this.fatDownloadActivity.filter(obj => obj.status === ConfigVariables.statusInprogress);
     //get queued object.
-    const inQueuedList = this.fatDownloadActivity.filter(obj => obj.status === this.config.statusList[3]);
+    const inQueuedList = this.fatDownloadActivity.filter(obj => obj.status === ConfigVariables.statusInprogress);
     //concatenate two arrays.
     inProgressList.concat(inQueuedList);
     for(var inProgress in inProgressList){
       const indexOfObject = this.fatDownloadActivity.indexOf(inProgressList[inProgress]);
-      inProgressList[inProgress].status = this.config.statusList[2];
+      inProgressList[inProgress].status = ConfigVariables.statusCancel;
       this.fatDownloadActivityInprogress.splice(indexOfObject, 1);
       this.fatDownloadCancel.push(inProgressList[inProgress]);
       this.fatDownloadActivity[indexOfObject] = inProgressList[inProgress];
@@ -131,19 +132,19 @@ export class ActivityPanelComponent {
     //capture changes in objectinprogress input.
     if(changes.objectInProgress != null){
       if(changes.objectInProgress.currentValue != null){
-        if(changes.objectInProgress.currentValue.status == this.config.statusList[3]){
+        if(changes.objectInProgress.currentValue.status == ConfigVariables.statusInprogress){
           this.fatDownloadActivityInprogress.push(changes.objectInProgress.currentValue);
           //remove from the list if exceeds the size of the lsit define in user config.
-          this.refresh(this.config.tabTypes[0]);
-        }else if(changes.objectInProgress.currentValue.status == this.config.statusList[0]){
+          this.refresh(ConfigVariables.InProgressTab);
+        }else if(changes.objectInProgress.currentValue.status == ConfigVariables.statusInprogress){
           this.findExisitingObject(changes.objectInProgress.currentValue, this.fatDownloadActivityInprogress).then((index)=> {
             if(index >= 0){
-              this.fatDownloadActivityInprogress[index].status = this.config.statusList[0];
+              this.fatDownloadActivityInprogress[index].status = ConfigVariables.statusInprogress;
             }else{
               this.fatDownloadActivityInprogress.push(changes.objectInProgress.currentValue);
             }
             //remove from the list if exceeds the size of the lsit define in user config.
-            this.refresh(this.config.tabTypes[0]);
+            this.refresh(ConfigVariables.InProgressTab);
             this.fatDownloadActivity.push(changes.objectInProgress.currentValue);
           });
         }
@@ -153,26 +154,26 @@ export class ActivityPanelComponent {
     if(changes.objectUpdate != null){
       if(changes.objectUpdate.currentValue != null){
         this.findExisitingObject(changes.objectUpdate.currentValue,this.fatDownloadActivity).then((index)=> {
-          if(changes.objectUpdate.currentValue.status == this.config.statusList[2]){
+          if(changes.objectUpdate.currentValue.status == ConfigVariables.statusCancel){
             this.fatDownloadCancel.push(changes.objectUpdate.currentValue);
-            this.refresh(this.config.tabTypes[1]);
+            this.refresh(ConfigVariables.CancelTab);
             this.fatDownloadActivityInprogress.shift();
-            this.refresh(this.config.tabTypes[0]);
-          }else if(changes.objectUpdate.currentValue.status == this.config.statusList[1]){
+            this.refresh(ConfigVariables.InProgressTab);
+          }else if(changes.objectUpdate.currentValue.status == ConfigVariables.statusComplete){
             this.fatDownloadCompleted.push(changes.objectUpdate.currentValue);
-            this.refresh(this.config.tabTypes[2]);
+            this.refresh(ConfigVariables.CompletedTab);
             this.fatDownloadActivityInprogress.shift();
-            this.refresh(this.config.tabTypes[0]);
-          }else if(changes.objectUpdate.currentValue.status == this.config.statusList[3]){
-            changes.objectUpdate.currentValue.status = this.config.statusList[2];
+            this.refresh(ConfigVariables.InProgressTab);
+          }else if(changes.objectUpdate.currentValue.status == ConfigVariables.statusInprogress){
+            changes.objectUpdate.currentValue.status = ConfigVariables.statusCancel;
             this.fatDownloadCancel.push(changes.objectUpdate.currentValue);
-            this.refresh(this.config.tabTypes[1]);
+            this.refresh(ConfigVariables.CancelTab);
             this.findExisitingObject(changes.objectUpdate.currentValue, this.fatDownloadActivityInprogress).then((index)=> {
               if(index >= 0){
                 this.fatDownloadActivityInprogress.splice(index,1);
               }
             });
-            this.refresh(this.config.tabTypes[0]);
+            this.refresh(ConfigVariables.InProgressTab);
           }
           this.fatDownloadActivity[index] = changes.objectUpdate.currentValue;
          
@@ -184,13 +185,13 @@ export class ActivityPanelComponent {
   //method to refresh the array sizes to maintain the size according to the user config.
   refresh(type) : void {
     const limitofActivityHistory = this.ftaConfig.getActivityHistoryLimit();
-    if(type == this.config.tabTypes[0]){
+    if(type == ConfigVariables.InProgressTab){
       //if larger than the limit size slice the array.
       if(this.fatDownloadActivityInprogress.length > limitofActivityHistory){
         this.fatDownloadActivityInprogress.shift();
       }
       this.fatDownloadActivityInprogress = this.fatDownloadActivityInprogress.slice();
-    }else if(type == this.config.tabTypes[1]){
+    }else if(type == ConfigVariables.CancelTab){
       //if larger than the limit size slice the array.
       if(this.fatDownloadCancel.length > limitofActivityHistory){
         this.fatDownloadCancel.shift();

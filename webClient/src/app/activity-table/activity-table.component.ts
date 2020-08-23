@@ -19,6 +19,7 @@ import { SelectItem } from 'primeng/api';
 import { Message } from 'primeng/components/common/api';
 import { Angular2InjectionTokens,Angular2PluginViewportEvents } from 'pluginlib/inject-resources';
 import * as globals from '../../environments/environment';
+import { ConfigVariables } from '../../shared/configvariable-enum';
 
 @Component({
   selector: 'activity-table',
@@ -57,10 +58,10 @@ export class ActivityTableComponent {
     for (index in this.fatActivityList){
       completedArray.push(
         [ new TableItem({data:this.fatActivityList[index].fileName}), 
-          new TableItem({data: this.config.activityIcons[this.fatActivityList[index].activitytype]}),
+          new TableItem({data: ConfigVariables[this.fatActivityList[index].activitytype]}),
           new TableItem({data: this.fatActivityList[index].remoteFile}),
           new TableItem({data: this.fatActivityList[index].size}),
-          new TableItem({data: this.config.priority[0]})
+          new TableItem({data: ConfigVariables.LowPriority})
         ]
       );
     }
@@ -69,11 +70,11 @@ export class ActivityTableComponent {
     this.copyOfList =  [...this.tableModel.data];
 
     const tableHeader = [
-        new TableHeaderItem({data: this.config.tableHeaders[0]}), 
-        new TableHeaderItem({data: this.config.tableHeaders[1]}),
-        new TableHeaderItem({data: this.config.tableHeaders[2]}),
-        new TableHeaderItem({data: this.config.tableHeaders[3]}),
-        new TableHeaderItem({data: this.config.tableHeaders[4]})
+        new TableHeaderItem({data: ConfigVariables.TableHeader1}), 
+        new TableHeaderItem({data: ConfigVariables.TableHeader2}),
+        new TableHeaderItem({data: ConfigVariables.TableHeader3}),
+        new TableHeaderItem({data: ConfigVariables.TableHeader4}),
+        new TableHeaderItem({data: ConfigVariables.TableHeader5})
     ];
     this.tableModel.header = tableHeader;
   }

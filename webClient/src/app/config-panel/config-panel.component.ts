@@ -15,6 +15,7 @@ import { Angular2InjectionTokens } from 'pluginlib/inject-resources';
 import { FTAConfigService } from '../services/FTAConfig.service';
 import * as globals from '../../environments/environment';
 import { Config } from '../modal/config';
+import { ConfigVariables } from '../../shared/configvariable-enum';
 
 @Component({
   selector: 'config-panel',

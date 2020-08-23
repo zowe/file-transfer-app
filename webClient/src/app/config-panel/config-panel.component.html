@@ -17,7 +17,7 @@
     <section class="modal-body">
         <form (ngSubmit)="onSubmit()" class="bx--form-item" id="file-form">
             <ibm-label
-			[helperText]="config.helperText[0]">
+			[helperText]="ConfigVariables.DownloadQueueHelperText">
             Queue Size
             <input
                 [(ngModel)]="model.queueSize" 
@@ -30,7 +30,7 @@
 				[disabled]="disabled">
             </ibm-label>
             <ibm-label
-			[helperText]="config.helperText[1]">
+			[helperText]="ConfigVariables.DownloadHistoryHelperText">
             History Length
             <input
                 [(ngModel)]="model.historySize" 

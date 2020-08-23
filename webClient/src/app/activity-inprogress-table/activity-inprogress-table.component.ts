@@ -19,6 +19,7 @@ import { SelectItem } from 'primeng/api';
 import { Message } from 'primeng/components/common/api';
 import { Angular2InjectionTokens,Angular2PluginViewportEvents } from 'pluginlib/inject-resources';
 import * as globals from '../../environments/environment';
+import {ConfigVariables} from '../../shared/configvariable-enum';
 
 @Component({
   selector: 'activity-progress-table',
@@ -85,7 +86,7 @@ export class ActivityInprogressTableComponent {
     for(index in this.fatActivityList){
       inProgressArray.push(
         [new TableItem({data:this.fatActivityList[index].fileName,expandedTemplate: this.customItemTemplate, expandedData:this.fatActivityList[index]}), 
-          new TableItem({data: this.config.activityIcons[this.fatActivityList[index].activitytype]}),
+          new TableItem({data: ConfigVariables[this.fatActivityList[index].activitytype]}),
           new TableItem({data: this.fatActivityList[index].remoteFile}),
           new TableItem({data: this.fatActivityList[index].size}),
           new TableItem({data:  this.fatActivityList[index],template: this.priorityMenuTemplate}),
@@ -99,13 +100,13 @@ export class ActivityInprogressTableComponent {
     this.copyOfList =  [...this.tableModel.data];
 
     const tableHeader = [
-        new TableHeaderItem({data: this.config.tableHeaders[0]}), 
-        new TableHeaderItem({data: this.config.tableHeaders[1]}),
-        new TableHeaderItem({data: this.config.tableHeaders[2]}),
-        new TableHeaderItem({data: this.config.tableHeaders[3]}),
-        new TableHeaderItem({data: this.config.tableHeaders[4]}),
-        new TableHeaderItem({data: this.config.tableHeaders[5]}),
-        new TableHeaderItem({data: this.config.tableHeaders[6]}),
+        new TableHeaderItem({data: ConfigVariables.TableHeader1}), 
+        new TableHeaderItem({data: ConfigVariables.TableHeader2}),
+        new TableHeaderItem({data: ConfigVariables.TableHeader3}),
+        new TableHeaderItem({data: ConfigVariables.TableHeader4}),
+        new TableHeaderItem({data: ConfigVariables.TableHeader5}),
+        new TableHeaderItem({data: ConfigVariables.TableHeader6}),
+        new TableHeaderItem({data: ConfigVariables.TableHeader7}),
     ];
     this.tableModel.header = tableHeader;
   }
@@ -173,10 +174,10 @@ export class ActivityInprogressTableComponent {
   //function to handle priority event changes.
   priorityChange(data){
     this.findExisitingObject(data, this.fatActivityList).then((index)=> {
-      if(index >= 0 && data.status != this.config.statusList[0]){
-        if(data.priority == this.config.priority[0]){
+      if(index >= 0 && data.status != ConfigVariables.statusInprogress){
+        if(data.priority == ConfigVariables.LowPriority){
             //set the priority high.
-            this.fatActivityList[index].priority = this.config.priority[1];
+            this.fatActivityList[index].priority = ConfigVariables.HighPriority;
             //splice the object and take it out from the current activity list array.
             let highPriorityObject = this.fatActivityList.splice(index,1);
             //splice out the current inprogress array.
@@ -192,7 +193,7 @@ export class ActivityInprogressTableComponent {
             this.priorityEventTrigger.emit(highPriorityObject[0]);
         }else{
           //set the priority low.
-          this.fatActivityList[index].priority = this.config.priority[0];
+          this.fatActivityList[index].priority = ConfigVariables.LowPriority;
           //splice the object and take it out from the current activity list array.
           let lowPriorityObject = this.fatActivityList.splice(index,1);
           //push the object in to the last of the list.

@@ -21,6 +21,7 @@ import { DownloadService } from '../services/Download.service';
 import * as globals from '../../environments/environment';
 import * as uuid from 'uuid';
 import { FTAConfigService } from '../services/FTAConfig.service';
+import {ConfigVariables} from '../../shared/configvariable-enum';
 
 class TreeNodeData {
     attributes: any;
@@ -286,16 +287,16 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
         this.downloadService.cancelDownload();
         var cancelObj = null;
         cancelObj  = this.downloadInProgressList.shift() ;
-        cancelObj.status = this.config.statusList[2];
+        cancelObj.status = ConfigVariables.statusCancel;
         this.downloadEndTrigger.emit(cancelObj);
     }
 
     startDownload(filename:string, remotePath:string, downloadObject?:any, sourceEncoding?:any, targetEncoding?:any): Promise<any>{
         //check if download in progress.
         if(!this.downloadInProgress){
-            this.initializeDownloadObject(this.config.statusList[0], remotePath, filename, downloadObject, sourceEncoding, targetEncoding).then((downloadObject)=> {
+            this.initializeDownloadObject(ConfigVariables.statusInprogress, remotePath, filename, downloadObject, sourceEncoding, targetEncoding).then((downloadObject)=> {
                 this.downloadInProgress = true;
-                downloadObject.status = this.config.statusList[0];
+                downloadObject.status = ConfigVariables.statusInprogress;
                 //todo after test change to the uri.
                 this.downloadService.fetchFileHandler("https://localhost:8544/unixfile/contents"+ remotePath,filename,remotePath, downloadObject).then((res) => {
                     this.downloadEndTrigger.emit(this.downloadService.finalObj);
@@ -320,7 +321,7 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
             //if already download inprogress check the download queue size 
             //from the user config and add to the queue.
             if(this.downloadQueue.length < this.ftaConfig.getDownloadQueueSize()){
-                this.initializeDownloadObject(this.config.statusList[3], remotePath, filename, null, sourceEncoding, targetEncoding).then((downloadObject)=> {
+                this.initializeDownloadObject(ConfigVariables.statusInprogress, remotePath, filename, null, sourceEncoding, targetEncoding).then((downloadObject)=> {
                     this.downloadQueue.push(filename);
                     this.downloadRemoteFileQueue.push(remotePath);
                     this.downloadObjectQueue.push(downloadObject);
@@ -337,7 +338,7 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
     //values which hare hard coded are to be replaced after the download time api is ready from zss.
     initializeDownloadObject(status:string, remoteFile:string, fileName:string , downloadObj? : any, sourceEncoding?:any, targetEncoding?:any):Promise<any>{
         if(downloadObj != null){
-            downloadObj.status = this.config.statusList[0];
+            downloadObj.status = ConfigVariables.statusInprogress;
             return Promise.resolve(downloadObj);
         }else{
             return Promise.resolve(this.objectToDownload = {
@@ -350,7 +351,7 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
                 progress: "0",
                 activitytype: "download",
                 remoteFile: remoteFile,
-                priority: this.config.priority[0],
+                priority: ConfigVariables.LowPriority,
                 sourceEncoding: sourceEncoding,
                 targetEncoding: targetEncoding
             });
@@ -363,11 +364,11 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
         if(changes.cancelEvent != null){
           if(changes.cancelEvent.currentValue != null){
             //when the inprogress object got cancel just cnacel the downlod and clean.
-            if(changes.cancelEvent.currentValue.status == this.config.statusList[0]){
+            if(changes.cancelEvent.currentValue.status == ConfigVariables.statusInprogress){
                 this.cancelDown();
             // when a queued download is cancelled make sure to remove it from the 
             // downloadQueue downloadRemoteFileQueue as well so it won't continue to hold these values.
-            }else if(changes.cancelEvent.currentValue.status == this.config.statusList[3]){
+            }else if(changes.cancelEvent.currentValue.status == ConfigVariables.statusInprogress){
                 this.findExisitingObject(changes.cancelEvent.currentValue.fileName,this.downloadQueue).then((index)=> {
                     this.downloadQueue.splice(index,1);
                     this.downloadRemoteFileQueue.splice(index,1);
@@ -389,7 +390,7 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
                         var priorityObj = [];
                         priorityObj = this.downloadObjectQueue.splice(index,1);
 
-                      if(changes.priorityDownloadEvent.currentValue.priority == this.config.priority[1]){
+                      if(changes.priorityDownloadEvent.currentValue.priority == ConfigVariables.HighPriority){
                           this.downloadQueue.unshift(highPriorityDownQueue[0]);
                           this.downloadRemoteFileQueue.unshift(highPriorityRemoteFileQueue[0]);
                           this.downloadObjectQueue.unshift(priorityObj[0]);

@@ -12,6 +12,7 @@ import { Angular2InjectionTokens } from 'pluginlib/inject-resources';
 import { of } from 'rxjs';
 import * as globals from '../../environments/environment';
 import { Config } from '../modal/config';
+import {ConfigVariables} from '../../shared/configvariable-enum';
 
 @Injectable()
 export class FTAConfigService {
@@ -29,13 +30,14 @@ export class FTAConfigService {
 
   constructor(@Inject(Angular2InjectionTokens.PLUGIN_DEFINITION) private pluginDefinition: ZLUX.ContainerPluginDefinition
   , @Inject(Angular2InjectionTokens.LOGGER) private log: ZLUX.ComponentLogger
-  , private http: Http) {}
+  , private http: Http) {
+    this.resourceName = `ftaConfig.json`;
+    this.limitofActivityHistory = ConfigVariables.limitofActivityHistory;
+    this.downloadQueueLength = ConfigVariables.downloadQueueLength;
+  }
 
   onInit() {
-    this.limitofActivityHistory = this.config.limitofActivityHistory;
-    this.downloadQueueLength = this.config.downloadQueueLength;
     this.basePlugin = this.pluginDefinition.getBasePlugin();
-    this.resourceName = `ftaConfig.json`;
     this.uri = ZoweZLUX.uriBroker.pluginConfigForScopeUri(this.basePlugin, this.scope, this.resourcePath, this.resourceName);
   }
 

@@ -9,6 +9,7 @@ import { Http, Headers, RequestOptions } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 import { Injectable, Inject } from '@angular/core';
 import { Angular2InjectionTokens } from 'pluginlib/inject-resources';
+import { FTAConfigService } from '../services/FTAConfig.service';
 import { of } from 'rxjs';
 import * as globals from '../../environments/environment';
 
@@ -31,19 +32,21 @@ export class FTAActivityService {
   public config = globals.prod_config;
 
   constructor(@Inject(Angular2InjectionTokens.PLUGIN_DEFINITION) private pluginDefinition: ZLUX.ContainerPluginDefinition
+  , private ftaConfig:FTAConfigService 
   , @Inject(Angular2InjectionTokens.LOGGER) private log: ZLUX.ComponentLogger
-  , private http: Http) {}
-
-  onInit() {
-    this.limitofActivityHistory = 10;
-    this.basePlugin = this.pluginDefinition.getBasePlugin();
-    this.resourceName = `activity.json`;
-    this.uri = ZoweZLUX.uriBroker.pluginConfigForScopeUri(this.basePlugin, this.scope, this.resourcePath, this.resourceName);
+  , private http: Http) {
     this.fatUploadActivity = [];
     this.fatDownloadActivity = [];
     this.fatDownloadActivityCompleted = [];
     this.fatDownloadActivityCancelled = [];
     this.fatTransferActivity = [];
+    this.resourceName = `activity.json`;
+  }
+
+  onInit() {
+    this.limitofActivityHistory = this.ftaConfig.getActivityHistoryLimit() ;
+    this.basePlugin = this.pluginDefinition.getBasePlugin();
+    this.uri = ZoweZLUX.uriBroker.pluginConfigForScopeUri(this.basePlugin, this.scope, this.resourcePath, this.resourceName);
   }
 
   public getData():Promise<any> {
@@ -147,20 +150,20 @@ export class FTAActivityService {
   }
 
   public clearActivity(){
-    if(this.fatTransferActivity.length > this.config.limitofActivityHistory){
-      this.fatTransferActivity = this.fatTransferActivity.slice(0,this.config.limitofActivityHistory);
+    if(this.fatTransferActivity.length > this.limitofActivityHistory){
+      this.fatTransferActivity = this.fatTransferActivity.slice(0,this.limitofActivityHistory);
     }
-    if(this.fatUploadActivity.length > this.config.limitofActivityHistory){
-      this.fatUploadActivity = this.fatUploadActivity.slice(0,this.config.limitofActivityHistory);
+    if(this.fatUploadActivity.length > this.limitofActivityHistory){
+      this.fatUploadActivity = this.fatUploadActivity.slice(0,this.limitofActivityHistory);
     }
-    if(this.fatDownloadActivity.length > this.config.limitofActivityHistory){
-      this.fatDownloadActivity = this.fatDownloadActivity.slice(0,this.config.limitofActivityHistory);
+    if(this.fatDownloadActivity.length > this.limitofActivityHistory){
+      this.fatDownloadActivity = this.fatDownloadActivity.slice(0,this.limitofActivityHistory);
     }
-    if(this.fatDownloadActivityCancelled.length > this.config.limitofActivityHistory){
-      this.fatDownloadActivityCancelled = this.fatDownloadActivityCancelled.slice(this.fatDownloadActivityCancelled.length-this.config.limitofActivityHistory);
+    if(this.fatDownloadActivityCancelled.length > this.limitofActivityHistory){
+      this.fatDownloadActivityCancelled = this.fatDownloadActivityCancelled.slice(this.fatDownloadActivityCancelled.length-this.limitofActivityHistory);
     }
-    if(this.fatDownloadActivityCompleted.length > this.config.limitofActivityHistory){
-      this.fatDownloadActivityCompleted = this.fatDownloadActivityCompleted.slice((this.fatDownloadActivityCompleted.length-this.config.limitofActivityHistory));
+    if(this.fatDownloadActivityCompleted.length > this.limitofActivityHistory){
+      this.fatDownloadActivityCompleted = this.fatDownloadActivityCompleted.slice((this.fatDownloadActivityCompleted.length-this.limitofActivityHistory));
     }
   }
 
