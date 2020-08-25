@@ -7,6 +7,7 @@
 // */
 import { Http, Headers, RequestOptions } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/operator/catch'
 import { Injectable, Inject } from '@angular/core';
 import { Angular2InjectionTokens } from 'pluginlib/inject-resources';
 import { FTAConfigService } from '../services/FTAConfig.service';

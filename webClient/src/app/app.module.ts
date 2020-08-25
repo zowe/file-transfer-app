@@ -51,7 +51,7 @@ import { ActivityInprogressTableComponent } from './activity-inprogress-table/ac
 import { ProgressBarComponent } from './progress-bar/progress-bar.component';
 import { ActivityTableComponent } from './activity-table/activity-table.component';
 import { ConfigPanelComponent } from './config-panel/config-panel.component';
-import { FileTreeModule } from '@zlux/file-explorer/src/plugin';
+import { FileTreeModule } from '@zowe/zlux-angular-file-tree';
 import { MatSnackBarModule } from '@angular/material'
 
 @NgModule({
