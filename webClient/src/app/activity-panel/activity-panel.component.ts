@@ -132,7 +132,7 @@ export class ActivityPanelComponent {
     //capture changes in objectinprogress input.
     if(changes.objectInProgress != null){
       if(changes.objectInProgress.currentValue != null){
-        if(changes.objectInProgress.currentValue.status == ConfigVariables.statusInprogress){
+        if(changes.objectInProgress.currentValue.status == ConfigVariables.statusQueued){
           this.fatDownloadActivityInprogress.push(changes.objectInProgress.currentValue);
           //remove from the list if exceeds the size of the lsit define in user config.
           this.refresh(ConfigVariables.InProgressTab);
@@ -164,7 +164,7 @@ export class ActivityPanelComponent {
             this.refresh(ConfigVariables.CompletedTab);
             this.fatDownloadActivityInprogress.shift();
             this.refresh(ConfigVariables.InProgressTab);
-          }else if(changes.objectUpdate.currentValue.status == ConfigVariables.statusInprogress){
+          }else if(changes.objectUpdate.currentValue.status == ConfigVariables.statusQueued){
             changes.objectUpdate.currentValue.status = ConfigVariables.statusCancel;
             this.fatDownloadCancel.push(changes.objectUpdate.currentValue);
             this.refresh(ConfigVariables.CancelTab);

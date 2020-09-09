@@ -37,7 +37,7 @@ export class ActivityInprogressTableComponent {
   copyOfList = [];
   timeInSecnds = "";
   downLoadProgress = 0;
-  cancelTrue = false;
+  downloadInProgress: boolean = false;
 
 
   //set of elements which holds download speed, progress bar, etc-.
@@ -77,38 +77,41 @@ export class ActivityInprogressTableComponent {
   
   //finalize the display of the table.
   finalizeDisplayInfo() {
-    var index: any;
-    var formattedActivityList = [];
+    if(this.tableModel !=  null){
+      this.downloadInProgress = true;
+      var index: any;
+      var formattedActivityList = [];
+      const inProgressArray = [];
+      //populating the inprogress activity list.
+      for(index in this.fatActivityList){
+        inProgressArray.push(
+          [new TableItem({data:this.fatActivityList[index].fileName,expandedTemplate: this.customItemTemplate, expandedData:this.fatActivityList[index]}), 
+            new TableItem({data: ConfigVariables[this.fatActivityList[index].activitytype]}),
+            new TableItem({data: this.fatActivityList[index].remoteFile}),
+            new TableItem({data: this.fatActivityList[index].size}),
+            new TableItem({data:  this.fatActivityList[index],template: this.priorityMenuTemplate}),
+            new TableItem({data: this.fatActivityList[index].status}),
+            new TableItem({data:this.fatActivityList[index] ,template: this.actionsMenuTemplate })
+          ]
+        );
+      }
 
-    const inProgressArray = [];
+      this.tableModel.data = inProgressArray;
+      this.copyOfList =  [...this.tableModel.data];
 
-    //populating the inprogress activity list.
-    for(index in this.fatActivityList){
-      inProgressArray.push(
-        [new TableItem({data:this.fatActivityList[index].fileName,expandedTemplate: this.customItemTemplate, expandedData:this.fatActivityList[index]}), 
-          new TableItem({data: ConfigVariables[this.fatActivityList[index].activitytype]}),
-          new TableItem({data: this.fatActivityList[index].remoteFile}),
-          new TableItem({data: this.fatActivityList[index].size}),
-          new TableItem({data:  this.fatActivityList[index],template: this.priorityMenuTemplate}),
-          new TableItem({data: this.fatActivityList[index].status}),
-          new TableItem({data:this.fatActivityList[index] ,template: this.actionsMenuTemplate })
-        ]
-      );
+      const tableHeader = [
+          new TableHeaderItem({data: ConfigVariables.TableHeader1}), 
+          new TableHeaderItem({data: ConfigVariables.TableHeader2}),
+          new TableHeaderItem({data: ConfigVariables.TableHeader3}),
+          new TableHeaderItem({data: ConfigVariables.TableHeader4}),
+          new TableHeaderItem({data: ConfigVariables.TableHeader5}),
+          new TableHeaderItem({data: ConfigVariables.TableHeader6}),
+          new TableHeaderItem({data: ConfigVariables.TableHeader7}),
+      ];
+      this.tableModel.header = tableHeader;
+    }else{
+      this.downloadInProgress = false;
     }
-
-    this.tableModel.data = inProgressArray;
-    this.copyOfList =  [...this.tableModel.data];
-
-    const tableHeader = [
-        new TableHeaderItem({data: ConfigVariables.TableHeader1}), 
-        new TableHeaderItem({data: ConfigVariables.TableHeader2}),
-        new TableHeaderItem({data: ConfigVariables.TableHeader3}),
-        new TableHeaderItem({data: ConfigVariables.TableHeader4}),
-        new TableHeaderItem({data: ConfigVariables.TableHeader5}),
-        new TableHeaderItem({data: ConfigVariables.TableHeader6}),
-        new TableHeaderItem({data: ConfigVariables.TableHeader7}),
-    ];
-    this.tableModel.header = tableHeader;
   }
 
   //listenting for changes in activity list
@@ -117,7 +120,6 @@ export class ActivityInprogressTableComponent {
     if(changes.activityList != null){
       if(changes.activityList.currentValue != null){
         this.fatActivityList = changes.activityList.currentValue;
-        this.cancelTrue = false;
         this.finalizeDisplayInfo();
       }
     }

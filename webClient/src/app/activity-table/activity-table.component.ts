@@ -48,35 +48,37 @@ export class ActivityTableComponent {
   
   //finalize the display of the table.
   finalizeDisplayInfo() {
-    var index: any;
-    var formattedActivityList = [];
-
-    const completedArray = [];
-    const cancelArray = [];
-    const inProgressArray = [];
-    //populating the inprogress activity list.
-    for (index in this.fatActivityList){
-      completedArray.push(
-        [ new TableItem({data:this.fatActivityList[index].fileName}), 
-          new TableItem({data: ConfigVariables[this.fatActivityList[index].activitytype]}),
-          new TableItem({data: this.fatActivityList[index].remoteFile}),
-          new TableItem({data: this.fatActivityList[index].size}),
-          new TableItem({data: ConfigVariables.LowPriority})
-        ]
-      );
+    if(this.tableModel != null){
+      var index: any;
+      var formattedActivityList = [];
+  
+      const completedArray = [];
+      const cancelArray = [];
+      const inProgressArray = [];
+      //populating the inprogress activity list.
+      for (index in this.fatActivityList){
+        completedArray.push(
+          [ new TableItem({data:this.fatActivityList[index].fileName}), 
+            new TableItem({data: ConfigVariables[this.fatActivityList[index].activitytype]}),
+            new TableItem({data: this.fatActivityList[index].remoteFile}),
+            new TableItem({data: this.fatActivityList[index].size}),
+            new TableItem({data: ConfigVariables.LowPriority})
+          ]
+        );
+      }
+  
+      this.tableModel.data = completedArray;
+      this.copyOfList =  [...this.tableModel.data];
+  
+      const tableHeader = [
+          new TableHeaderItem({data: ConfigVariables.TableHeader1}), 
+          new TableHeaderItem({data: ConfigVariables.TableHeader2}),
+          new TableHeaderItem({data: ConfigVariables.TableHeader3}),
+          new TableHeaderItem({data: ConfigVariables.TableHeader4}),
+          new TableHeaderItem({data: ConfigVariables.TableHeader5})
+      ];
+      this.tableModel.header = tableHeader;
     }
-
-    this.tableModel.data = completedArray;
-    this.copyOfList =  [...this.tableModel.data];
-
-    const tableHeader = [
-        new TableHeaderItem({data: ConfigVariables.TableHeader1}), 
-        new TableHeaderItem({data: ConfigVariables.TableHeader2}),
-        new TableHeaderItem({data: ConfigVariables.TableHeader3}),
-        new TableHeaderItem({data: ConfigVariables.TableHeader4}),
-        new TableHeaderItem({data: ConfigVariables.TableHeader5})
-    ];
-    this.tableModel.header = tableHeader;
   }
 
   //listenting for changes in activity list

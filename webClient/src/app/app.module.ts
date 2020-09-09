@@ -32,7 +32,7 @@ import { SearchModule } from 'carbon-components-angular/search/search.module';
 import { NotificationModule } from 'carbon-components-angular/notification/notification.module';
 import { PaginationModule } from "carbon-components-angular/pagination/pagination.module";
 import { CheckboxModule } from "carbon-components-angular/checkbox/checkbox.module";
-import { DownloadModule, UploadModule, SettingsModule, DeleteModule, SaveModule, AddModule } from '@carbon/icons-angular';
+import { DownloadModule, UploadModule, SettingsModule, DeleteModule, SaveModule, AddModule, CloseModule } from '@carbon/icons-angular';
 
 import { UploaderService } from './services/Uploader.service'
 import { FTAWebsocketService } from './services/FTAWebsocket.service';
@@ -80,6 +80,8 @@ import { MatSnackBarModule } from '@angular/material'
     PaginationModule,
     InputModule,
     DownloadModule,
+    CloseModule,
+    SettingsModule,
     TabsModule,
     AccordionModule,
     GridModule,

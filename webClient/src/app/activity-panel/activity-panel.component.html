@@ -17,15 +17,30 @@
       [activityList] = "fatDownloadActivityInprogress">
       </activity-progress-table>
     </div>
+    <div *ngIf="fatDownloadActivityInprogress.length == 0">
+      <ibm-tile >
+        No Inprogress Downloads...
+      </ibm-tile>
+    </div>
   </ibm-tab>
   <ibm-tab heading="Completed"> 
     <div *ngIf="fatDownloadCompleted.length > 0">
       <activity-table [activityList] = "fatDownloadCompleted"></activity-table>
     </div>
+    <div *ngIf="fatDownloadCompleted.length == 0">
+      <ibm-tile >
+        No Completed Downloads...
+      </ibm-tile>
+    </div>
   </ibm-tab>
   <ibm-tab heading="Errored/ Cancelled">
     <div *ngIf="fatDownloadCancel.length > 0">
       <activity-table [activityList] = "fatDownloadCancel"></activity-table>
+    </div>
+    <div *ngIf="fatDownloadCancel.length == 0">
+      <ibm-tile >
+        No Canceled Downloads...
+      </ibm-tile>
     </div>
   </ibm-tab>
 </ibm-tabs>

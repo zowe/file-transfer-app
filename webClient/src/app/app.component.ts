@@ -135,6 +135,7 @@ export class AppComponent {
   captureCancelEvent(data){
     if(data != null){
       this.cancelDownload = data;
+      this.cancelDownload = Object.assign({}, this.cancelDownload);
     }
   }
 

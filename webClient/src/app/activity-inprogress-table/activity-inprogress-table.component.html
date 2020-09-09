@@ -47,12 +47,12 @@
 <ng-template #priorityMenuTemplate let-data="data">
   <div class="container" *ngIf="data != null">
     <div class="row">
-      <div class="col-md-2" *ngIf="data.priority == ConfigVariables.HighPriority">
+      <div class="col-md-2" *ngIf="data.priority == config.priority[1]">
         <button (click)="priorityChange(data)" type="button" class="btn btn-info">
           <span>{{data.priority}}</span> 
         </button>
       </div>
-      <div class="col-md-2" *ngIf="data.priority == ConfigVariables.LowPriority">
+      <div class="col-md-2" *ngIf="data.priority == config.priority[0]">
         <button (click)="priorityChange(data)" type="button" class="btn btn-info">
           <span>{{data.priority}}</span> 
         </button>
@@ -65,7 +65,7 @@
   <div class="container">
     <div class="row">
       <div class="col-md-10">
-        <div class="row" *ngIf="data.status == ConfigVariables.statusInprogress">
+        <div class="row" *ngIf="data.status == config.statusList[0]">
           <div class="col-md-2">
             00:00:00 elpased
           </div>
@@ -79,7 +79,7 @@
             262,144 bytes (? B/s)
           </div>
         </div>
-        <div class="row" *ngIf="data.status == ConfigVariables.statusQueued">
+        <div class="row" *ngIf="data.status == config.statusList[3]">
           <div class="col-md-2">
             00:00:00 elpased
           </div>

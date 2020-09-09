@@ -95,7 +95,8 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
     list: FileRow[];
     selectedPath: string;
     selectedFileSize: string;
-    enableDownload:boolean = true;
+    enableDownload:boolean = false;
+    enableCancel:boolean = false;
     selectedFileType:string;
     errorMessages: Message[] = [];
 
@@ -106,7 +107,7 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
     uploadModalVisible: boolean;
     uploadConfigModalVisible: boolean;
 
-    toggleText = ["Binary", "Autoconvert"];
+    toggleText = ["Binary", "Convert"];
     activateAutomaticConvertion = false;
     encodings = ["ASCII", "EBCDIC", "UTF8"];
 
@@ -196,7 +197,9 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
 
     ngAfterViewInit(){
         // Funky dummy tab used for UI alignment
-        this.fileExplorer.tabs = [{ index: 0, name: "USS" }, {index:0, name: ""}];
+        if(this.fileExplorer != null){
+            this.fileExplorer.tabs = [{ index: 0, name: "USS" }, {index:0, name: ""}];
+        }
     }
 
     treeView(): void {
@@ -233,7 +236,9 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
 
     closeUploadModal(): void {
         this.uploadModalVisible = false;
-        this.fileExplorer.updateDirectory(this.getSelectedDirectory());
+        if(this.fileExplorer != null){
+            this.fileExplorer.updateDirectory(this.getSelectedDirectory());
+        }
     }
 
     closeConfigModal(): void {
@@ -272,11 +277,7 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
         this.log.debug('downloading from uri', uri, 'with path ',this.selectedPath);
         a.href = uri;
         //staart the donwload.
-        this.startDownload(filename, this.selectedPath, null, sourceEncoding,targetEncoding).then(res => {
-            this.log.debug('completed download');
-        }).catch((err) => {
-            this.log.debug('error downloading '+ err);
-        });
+        this.startDownload(filename, this.selectedPath, null, sourceEncoding,targetEncoding);
         // a.download = filename;
         // a.click();
         this.log.debug('clicked link');
@@ -291,14 +292,15 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
         this.downloadEndTrigger.emit(cancelObj);
     }
 
-    startDownload(filename:string, remotePath:string, downloadObject?:any, sourceEncoding?:any, targetEncoding?:any): Promise<any>{
+    startDownload(filename:string, remotePath:string, downloadObject?:any, sourceEncoding?:any, targetEncoding?:any):Promise<any>{
         //check if download in progress.
         if(!this.downloadInProgress){
             this.initializeDownloadObject(ConfigVariables.statusInprogress, remotePath, filename, downloadObject, sourceEncoding, targetEncoding).then((downloadObject)=> {
                 this.downloadInProgress = true;
+                this.enableCancel = true;
                 downloadObject.status = ConfigVariables.statusInprogress;
                 //todo after test change to the uri.
-                this.downloadService.fetchFileHandler("https://localhost:8544/unixfile/contents"+ remotePath,filename,remotePath, downloadObject).then((res) => {
+                this.downloadService.fetchFileHandler("https://localhost:8544/unixfile/contents"+ remotePath+"?responseType=raw",filename,remotePath, downloadObject).then((res) => {
                     this.downloadEndTrigger.emit(this.downloadService.finalObj);
                     if(this.downloadQueue.length > 0){
                         this.downloadInProgress = false;
@@ -307,6 +309,8 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
                     }else{
                         // fires when download queue is empty.
                         this.downloadInProgress = false;
+                        this.enableDownload = false;
+                        this.enableCancel = false;
                         return Promise.resolve("Completed All downloads");
                     }
                 }).catch((err) => {
@@ -321,7 +325,7 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
             //if already download inprogress check the download queue size 
             //from the user config and add to the queue.
             if(this.downloadQueue.length < this.ftaConfig.getDownloadQueueSize()){
-                this.initializeDownloadObject(ConfigVariables.statusInprogress, remotePath, filename, null, sourceEncoding, targetEncoding).then((downloadObject)=> {
+                this.initializeDownloadObject(ConfigVariables.statusQueued, remotePath, filename, null, sourceEncoding, targetEncoding).then((downloadObject)=> {
                     this.downloadQueue.push(filename);
                     this.downloadRemoteFileQueue.push(remotePath);
                     this.downloadObjectQueue.push(downloadObject);
@@ -368,7 +372,7 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
                 this.cancelDown();
             // when a queued download is cancelled make sure to remove it from the 
             // downloadQueue downloadRemoteFileQueue as well so it won't continue to hold these values.
-            }else if(changes.cancelEvent.currentValue.status == ConfigVariables.statusInprogress){
+            }else if(changes.cancelEvent.currentValue.status == ConfigVariables.statusQueued){
                 this.findExisitingObject(changes.cancelEvent.currentValue.fileName,this.downloadQueue).then((index)=> {
                     this.downloadQueue.splice(index,1);
                     this.downloadRemoteFileQueue.splice(index,1);
