@@ -16,6 +16,7 @@ import { FTASide, FTAFileInfo, FTAFileMode } from '../../../../common/FTATypes';
 import { FileTreeComponent as ZluxFileTreeComponent } from '@zowe/zlux-angular-file-tree/src/plugin';
 import { UploaderPanelComponent } from '../uploader-panel/uploader-panel.component';
 import { ConfigPanelComponent } from '../config-panel/config-panel.component';
+import { DownloadPanelComponent } from '../donwload-folder-panel/download-folder-panel.component';
 import { Angular2InjectionTokens,Angular2PluginViewportEvents } from 'pluginlib/inject-resources';
 import { DownloadService } from '../services/Download.service';
 import * as globals from '../../environments/environment';
@@ -86,6 +87,7 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
     downloadRemoteFileQueue: string [];
     downloadInProgressList: string [];
     objectToDownload = null;
+    folderObjectToDownload = null;
     public config = globals.prod_config;
 
     fileView: string;
@@ -96,6 +98,7 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
     selectedPath: string;
     selectedFileSize: string;
     enableDownload:boolean = false;
+    isFile:boolean = true;
     enableCancel:boolean = false;
     selectedFileType:string;
     errorMessages: Message[] = [];
@@ -106,6 +109,7 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
 
     uploadModalVisible: boolean;
     uploadConfigModalVisible: boolean;
+    downloadFolderModalVisible:boolean;
 
     toggleText = ["Binary", "Convert"];
     activateAutomaticConvertion = false;
@@ -114,6 +118,7 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
     constructor(@Inject(Angular2InjectionTokens.LOGGER) private log: ZLUX.ComponentLogger, 
     private downloadService:DownloadService,
     private ftaConfig:FTAConfigService,
+    @Inject(Angular2InjectionTokens.PLUGIN_DEFINITION) private pluginDefinition: ZLUX.ContainerPluginDefinition,
     @Inject(Angular2InjectionTokens.VIEWPORT_EVENTS) private viewportEvents: Angular2PluginViewportEvents) { }
 
     get sideLocal(): FTASide {
@@ -133,6 +138,7 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
         this.fileView = 'tree';
         this.uploadModalVisible = false;
         this.uploadConfigModalVisible = false;
+        this.downloadFolderModalVisible = false;
 
         this.connection.ftaWs.onError((err) => {
             this.showError(err);
@@ -234,6 +240,14 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
         this.uploadConfigModalVisible = true;
     }
 
+    showDownloadFolderModel(folderName, folderPath): void{
+        this.downloadFolderModalVisible = true;
+        this.folderObjectToDownload = {
+            folderName : folderName,
+            folderPath : folderPath
+        }
+    }
+
     closeUploadModal(): void {
         this.uploadModalVisible = false;
         if(this.fileExplorer != null){
@@ -245,6 +259,11 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
         this.uploadConfigModalVisible = false;
     }
 
+    closeFolderDownloadMoadl(): void {
+        this.downloadFolderModalVisible = false;
+        
+    }
+
     getSelectedDirectory(): string {
         return this.selectedPath;
     }
@@ -253,12 +272,14 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
             this.selectedPath = $event.path;
             this.selectedFileSize = $event.size;
             this.enableDownload = true;
+            this.isFile = true;
             this.selectedFileType = $event.data;
         } else {
             let folderPath = $event.path.substring($event.path.lastIndexOf("\\") + 1, $event.path.length);
             this.log.debug(folderPath);
             this.selectedPath = folderPath;
-            this.enableDownload = false;
+            this.enableDownload = true;
+            this.isFile = false;
         }
         this.log.debug(this.selectedPath);
     }
@@ -276,11 +297,20 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
         const a = document.createElement('a');
         this.log.debug('downloading from uri', uri, 'with path ',this.selectedPath);
         a.href = uri;
-        //staart the donwload.
-        this.startDownload(filename, this.selectedPath, null, sourceEncoding,targetEncoding);
+        //start the donwload.
+        if(this.isFile){
+            this.startDownload(filename, this.selectedPath, null, sourceEncoding,targetEncoding);
+        }else{
+            this.showDownloadFolderModel(filename, this.selectedPath);
+            // this.startDownload(filename,this.selectedPath);
+        }
         // a.download = filename;
         // a.click();
         this.log.debug('clicked link');
+    }
+
+    proceedFolderDownload(): void{
+        this.startDownload(this.folderObjectToDownload["folderName"],this.folderObjectToDownload["folderPath"]);
     }
 
     //cancel the download.
@@ -300,8 +330,20 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
                 this.enableCancel = true;
                 downloadObject.status = ConfigVariables.statusInprogress;
                 //todo after test change to the uri.
-                this.downloadService.fetchFileHandler("https://localhost:8544/unixfile/contents"+ remotePath+"?responseType=raw",filename,remotePath, downloadObject).then((res) => {
+                let url = "";
+                if(this.isFile){
+                    url = "https://localhost:8544/unixfile/contents"+remotePath+"?responseType=raw";
+                }else{
+                    url = "https://localhost:8544/unixfile/folderdownload"+remotePath+"?responseType=raw";
+                }
+
+                this.downloadService.fetchFileHandler(url,filename,remotePath, downloadObject).then((res) => {
                     this.downloadEndTrigger.emit(this.downloadService.finalObj);
+                    if(this.downloadService.finalObj.status == ConfigVariables.statusComplete){
+                        this.sendNotification(ConfigVariables.Download_Config_Notification_Hanlder, ConfigVariables.Download_Config_Notification_Message +this.downloadService.finalObj.fileName);
+                    }else if(this.downloadService.finalObj.status == ConfigVariables.statusCancel){
+                        this.sendNotification(ConfigVariables.Download_Config_Notification_Hanlder, ConfigVariables.Download_Config_Cancel_Notification_Message +this.downloadService.finalObj.fileName);
+                    }
                     if(this.downloadQueue.length > 0){
                         this.downloadInProgress = false;
                         //after end of a download shift the queue and start the next download.
@@ -413,6 +455,13 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
     findExisitingObject(objectToFind, objectArray){
         const existingObject = objectArray.findIndex(obj => obj == objectToFind)
         return Promise.resolve(existingObject);
+    }
+
+    sendNotification(title: string, message: string): number {
+        const pluginId = this.pluginDefinition.getBasePlugin().getIdentifier();
+        // We can specify a different styleClass to theme the notification UI i.e. [...] message, 1, pluginId, "org_zowe_zlux_editor_snackbar"
+        let notification = ZoweZLUX.notificationManager.createNotification(title, message, 1, pluginId);
+        return ZoweZLUX.notificationManager.notify(notification);
     }
 
     getSelectedPath(){

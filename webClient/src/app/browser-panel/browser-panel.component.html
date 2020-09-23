@@ -159,5 +159,8 @@
     <div *ngIf="uploadConfigModalVisible">
         <config-panel (onClose)="closeConfigModal()"></config-panel>
     </div>
+    <div *ngIf="downloadFolderModalVisible">
+        <download-panel (onClose)="closeFolderDownloadMoadl()" (downloadFolderProceedTrigger)="proceedFolderDownload()"></download-panel>
+    </div>
     <!-- <button class="bx--btn bx--btn--secondary mt-3" style="width:100%;" (click)="uploadBtn(rightUpload, sideRemote)">Upload files to z/OS...</button> -->
 </div>

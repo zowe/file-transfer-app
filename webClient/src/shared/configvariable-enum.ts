@@ -37,5 +37,10 @@ export enum ConfigVariables {
   DownloadHistoryHelperText = "History of the download objects to keep in memory",
   ASCII = "819", 
   EBCDIC = "1047",
-  UTF8 = "1208"
-}
+  UTF8 = "1208",
+  Upload_Config_Notification_Hanlder = "Config Service Notification",
+  Upload_Config_Notification_Message = "Updated User Config for the File Transfer App",
+  Download_Config_Notification_Hanlder = "Download Service Notification",
+  Download_Config_Notification_Message = "Downloaded file ",
+  Download_Config_Cancel_Notification_Message = "Download canceld for file ",
+ }

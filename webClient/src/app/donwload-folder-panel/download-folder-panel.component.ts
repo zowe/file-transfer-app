@@ -18,15 +18,15 @@ import { Config } from '../modal/config';
 import { ConfigVariables } from '../../shared/configvariable-enum';
 
 @Component({
-  selector: 'config-panel',
-  templateUrl: './config-panel.component.html',
+  selector: 'download-panel',
+  templateUrl: './download-folder-panel.component.html',
   styleUrls: [
     // '../../../node_modules/carbon-components/css/carbon-components.min.css',
-    './config-panel.component.scss',
+    './download-folder-panel.component.scss',
     '../../styles.scss'
   ]
 })
-export class ConfigPanelComponent {
+export class DownloadPanelComponent {
 
   public config = globals.prod_config;
   objToSubmit: Config = Config.initEmpty();
@@ -35,6 +35,8 @@ export class ConfigPanelComponent {
 
   ngOnInit(): void {
   }
+
+  @Output() downloadFolderProceedTrigger = new EventEmitter();
 
   @Output() onClose: EventEmitter<null> = new EventEmitter<null>();
 
@@ -48,28 +50,8 @@ export class ConfigPanelComponent {
     this.onClose.emit();
   }
 
-  fetchConfigAfterSaving(){
-    this.ftaConfigService.getData();
-  }
-
-  onSubmit() {
-    this.objToSubmit = JSON.parse(JSON.stringify(this.model));
-    this.ftaConfigService.saveData(this.objToSubmit)
-      .then(res => {
-        this.sendNotification(ConfigVariables.Upload_Config_Notification_Hanlder, ConfigVariables.Upload_Config_Notification_Message);
-        this.close();
-        this.fetchConfigAfterSaving();
-      })
-			.catch(error => {
-        this.sendNotification("Error in Saving Config", error);
-      });
-
-  }
-
-  sendNotification(title: string, message: string): number {
-    const pluginId = this.pluginDefinition.getBasePlugin().getIdentifier();
-    // We can specify a different styleClass to theme the notification UI i.e. [...] message, 1, pluginId, "org_zowe_zlux_editor_snackbar"
-    let notification = ZoweZLUX.notificationManager.createNotification(title, message, 1, pluginId);
-    return ZoweZLUX.notificationManager.notify(notification);
+  proceed() {
+    this.downloadFolderProceedTrigger.emit(true);
+    this.close();
   }
 }
