@@ -8,14 +8,21 @@
   Copyright Contributors to the Zowe Project.
 */
 
-import { Component, OnInit, Input, ViewChild, Inject, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, Inject, AfterViewInit , EventEmitter, Output } from '@angular/core';
 import { TreeNode } from 'primeng/primeng';
 import { Connection } from '../Connection';
 import { Message } from 'primeng/components/common/api';
 import { FTASide, FTAFileInfo, FTAFileMode } from '../../../../common/FTATypes';
-import { FileTreeComponent as ZluxFileTreeComponent } from '@zowe/zlux-angular-file-tree';
+import { FileTreeComponent as ZluxFileTreeComponent } from '@zowe/zlux-angular-file-tree/src/plugin';
 import { UploaderPanelComponent } from '../uploader-panel/uploader-panel.component';
-import { Angular2InjectionTokens } from 'pluginlib/inject-resources';
+import { ConfigPanelComponent } from '../config-panel/config-panel.component';
+import { DownloadPanelComponent } from '../donwload-folder-panel/download-folder-panel.component';
+import { Angular2InjectionTokens,Angular2PluginViewportEvents } from 'pluginlib/inject-resources';
+import { DownloadService } from '../services/Download.service';
+import * as globals from '../../environments/environment';
+import * as uuid from 'uuid';
+import { FTAConfigService } from '../services/FTAConfig.service';
+import {ConfigVariables} from '../../shared/configvariable-enum';
 
 class TreeNodeData {
     attributes: any;
@@ -57,13 +64,31 @@ class FileRow {
     './browser-panel.component.scss',
     '../../styles.scss'
     ]
-    
+
 })
+
 export class BrowserPanelComponent implements AfterViewInit, OnInit {
+
     @Input() connection;
     @Input() ftaSide;
+    @Input() cancelEvent;
+    @Input() priorityDownloadEvent;
+
+    //download start trigger.
+    @Output() downloadTrigger = new EventEmitter();
+    //end download trigger.
+    @Output() downloadEndTrigger = new EventEmitter();
+
     @ViewChild(ZluxFileTreeComponent)
     fileExplorer: ZluxFileTreeComponent;
+    downloadInProgress: boolean;
+    downloadQueue: string [];
+    downloadObjectQueue: string [];
+    downloadRemoteFileQueue: string [];
+    downloadInProgressList: string [];
+    objectToDownload = null;
+    folderObjectToDownload = null;
+    public config = globals.prod_config;
 
     fileView: string;
     tree: TreeNode[] = [];
@@ -71,6 +96,11 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
     listSelection: FileRow;
     list: FileRow[];
     selectedPath: string;
+    selectedFileSize: string;
+    enableDownload:boolean = false;
+    isFile:boolean = true;
+    enableCancel:boolean = false;
+    selectedFileType:string;
     errorMessages: Message[] = [];
 
     contextSide: FTASide;
@@ -78,8 +108,18 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
     contextRow: FileRow;
 
     uploadModalVisible: boolean;
+    uploadConfigModalVisible: boolean;
+    downloadFolderModalVisible:boolean;
 
-    constructor(@Inject(Angular2InjectionTokens.LOGGER) private log: ZLUX.ComponentLogger) { }
+    toggleText = ["Binary", "Convert"];
+    activateAutomaticConvertion = false;
+    encodings = ["ASCII", "EBCDIC", "UTF8"];
+
+    constructor(@Inject(Angular2InjectionTokens.LOGGER) private log: ZLUX.ComponentLogger, 
+    private downloadService:DownloadService,
+    private ftaConfig:FTAConfigService,
+    @Inject(Angular2InjectionTokens.PLUGIN_DEFINITION) private pluginDefinition: ZLUX.ContainerPluginDefinition,
+    @Inject(Angular2InjectionTokens.VIEWPORT_EVENTS) private viewportEvents: Angular2PluginViewportEvents) { }
 
     get sideLocal(): FTASide {
         return FTASide.LOCAL;
@@ -89,10 +129,16 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
     }
 
     ngOnInit(): void {
+        this.downloadQueue = [];
+        this.downloadRemoteFileQueue = [];
+        this.downloadInProgressList = [];
+        this.downloadObjectQueue = [];
         this.log.debug('ngOnInit this.connection.name=' + this.connection.name);
 
         this.fileView = 'tree';
         this.uploadModalVisible = false;
+        this.uploadConfigModalVisible = false;
+        this.downloadFolderModalVisible = false;
 
         this.connection.ftaWs.onError((err) => {
             this.showError(err);
@@ -129,11 +175,40 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
         });
 
         this.connection.ftaWs.getHomePath(this.ftaSide);
+
+        this.viewportEvents.registerCloseHandler(():Promise<void>=> {
+            return new Promise((resolve,reject)=> {
+              this.ngOnDestroy();
+              resolve();
+            });
+        });
+    }
+
+    onChange(event){
+        //set the autoatic convertion status.
+        if(event.checked){
+            this.activateAutomaticConvertion = true;
+        }else{
+            this.activateAutomaticConvertion = false;
+        }
+    }
+
+    ngOnDestroy(): void {
+        this.log.debug('cancel inprogress downloads.');
+        this.downloadQueue = [];
+        this.downloadRemoteFileQueue =[];
+        this.downloadObjectQueue = [];
+        if(this.downloadInProgressList.length > 0){
+            this.downloadInProgressList.shift();
+            this.downloadService.cancelDownload();
+        }
     }
 
     ngAfterViewInit(){
         // Funky dummy tab used for UI alignment
-        this.fileExplorer.tabs = [{ index: 0, name: "USS" }, {index:0, name: ""}];
+        if(this.fileExplorer != null){
+            this.fileExplorer.tabs = [{ index: 0, name: "USS" }, {index:0, name: ""}];
+        }
     }
 
     treeView(): void {
@@ -164,9 +239,32 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
         this.uploadModalVisible = true;
     }
 
+    showConfigModal(): void{
+        this.uploadConfigModalVisible = true;
+    }
+
+    showDownloadFolderModel(folderName, folderPath): void{
+        this.downloadFolderModalVisible = true;
+        this.folderObjectToDownload = {
+            folderName : folderName,
+            folderPath : folderPath
+        }
+    }
+
     closeUploadModal(): void {
         this.uploadModalVisible = false;
-        this.fileExplorer.updateDirectory(this.getSelectedDirectory());
+        if(this.fileExplorer != null){
+            this.fileExplorer.updateDirectory(this.getSelectedDirectory());
+        }
+    }
+
+    closeConfigModal(): void {
+        this.uploadConfigModalVisible = false;
+    }
+
+    closeFolderDownloadMoadl(): void {
+        this.downloadFolderModalVisible = false;
+        
     }
 
     getSelectedDirectory(): string {
@@ -175,10 +273,16 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
     onNodeClick($event:any){
         if ($event.directory == false) { 
             this.selectedPath = $event.path;
+            this.selectedFileSize = $event.size;
+            this.enableDownload = true;
+            this.isFile = true;
+            this.selectedFileType = $event.data;
         } else {
             let folderPath = $event.path.substring($event.path.lastIndexOf("\\") + 1, $event.path.length);
             this.log.debug(folderPath);
             this.selectedPath = folderPath;
+            this.enableDownload = true;
+            this.isFile = false;
         }
         this.log.debug(this.selectedPath);
     }
@@ -187,7 +291,7 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
         this.selectedPath = $event;
     }
 
-    saveAs(): void {
+    saveAs(sourceEncoding?:any, targetEncoding?:any): void {
         const uri = ZoweZLUX.uriBroker.unixFileUri('contents', this.selectedPath.slice(1), undefined, undefined, undefined, true);
         this.log.debug(uri);
         const tokens = this.selectedPath.split('/');
@@ -196,9 +300,172 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
         const a = document.createElement('a');
         this.log.debug('downloading from uri', uri, 'with path ',this.selectedPath);
         a.href = uri;
-        a.download = filename;
-        a.click();
+        //start the donwload.
+        if(this.isFile){
+            this.startDownload(filename, this.selectedPath, null, sourceEncoding,targetEncoding);
+        }else{
+            this.showDownloadFolderModel(filename, this.selectedPath);
+            // this.startDownload(filename,this.selectedPath);
+        }
+        // a.download = filename;
+        // a.click();
         this.log.debug('clicked link');
+    }
+
+    proceedFolderDownload(): void{
+        this.startDownload(this.folderObjectToDownload["folderName"],this.folderObjectToDownload["folderPath"]);
+    }
+
+    //cancel the download.
+    cancelDown(){
+        this.downloadService.cancelDownload();
+        var cancelObj = null;
+        cancelObj  = this.downloadInProgressList.shift();
+        cancelObj.status = ConfigVariables.statusCancel;
+        this.downloadEndTrigger.emit(cancelObj);
+    }
+
+    startDownload(filename:string, remotePath:string, downloadObject?:any, sourceEncoding?:any, targetEncoding?:any):Promise<any>{
+        //check if download in progress.
+        if(!this.downloadInProgress){
+            this.initializeDownloadObject(ConfigVariables.statusInprogress, remotePath, filename, downloadObject, sourceEncoding, targetEncoding).then((downloadObject)=> {
+                this.downloadInProgress = true;
+                this.enableCancel = true;
+                downloadObject.status = ConfigVariables.statusInprogress;
+                //todo after test change to the uri.
+                let url = "";
+                if(this.isFile){
+                    url = "https://localhost:8544/unixfile/contents"+remotePath+"?responseType=raw";
+                }else{
+                    url = "https://localhost:8544/unixfile/folderdownload"+remotePath+"?responseType=raw";
+                }
+
+                this.downloadService.fetchFileHandler(url,filename,remotePath, downloadObject).then((res) => {
+                    this.downloadEndTrigger.emit(this.downloadService.finalObj);
+                    this.downloadInProgressList.shift();
+                    if(this.downloadService.finalObj.status == ConfigVariables.statusComplete){
+                        this.sendNotification(ConfigVariables.Download_Config_Notification_Hanlder, ConfigVariables.Download_Config_Notification_Message +this.downloadService.finalObj.fileName);
+                    }else if(this.downloadService.finalObj.status == ConfigVariables.statusCancel){
+                        this.sendNotification(ConfigVariables.Download_Config_Notification_Hanlder, ConfigVariables.Download_Config_Cancel_Notification_Message +this.downloadService.finalObj.fileName);
+                    }
+                    if(this.downloadQueue.length > 0){
+                        this.downloadInProgress = false;
+                        //after end of a download shift the queue and start the next download.
+                        this.startDownload(this.downloadQueue.shift(),this.downloadRemoteFileQueue.shift(),this.downloadObjectQueue.shift());
+                    }else{
+                        // fires when download queue is empty.
+                        this.downloadInProgress = false;
+                        this.enableDownload = false;
+                        this.enableCancel = false;
+                        return Promise.resolve("Completed All downloads");
+                    }
+                }).catch((err) => {
+                    return Promise.reject(err);
+                });
+                //add to inrprogress list.
+                this.downloadInProgressList.push(downloadObject);
+                //emit the download start event.
+                this.downloadTrigger.emit(downloadObject);
+            })
+        }else{
+            //if already download inprogress check the download queue size 
+            //from the user config and add to the queue.
+            if(this.downloadQueue.length < this.ftaConfig.getDownloadQueueSize()){
+                this.initializeDownloadObject(ConfigVariables.statusQueued, remotePath, filename, null, sourceEncoding, targetEncoding).then((downloadObject)=> {
+                    this.downloadQueue.push(filename);
+                    this.downloadRemoteFileQueue.push(remotePath);
+                    this.downloadObjectQueue.push(downloadObject);
+                    this.downloadTrigger.emit(downloadObject);
+                    return Promise.resolve("Added to the queue");
+                });
+            }else{
+                return Promise.resolve("Already exceeds the queuing limit please try after one or more download finishes");
+            }
+        }
+    }
+
+    //initialize the download object.
+    //values which hare hard coded are to be replaced after the download time api is ready from zss.
+    initializeDownloadObject(status:string, remoteFile:string, fileName:string , downloadObj? : any, sourceEncoding?:any, targetEncoding?:any):Promise<any>{
+        if(downloadObj != null){
+            downloadObj.status = ConfigVariables.statusInprogress;
+            return Promise.resolve(downloadObj);
+        }else{
+            return Promise.resolve(this.objectToDownload = {
+                uuid : uuid.v4(),
+                fileName: fileName,
+                type: this.selectedFileType,
+                size: this.selectedFileSize,
+                transfertime: "00.012.21.0",
+                status: status,
+                progress: "0",
+                activitytype: "download",
+                remoteFile: remoteFile,
+                priority: ConfigVariables.LowPriority,
+                sourceEncoding: sourceEncoding,
+                targetEncoding: targetEncoding
+            });
+        }
+       
+    }
+
+    ngOnChanges(changes) {
+        //capture the cancel event.
+        if(changes.cancelEvent != null){
+          if(changes.cancelEvent.currentValue != null){
+            //when the inprogress object got cancel just cnacel the downlod and clean.
+            if(changes.cancelEvent.currentValue.status == ConfigVariables.statusInprogress){
+                this.cancelDown();
+            // when a queued download is cancelled make sure to remove it from the 
+            // downloadQueue downloadRemoteFileQueue as well so it won't continue to hold these values.
+            }else if(changes.cancelEvent.currentValue.status == ConfigVariables.statusQueued){
+                this.findExisitingObject(changes.cancelEvent.currentValue.fileName,this.downloadQueue).then((index)=> {
+                    this.downloadQueue.splice(index,1);
+                    this.downloadRemoteFileQueue.splice(index,1);
+                    var cancelObj = [];
+                    cancelObj = this.downloadObjectQueue.splice(index,1);
+                    this.downloadEndTrigger.emit(cancelObj[0]);
+                });
+            }
+          }
+        }
+        //capture priority download event
+        if(changes.priorityDownloadEvent != null){
+            if(changes.priorityDownloadEvent.currentValue != null){
+                this.findExisitingObject(changes.priorityDownloadEvent.currentValue.fileName, this.downloadQueue).then((index)=> {
+                    if(index >= 0){
+                        //splice object and take out the priority object
+                        const highPriorityDownQueue = this.downloadQueue.splice(index,1);
+                        const highPriorityRemoteFileQueue = this.downloadRemoteFileQueue.splice(index,1);
+                        var priorityObj = [];
+                        priorityObj = this.downloadObjectQueue.splice(index,1);
+
+                      if(changes.priorityDownloadEvent.currentValue.priority == ConfigVariables.HighPriority){
+                          this.downloadQueue.unshift(highPriorityDownQueue[0]);
+                          this.downloadRemoteFileQueue.unshift(highPriorityRemoteFileQueue[0]);
+                          this.downloadObjectQueue.unshift(priorityObj[0]);
+                      }else{
+                        this.downloadQueue.push(highPriorityDownQueue[0]);
+                        this.downloadRemoteFileQueue.push(highPriorityRemoteFileQueue[0]);
+                        this.downloadObjectQueue.push(priorityObj[0]);
+                      }
+                    }
+                  });
+            }
+          }
+    }
+
+    //find the existing object.
+    findExisitingObject(objectToFind, objectArray){
+        const existingObject = objectArray.findIndex(obj => obj == objectToFind)
+        return Promise.resolve(existingObject);
+    }
+
+    sendNotification(title: string, message: string): number {
+        const pluginId = this.pluginDefinition.getBasePlugin().getIdentifier();
+        // We can specify a different styleClass to theme the notification UI i.e. [...] message, 1, pluginId, "org_zowe_zlux_editor_snackbar"
+        let notification = ZoweZLUX.notificationManager.createNotification(title, message, 1, pluginId);
+        return ZoweZLUX.notificationManager.notify(notification);
     }
 
     getSelectedPath(){

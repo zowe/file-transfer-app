@@ -8,9 +8,6 @@
   Copyright Contributors to the Zowe Project.
 */
 
-:host {
-    @import "../../../node_modules/carbon-components/scss/globals/scss/styles.scss";
-
 svg {
     fill: #ffffff;
 }
@@ -42,5 +39,4 @@ svg {
     font-size: 0.875rem; 
     line-height: 1.25; 
     font-weight: 600;
-}
 }

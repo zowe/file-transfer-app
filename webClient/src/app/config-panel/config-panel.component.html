@@ -1,0 +1,51 @@
+<!--
+  This program and the accompanying materials are
+  made available under the terms of the Eclipse Public License v2.0 which accompanies
+  this distribution, and is available at https://www.eclipse.org/legal/epl-v20.html
+  
+  SPDX-License-Identifier: EPL-2.0
+  
+  Copyright Contributors to the Zowe Project.
+-->
+
+<!DOCTYPE html>
+<ibm-modal #modal [size]="lg">
+    <ibm-modal-header (closeSelect)="close()">
+        <h1>User Configuaration</h1>
+        <p>Manual Configuration Update.</p>
+    </ibm-modal-header>
+    <section class="modal-body">
+        <form (ngSubmit)="onSubmit()" class="bx--form-item" id="file-form">
+            <ibm-label
+            [helperText]="config.helperText[0]">
+            Queue Size
+            <input
+                [(ngModel)]="model.queueSize" 
+                name="queueSize" 
+                #queueSize="ngModel"
+                type="number"
+                min="5"
+                class="form-control" 
+				ibmText
+				[disabled]="disabled">
+            </ibm-label>
+            <ibm-label
+			[helperText]="config.helperText[1]">
+            History Length
+            <input
+                [(ngModel)]="model.historySize" 
+                name="historySize" 
+                #historySize="ngModel"
+                type="number"
+                min="10"
+                class="form-control" 
+				ibmText
+				[disabled]="disabled">
+		    </ibm-label>
+        </form>
+    </section>
+    <ibm-modal-footer class="mt-3">
+        <button ibmButton="ghost" (click)="close()" class="mr-3">Cancel</button>
+        <button ibmButton type="submit" id="upload-button" form="file-form">Submit</button>
+    </ibm-modal-footer>
+</ibm-modal>

@@ -25,6 +25,12 @@
         "subResources": {
           "history": {
             "aggregationPolicy": "override"
+          },
+          "ftaactivity": {
+            "aggregationPolicy": "override"
+          },
+          "ftaConfig": {
+            "aggregationPolicy": "override"
           }
         }
       }

@@ -1,5 +1,3 @@
-
-
 /*
   This program and the accompanying materials are
   made available under the terms of the Eclipse Public License v2.0 which accompanies
@@ -9,12 +7,13 @@
 
   Copyright Contributors to the Zowe Project.
 */
-
 import { Component, Inject } from '@angular/core';
 import { DOCUMENT } from '@angular/platform-browser'; // DEPRECATED
-import { Angular2InjectionTokens } from 'pluginlib/inject-resources';
+import { Angular2InjectionTokens,Angular2PluginViewportEvents } from 'pluginlib/inject-resources';
 import { Connection } from './Connection';
 import { FTAWebsocketService } from './services/FTAWebsocket.service';
+import { FTAActivityService } from './services/FTAActivity.service';
+import { FTAConfigService } from './services/FTAConfig.service';
 import { FTASide } from '../../../common/FTATypes';
 
 import { SelectItem } from 'primeng/api';
@@ -38,6 +37,8 @@ import { ModalService } from 'carbon-components-angular/modal/modal.service';
 
 export class AppComponent {
   title = 'app';
+  downloadObject = null;
+  updateObject = null;
 
   get sideLocal(): FTASide {
     return FTASide.LOCAL;
@@ -67,6 +68,8 @@ export class AppComponent {
   credentialsSubmitted: boolean;
   showConnectionPanel: boolean;
   toggleMenuType: string;
+  cancelDownload: any;
+  priorityDownload: any;
 
   response: any;
 
@@ -75,8 +78,12 @@ export class AppComponent {
     private document: any,
     @Inject(Angular2InjectionTokens.PLUGIN_DEFINITION)
     private pluginDefinition: ZLUX.ContainerPluginDefinition,
-    public modalService: ModalService
+    @Inject(Angular2InjectionTokens.VIEWPORT_EVENTS) private viewportEvents: Angular2PluginViewportEvents,
+    public modalService: ModalService,
+    private ftaActivityService:FTAActivityService,
+    private ftaConfigService:FTAConfigService
     ) {
+    this.ftaConfigService.onInit();
 
     const host = this.document.location.hostname;
     this.ftaServiceUrl = (window as any).ZoweZLUX.uriBroker.pluginWSUri(this.pluginDefinition.getBasePlugin(), 'fs', '');
@@ -95,6 +102,10 @@ export class AppComponent {
     ftaWs.connect(this.ftaServiceUrl);
   }
 
+  ngOnInit(): void {
+    this.ftaConfigService.getData();
+  }
+
   onCredentialsSubmitted(connection: Connection): void {
     console.log('Credentials Submitted');
     this.credentialsSubmitted = true;
@@ -107,6 +118,31 @@ export class AppComponent {
       this.toggleMenuType = "toggle-menu contract-menu"; //Show option to hide it
     } else { //Otherwise show option to show it
       this.toggleMenuType = "toggle-menu expand-menu";
+    }
+  }
+
+  getCurrentDownload(downloadObj){
+    if(downloadObj != null){
+      this.downloadObject = downloadObj;
+      this.downloadObject = Object.assign({}, this.downloadObject);
+    }
+  }
+
+  updateDownloadObject(downloadObj){
+    this.updateObject = downloadObj;
+  }
+
+  captureCancelEvent(data){
+    if(data != null){
+      this.cancelDownload = data;
+      this.cancelDownload = Object.assign({}, this.cancelDownload);
+    }
+  }
+
+  capturePriorityEvent(data){
+    if(data != null){
+      this.priorityDownload = data;
+      this.priorityDownload = Object.assign({}, this.priorityDownload);
     }
   }
 }
