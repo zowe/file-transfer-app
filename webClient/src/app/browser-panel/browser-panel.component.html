@@ -130,17 +130,17 @@
     <div class="row">
         <div class="col-sm-3">
             <!-- Download Button -->
-            <ibm-toggle [onText]="toggleText[1]" [offText]="toggleText[0]" (change)="onChange($event)" [(ngModel)]="toggleState">Toggle</ibm-toggle>
+            <ibm-toggle [onText]="toggleText[1]" [offText]="toggleText[0]" (change)="onChange($event)">Toggle</ibm-toggle>
         </div>
         <div id="download-button" class="col-sm-3">
             <div *ngIf="!activateAutomaticConvertion">
-                <button  type="button" ibmButton="tertiary" size="field" data-toggle="dropdown" style="width:110%" (click)="saveAs()" [disabled]="!enableDownload">
+                <button  type="button" ibmButton="tertiary" size="field" style="width:110%" (click)="saveAs()" [disabled]="!enableDownload">
                     Download
                     <ibm-icon-download size="16" class="bx--btn__icon"> </ibm-icon-download>
                 </button>
             </div>
             <div *ngIf="activateAutomaticConvertion">
-                <button  type="button" class="btn dropdown-toggle" ibmButton="tertiary" size="field" data-toggle="dropdown" style="width:110%" [disabled]="!enableDownload">
+                <button  type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" [disabled]="!enableDownload">
                     Download
                     <div class="dropdown-menu">
                         <a class="dropdown-item" (click)="saveAs(encodings[1],encodings[2])">Target UTF8 -> Source EBCDIC</a>

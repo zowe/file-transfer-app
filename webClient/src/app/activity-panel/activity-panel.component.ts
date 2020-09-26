@@ -111,18 +111,13 @@ export class ActivityPanelComponent {
 
   finalizeObjectBeforeCloseEvent(): Promise<any> {
     //get inprogress object.
-    const inProgressList = this.fatDownloadActivity.filter(obj => obj.status === ConfigVariables.statusInprogress);
+    this.fatDownloadActivity
+    .filter(obj => obj.status === ConfigVariables.statusInprogress)
+    .forEach(obj => obj.status = ConfigVariables.statusCancel);
     //get queued object.
-    const inQueuedList = this.fatDownloadActivity.filter(obj => obj.status === ConfigVariables.statusInprogress);
-    //concatenate two arrays.
-    inProgressList.concat(inQueuedList);
-    for(var inProgress in inProgressList){
-      const indexOfObject = this.fatDownloadActivity.indexOf(inProgressList[inProgress]);
-      inProgressList[inProgress].status = ConfigVariables.statusCancel;
-      this.fatDownloadActivityInprogress.splice(indexOfObject, 1);
-      this.fatDownloadCancel.push(inProgressList[inProgress]);
-      this.fatDownloadActivity[indexOfObject] = inProgressList[inProgress];
-    }
+    this.fatDownloadActivity
+    .filter(obj => obj.status === ConfigVariables.statusQueued)
+    .forEach(obj => obj.status = ConfigVariables.statusCancel);
     //return after changing the state to cancel.
     return Promise.resolve(this.fatDownloadActivity);
   }
@@ -134,6 +129,7 @@ export class ActivityPanelComponent {
       if(changes.objectInProgress.currentValue != null){
         if(changes.objectInProgress.currentValue.status == ConfigVariables.statusQueued){
           this.fatDownloadActivityInprogress.push(changes.objectInProgress.currentValue);
+          this.fatDownloadActivity.push(changes.objectInProgress.currentValue);
           //remove from the list if exceeds the size of the lsit define in user config.
           this.refresh(ConfigVariables.InProgressTab);
         }else if(changes.objectInProgress.currentValue.status == ConfigVariables.statusInprogress){
@@ -143,9 +139,15 @@ export class ActivityPanelComponent {
             }else{
               this.fatDownloadActivityInprogress.push(changes.objectInProgress.currentValue);
             }
+            this.findExisitingObject(changes.objectInProgress.currentValue,this.fatDownloadActivity).then((index)=> {
+              if(index >= 0){
+                this.fatDownloadActivity[index].status = ConfigVariables.statusInprogress;
+              }else{
+                this.fatDownloadActivity.push(changes.objectInProgress.currentValue);
+              }
+            });
             //remove from the list if exceeds the size of the lsit define in user config.
             this.refresh(ConfigVariables.InProgressTab);
-            this.fatDownloadActivity.push(changes.objectInProgress.currentValue);
           });
         }
       }

@@ -194,11 +194,14 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
     }
 
     ngOnDestroy(): void {
-        this.log.debug('cancel inprogress/queued downloads.');
+        this.log.debug('cancel inprogress downloads.');
         this.downloadQueue = [];
         this.downloadRemoteFileQueue =[];
         this.downloadObjectQueue = [];
-        this.downloadService.cancelDownload();
+        if(this.downloadInProgressList.length > 0){
+            this.downloadInProgressList.shift();
+            this.downloadService.cancelDownload();
+        }
     }
 
     ngAfterViewInit(){
@@ -317,7 +320,7 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
     cancelDown(){
         this.downloadService.cancelDownload();
         var cancelObj = null;
-        cancelObj  = this.downloadInProgressList.shift() ;
+        cancelObj  = this.downloadInProgressList.shift();
         cancelObj.status = ConfigVariables.statusCancel;
         this.downloadEndTrigger.emit(cancelObj);
     }
@@ -339,6 +342,7 @@ export class BrowserPanelComponent implements AfterViewInit, OnInit {
 
                 this.downloadService.fetchFileHandler(url,filename,remotePath, downloadObject).then((res) => {
                     this.downloadEndTrigger.emit(this.downloadService.finalObj);
+                    this.downloadInProgressList.shift();
                     if(this.downloadService.finalObj.status == ConfigVariables.statusComplete){
                         this.sendNotification(ConfigVariables.Download_Config_Notification_Hanlder, ConfigVariables.Download_Config_Notification_Message +this.downloadService.finalObj.fileName);
                     }else if(this.downloadService.finalObj.status == ConfigVariables.statusCancel){
